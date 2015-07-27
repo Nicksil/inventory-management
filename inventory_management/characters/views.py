@@ -11,6 +11,17 @@ import evelink.account
 from .models import Character
 
 
+def character_list_view(request):
+    user = request.user
+    characters = user.characters.all()
+
+    return render(
+        request,
+        'characters/character_list_view.html',
+        {'characters': characters}
+    )
+
+
 def character_add_view(request):
     if request.method == 'POST':
         user = request.user

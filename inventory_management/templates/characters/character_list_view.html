@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>Character List</h1>
+    <ul>
+        {% for character in characters %}
+            <li>{{ character.name }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

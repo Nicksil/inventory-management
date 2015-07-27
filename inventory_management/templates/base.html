@@ -12,6 +12,7 @@
             <li><a href="{% url 'index' %}">Home</a></li>
             {% if user.is_authenticated %}
                 <li><a href="{% url 'characters:add' %}">Add Character</a></li>
+                <li><a href="{% url 'characters:list' %}">Characters</a></li>
                 <li><a href="{% url 'logout' %}">Log out</a></li>
             {% else %}
                 <li><a href="{% url 'login' %}">Log in</a></li>
