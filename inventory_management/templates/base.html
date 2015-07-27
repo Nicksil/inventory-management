@@ -5,11 +5,17 @@
         <title>Inventory Management</title>
     </head>
     <body>
-        {{ user }}
+        {% if user.is_authenticated %}
+            <p>{{ user.username }}</p>
+        {% endif %}
         <ul>
             <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'login' %}">Log in</a></li>
-            <li><a href="{% url 'logout' %}">Log out</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'characters:add' %}">Add Character</a></li>
+                <li><a href="{% url 'logout' %}">Log out</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Log in</a></li>
+            {% endif %}
         </ul>
         {% block body %}{% endblock %}
     </body>

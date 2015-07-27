@@ -9,5 +9,5 @@ class Character(models.Model):
     key_id = models.IntegerField()
     v_code = models.CharField(max_length=256)
 
-    def unicode(self):
+    def __unicode__(self):
         return self.name
