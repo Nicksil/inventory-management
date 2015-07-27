@@ -6,6 +6,7 @@ class Character(models.Model):
 
     user = models.ForeignKey(User, related_name='characters')
     name = models.CharField(max_length=256)
+    char_id = models.IntegerField()
     key_id = models.IntegerField()
     v_code = models.CharField(max_length=256)
 

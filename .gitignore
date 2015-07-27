@@ -1,3 +1,4 @@
 *.DS_Store
 *.pyc
 migrations
+test_data.txt
