@@ -11,6 +11,12 @@ import evelink.account
 from .models import Character
 
 
+def character_delete_view(request, pk):
+    Character.objects.get(pk=pk).delete()
+
+    return redirect('characters:list')
+
+
 def character_detail_view(request, pk):
     character = Character.objects.get(pk=pk)
 

@@ -8,4 +8,5 @@
         <li>{{ character.key_id }}</li>
         <li>{{ character.v_code }}</li>
     </ul>
+    <a href="{% url 'characters:delete' pk=character.pk %}">Delete character</a>
 {% endblock %}
