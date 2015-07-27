@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Inventory Management</title>
+    </head>
+    <body>
+        {{ user }}
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'login' %}">Log in</a></li>
+            <li><a href="{% url 'logout' %}">Log out</a></li>
+        </ul>
+        {% block body %}{% endblock %}
+    </body>
+</html>
