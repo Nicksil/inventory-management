@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>Character Detail</h1>
+    <ul>
+        <li>{{ character.name }}</li>
+        <li>{{ character.user.username }}</li>
+        <li>{{ character.char_id }}</li>
+        <li>{{ character.key_id }}</li>
+        <li>{{ character.v_code }}</li>
+    </ul>
+{% endblock %}

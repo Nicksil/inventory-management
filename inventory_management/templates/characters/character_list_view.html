@@ -3,7 +3,7 @@
     <h1>Character List</h1>
     <ul>
         {% for character in characters %}
-            <li>{{ character.name }}</li>
+            <li><a href="{% url 'characters:detail' pk=character.pk %}">{{ character.name }}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

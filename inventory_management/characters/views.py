@@ -11,6 +11,16 @@ import evelink.account
 from .models import Character
 
 
+def character_detail_view(request, pk):
+    character = Character.objects.get(pk=pk)
+
+    return render(
+        request,
+        'characters/character_detail_view.html',
+        {'character': character}
+    )
+
+
 def character_list_view(request):
     user = request.user
     characters = user.characters.all()
