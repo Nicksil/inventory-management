@@ -8,6 +8,14 @@ from characters.models import Character
 from items.models import Item
 
 
+def shoppinglist_item_remove(request, list_pk, item_pk):
+    shoppinglist = ShoppingList.objects.get(pk=list_pk)
+    item = Item.objects.get(pk=item_pk)
+    shoppinglist.items.remove(item)
+
+    return redirect('lists:shoppinglist_update', pk=list_pk)
+
+
 def shoppinglist_list_view(request):
     shoppinglists = ShoppingList.objects.all()
 
