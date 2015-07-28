@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+from items.models import Item
+
 
 class Character(models.Model):
 
@@ -12,3 +14,16 @@ class Character(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Asset(models.Model):
+
+    character = models.ForeignKey(Character, related_name='assets')
+    item = models.ForeignKey(Item, related_name='assets')
+    location_id = models.IntegerField()
+    quantity = models.IntegerField()
+    flag = models.SmallIntegerField()
+    singleton = models.SmallIntegerField()
+
+    def __unicode__(self):
+        return '{} ({})'.format(self.characters.name, self.item.type_name)
