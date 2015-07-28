@@ -2,3 +2,4 @@
 *.pyc
 migrations
 test_data.txt
+utils
