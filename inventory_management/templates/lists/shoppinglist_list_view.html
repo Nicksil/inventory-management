@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>Shopping Lists</h1>
+    <ul>
+        {% for shoppinglist in shoppinglists %}
+            <li><a href="{% url 'lists:shoppinglist_update' pk=shoppinglist.pk %}">{{ shoppinglist.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

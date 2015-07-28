@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>Shopping List Update View</h1>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ shoppinglist.character }}
+        <label for="_name">Name</label>
+        <input type="text" id="_name" name="name" value="{{ shoppinglist.name }}">
+        <label for="_items">Items</label>
+        <input type="text" id="_items" name="items">
+        <button type="submit">Update</button>
+    </form>
+    <ul>
+        {% for item in shoppinglist.items.all %}
+            <li>{{ item.type_name }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
