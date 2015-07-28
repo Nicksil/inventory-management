@@ -8,3 +8,17 @@ class Item(models.Model):
 
     def __unicode__(self):
         return self.type_name
+
+
+class Price(models.Model):
+
+    item = models.ForeignKey(Item, related_name='prices')
+    buy = models.FloatField(default=0.0)
+    sell = models.FloatField(default=0.0)
+
+    def __unicode__(self):
+        return '({}, {}): ({}, {})'.format(
+            self.item.type_name,
+            self.item.type_id,
+            self.buy, self.sell
+        )
