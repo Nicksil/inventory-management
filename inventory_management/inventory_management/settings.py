@@ -21,6 +21,7 @@ INSTALLED_APPS = (
     'django_extensions',
 
     'characters',
+    'items',
 )
 
 MIDDLEWARE_CLASSES = (
