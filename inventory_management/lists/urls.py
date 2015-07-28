@@ -7,6 +7,7 @@ from .views import shoppinglist_detail_view
 from .views import shoppinglist_item_remove
 from .views import shoppinglist_list_view
 from .views import shoppinglist_update_view
+from .views import update_item_prices
 
 urlpatterns = [
     url(
@@ -28,6 +29,11 @@ urlpatterns = [
         r'^(?P<pk>\d+)/update/$',
         shoppinglist_update_view,
         name='shoppinglist_update'
+    ),
+    url(
+        r'^(?P<pk>\d+)/update-prices/$',
+        update_item_prices,
+        name='shoppinglist_update_prices'
     ),
     url(
         r'^(?P<list_pk>\d+)/items/(?P<item_pk>\d+)/remove/$',
