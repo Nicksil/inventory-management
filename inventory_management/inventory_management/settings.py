@@ -22,6 +22,7 @@ INSTALLED_APPS = (
 
     'characters',
     'items',
+    'lists',
 )
 
 MIDDLEWARE_CLASSES = (
