@@ -8,6 +8,15 @@ from characters.models import Character
 from items.models import Item
 
 
+def shoppinglist_detail_view(request, pk):
+    shoppinglist = ShoppingList.objects.get(pk=pk)
+    return render(
+        request,
+        'lists/shoppinglist_detail_view.html',
+        {'shoppinglist': shoppinglist}
+    )
+
+
 def shoppinglist_item_remove(request, list_pk, item_pk):
     shoppinglist = ShoppingList.objects.get(pk=list_pk)
     item = Item.objects.get(pk=item_pk)
