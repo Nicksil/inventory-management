@@ -15,6 +15,7 @@ class Price(models.Model):
     item = models.ForeignKey(Item, related_name='prices')
     buy = models.FloatField(default=0.0)
     sell = models.FloatField(default=0.0)
+    added = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return '({}, {}): ({}, {})'.format(
