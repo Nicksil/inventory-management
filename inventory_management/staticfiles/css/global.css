@@ -1,0 +1,17 @@
+header {
+    height: 30px;
+}
+.nav-list {
+    display: inline-block;
+    margin-top: 0;
+}
+
+.nav-list>li {
+    display: inline-block;
+}
+.float-left {
+    float: left;
+}
+.float-right {
+    float: right;
+}

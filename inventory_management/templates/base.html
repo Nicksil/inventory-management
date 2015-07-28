@@ -1,25 +1,31 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Inventory Management</title>
+        <link rel="stylesheet" href="{% static 'css/global.css' %}">
     </head>
     <body>
-        {% if user.is_authenticated %}
-            <p>{{ user.username }}</p>
-        {% endif %}
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
+        <header>
             {% if user.is_authenticated %}
-                <li><a href="{% url 'characters:add' %}">Add Character</a></li>
-                <li><a href="{% url 'characters:list' %}">Characters</a></li>
-                <li><a href="{% url 'lists:shoppinglist_create' %}">Create Shopping List</a></li>
-                <li><a href="{% url 'lists:shoppinglist_list' %}">Shopping Lists</a></li>
-                <li><a href="{% url 'logout' %}">Log out</a></li>
-            {% else %}
-                <li><a href="{% url 'login' %}">Log in</a></li>
+                <span class="float-left">{{ user.username }}</span>
             {% endif %}
-        </ul>
+            <nav>
+                <ul class="nav-list float-right">
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'characters:add' %}">Add Character</a></li>
+                        <li><a href="{% url 'characters:list' %}">Characters</a></li>
+                        <li><a href="{% url 'lists:shoppinglist_create' %}">Create Shopping List</a></li>
+                        <li><a href="{% url 'lists:shoppinglist_list' %}">Shopping Lists</a></li>
+                        <li><a href="{% url 'logout' %}">Log out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Log in</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </header>
         {% block body %}{% endblock %}
     </body>
 </html>

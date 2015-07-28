@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>List Detail</h1>
-    <h2>{{ shoppinglist.name }}</h2>
+    <h1>{{ shoppinglist.name }}</h1>
     <p><a href="{% url 'lists:shoppinglist_update' pk=shoppinglist.pk %}">Update</a></p>
     <ul>
         {% for item in shoppinglist.items.all %}

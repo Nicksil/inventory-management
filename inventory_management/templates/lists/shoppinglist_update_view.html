@@ -4,10 +4,13 @@
     <form action="" method="POST">
         {% csrf_token %}
         {{ shoppinglist.character }}
+        <br>
         <label for="_name">Name</label>
         <input type="text" id="_name" name="name" value="{{ shoppinglist.name }}">
+        <br>
         <label for="_items">Items</label>
         <input type="text" id="_items" name="items">
+        <br>
         <button type="submit">Update</button>
     </form>
     <ul>
