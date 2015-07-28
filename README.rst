@@ -3,3 +3,4 @@ An Inventory Management Application for use with the game `EVE Online <http://ww
 Using:
 
 * `Django <https://www.djangoproject.com/>`_
+* `EVELink <https://github.com/eve-val/evelink>`_
