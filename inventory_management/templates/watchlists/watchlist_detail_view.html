@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>Watch List Detail</h1>
+    <ul>
+        <li>{{ watchlist.name }}</li>
+        {% for item in watchlist.items.all %}
+            <li>{{ item.item.type_name }} | {{ item.desired_price }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

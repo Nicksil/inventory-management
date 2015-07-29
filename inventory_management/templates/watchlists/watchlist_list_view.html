@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>Watch Lists</h1>
+    <ul>
+        {% for watchlist in watchlists %}
+            <li><a href="{% url 'watchlists:detail' pk=watchlist.pk %}">{{ watchlist }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

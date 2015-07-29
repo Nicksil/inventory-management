@@ -22,8 +22,12 @@ urlpatterns = [
         include('characters.urls', namespace='characters')
     ),
     url(
-        r'^lists/',
+        r'^shoppinglists/',
         include('shoppinglists.urls', namespace='shoppinglists')
+    ),
+    url(
+        r'^watchlists/',
+        include('watchlists.urls', namespace='watchlists')
     ),
     url(
         r'^admin/',

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>Create Watch List</h1>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="_name">Name</label>
+        <input type="text" id="_name" name="name">
+        <br>
+        <label for="_item">Item</label>
+        <input type="text" id="_item" name="item">
+        <br>
+        <label for="_desired_price">Desired Price</label>
+        <input type="text" id="_desired_price" name="desired_price">
+        <br>
+        <button type="submit">Create</button>
+    </form>
+{% endblock %}
