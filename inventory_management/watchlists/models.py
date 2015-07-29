@@ -9,7 +9,7 @@ class WatchListItem(models.Model):
     desired_price = models.FloatField(default=0.0)
 
     def __unicode__(self):
-        return '{}: {}'.format(self.item.type_name, self.desired_price)
+        return 'Item: {}, Desired Price: {}, Last Sell Price: {}'.format(self.item.type_name, self.desired_price, self.item.prices.last().sell)
 
 
 class WatchList(models.Model):

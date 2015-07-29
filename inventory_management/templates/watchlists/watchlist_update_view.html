@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>{{ watchlist.name }}</h1>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="_item">Item</label>
+        <input type="text" id="_item" name="item">
+        <br>
+        <label for="_desired_price">Desired Price</label>
+        <input type="text" id="_desired_price" name="desired_price">
+        <br>
+        <button type="submit">Update</button>
+    </form>
+{% endblock %}h1

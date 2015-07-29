@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>Watch List Detail</h1>
+    <h1>{{ watchlist.name }}</h1>
+    <a href="{% url 'watchlists:update' pk=watchlist.pk %}">Update</a>
     <ul>
-        <li>{{ watchlist.name }}</li>
         {% for item in watchlist.items.all %}
             <li>{{ item.item.type_name }} | {{ item.desired_price }}</li>
         {% endfor %}
