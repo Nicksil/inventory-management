@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
     <h1>Character Detail</h1>
+    <p><a href="{% url 'characters:asset_list' pk=character.pk %}">Assets</a></p>
     <ul>
         <li>{{ character.name }}</li>
         <li>{{ character.user.username }}</li>

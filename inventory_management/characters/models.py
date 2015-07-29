@@ -20,10 +20,11 @@ class Asset(models.Model):
 
     character = models.ForeignKey(Character, related_name='assets')
     item = models.ForeignKey(Item, related_name='assets')
+    unique_item_id = models.BigIntegerField(unique=True)
     location_id = models.IntegerField()
     quantity = models.IntegerField()
     flag = models.SmallIntegerField()
-    singleton = models.SmallIntegerField()
+    packaged = models.BooleanField()
 
     def __unicode__(self):
-        return '{} ({})'.format(self.characters.name, self.item.type_name)
+        return '{} ({})'.format(self.character.name, self.item.type_name)

@@ -27,7 +27,7 @@ def update_item_prices(request, pk):
             sell=sell
         )
 
-    return redirect('lists:shoppinglist_detail', pk=pk)
+    return redirect('shoppinglists:shoppinglist_detail', pk=pk)
 
 
 def fetch_item_prices(items, hours=24, regions=None, system=None):
@@ -56,7 +56,7 @@ def shoppinglist_item_remove(request, list_pk, item_pk):
     item = Item.objects.get(pk=item_pk)
     shoppinglist.items.remove(item)
 
-    return redirect('lists:shoppinglist_update', pk=list_pk)
+    return redirect('shoppinglists:shoppinglist_update', pk=list_pk)
 
 
 def shoppinglist_list_view(request):
@@ -82,7 +82,7 @@ def shoppinglist_update_view(request, pk):
             item_obj = Item.objects.get(type_name=items)
             shoppinglist.items.add(item_obj)
 
-        return redirect('lists:shoppinglist_list')
+        return redirect('shoppinglists:shoppinglist_list')
 
     return render(
         request,
@@ -103,7 +103,7 @@ def shoppinglist_create_view(request):
         )
         shoppinglist.items.add(item_obj)
 
-        return redirect('lists:shoppinglist_create')
+        return redirect('shoppinglists:shoppinglist_create')
 
     characters = request.user.characters.all()
     return render(

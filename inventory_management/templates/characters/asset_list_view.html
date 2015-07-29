@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>Assets</h1>
+    <p><a href="{% url 'characters:asset_update' pk=character.pk %}">Update assets</a></p>
+    <ul>
+        {% for asset in assets %}
+            <li>{{ asset }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

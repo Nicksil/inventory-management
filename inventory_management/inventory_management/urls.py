@@ -23,7 +23,7 @@ urlpatterns = [
     ),
     url(
         r'^lists/',
-        include('shoppinglists.urls', namespace='lists')
+        include('shoppinglists.urls', namespace='shoppinglists')
     ),
     url(
         r'^admin/',

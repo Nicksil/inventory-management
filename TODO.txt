@@ -1,3 +1,4 @@
 - Logging
 - Move user login to separate view/app
 - Add station, system, region data/models
+- Consider adding in non-packaged contents within assets
