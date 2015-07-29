@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'items',
     'monitoring',
     'shoppinglists',
+    'watchlists',
 )
 
 MIDDLEWARE_CLASSES = (
