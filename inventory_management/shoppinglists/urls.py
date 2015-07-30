@@ -13,17 +13,17 @@ urlpatterns = [
     url(
         r'^create/$',
         shoppinglist_create_view,
-        name='shoppinglist_create'
+        name='create'
     ),
     url(
         r'^list/$',
         shoppinglist_list_view,
-        name='shoppinglist_list'
+        name='list'
     ),
     url(
         r'^(?P<pk>\d+)/detail/$',
         shoppinglist_detail_view,
-        name='shoppinglist_detail'
+        name='detail'
     ),
     url(
         r'^(?P<pk>\d+)/update/$',

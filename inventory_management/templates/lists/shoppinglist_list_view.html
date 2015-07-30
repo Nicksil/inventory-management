@@ -3,7 +3,7 @@
     <h1>Shopping Lists</h1>
     <ul>
         {% for shoppinglist in shoppinglists %}
-            <li><a href="{% url 'shoppinglists:shoppinglist_detail' pk=shoppinglist.pk %}">{{ shoppinglist.name }}</a> <a href="{% url 'shoppinglists:shoppinglist_update' pk=shoppinglist.pk %}">(update)</a></li>
+            <li><a href="{% url 'shoppinglists:detail' pk=shoppinglist.pk %}">{{ shoppinglist.name }}</a> <a href="{% url 'shoppinglists:shoppinglist_update' pk=shoppinglist.pk %}">(update)</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
     <h1>{{ shoppinglist.name }}</h1>
-    <p><a href="{% url 'shoppinglists:shoppinglist_update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'shoppinglists:shoppinglist_update_prices' pk=shoppinglist.pk %}">Update prices</a></p>
+    <p><a href="{% url 'shoppinglists:shoppinglist_update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'shoppinglists:shoppinglist_update_prices' pk=shoppinglist.pk %}">Update prices</a> | <a href="{% url 'shoppinglists:list' %}">All Lists</a></p>
     <ul>
         {% for item in shoppinglist.items.all %}
             <li>{{ item.type_name }}: {{ item.prices.last.sell }}</li>

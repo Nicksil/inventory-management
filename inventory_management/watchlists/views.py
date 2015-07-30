@@ -66,6 +66,6 @@ def watchlist_create_view(request):
         watchlist = WatchList.objects.create(name=name)
         watchlist.items.add(watchlist_item)
 
-        return redirect('watchlists:list')
+        return redirect('watchlists:detail', pk=watchlist.pk)
 
     return render(request, 'watchlists/watchlist_create_view.html')
