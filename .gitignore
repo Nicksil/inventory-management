@@ -1,5 +1,6 @@
 *.DS_Store
-*.pyc
+*.py[co]
+docs/_build/
 migrations
 test_data.txt
 utils

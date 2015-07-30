@@ -6,6 +6,10 @@ from items.models import Item
 
 class Character(models.Model):
 
+    """
+    A model representing a single character
+    """
+
     user = models.ForeignKey(User, related_name='characters')
     name = models.CharField(max_length=256)
     char_id = models.IntegerField()
@@ -17,6 +21,10 @@ class Character(models.Model):
 
 
 class Asset(models.Model):
+
+    """
+    A model representing a single character
+    """
 
     character = models.ForeignKey(Character, related_name='assets')
     item = models.ForeignKey(Item, related_name='assets')
