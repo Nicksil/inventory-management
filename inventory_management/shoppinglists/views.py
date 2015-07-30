@@ -56,7 +56,7 @@ def shoppinglist_item_remove(request, list_pk, item_pk):
     item = Item.objects.get(pk=item_pk)
     shoppinglist.items.remove(item)
 
-    return redirect('shoppinglists:shoppinglist_update', pk=list_pk)
+    return redirect('shoppinglists:update', pk=list_pk)
 
 
 def shoppinglist_list_view(request):

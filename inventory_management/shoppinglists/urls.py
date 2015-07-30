@@ -28,7 +28,7 @@ urlpatterns = [
     url(
         r'^(?P<pk>\d+)/update/$',
         shoppinglist_update_view,
-        name='shoppinglist_update'
+        name='update'
     ),
     url(
         r'^(?P<pk>\d+)/update-prices/$',
