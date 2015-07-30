@@ -19,16 +19,14 @@ from items.models import Item
 logger = logging.getLogger(__name__)
 
 
-def asset_update(request, pk):
-    character = Character.objects.get(pk=pk)
-    char_id = character.char_id
-    api_key = (character.key_id, character.v_code)
-
+def fetch_assets(api_key, char_id):
     api = evelink.api.API(api_key=api_key)
     char_api = evelink.char.Char(char_id, api)
 
-    assets = char_api.assets().result
+    return char_api.assets().result
 
+
+def save_assets(assets, character):
     for loc in assets.itervalues():
         for i in loc['contents']:
             item_type_id = i['item_type_id']
@@ -51,6 +49,15 @@ def asset_update(request, pk):
                 )
             except IntegrityError as e:
                 logger.exception(e)
+
+
+def asset_update(request, pk):
+    character = Character.objects.get(pk=pk)
+    char_id = character.char_id
+    api_key = (character.key_id, character.v_code)
+
+    assets = fetch_assets(api_key, char_id)
+    save_assets(assets, character)
 
     return redirect('characters:asset_list', pk=pk)
 

@@ -4,7 +4,7 @@
     <p><a href="{% url 'characters:asset_update' pk=character.pk %}">Update assets</a></p>
     <ul>
         {% for asset in assets %}
-            <li>{{ asset }}</li>
+            <li>{{ asset.quantity }} {{ asset.item.type_name }}</li>
         {% endfor %}
     </ul>
 {% endblock %}
