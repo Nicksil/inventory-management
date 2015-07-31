@@ -4,8 +4,8 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic import TemplateView
 
-from characters.views import login
-from characters.views import logout
+from .auth_views import login
+from .auth_views import logout
 
 urlpatterns = [
     url(

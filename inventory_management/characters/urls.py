@@ -17,6 +17,11 @@ urlpatterns = [
         name='add'
     ),
     url(
+        r'^list/$',
+        character_list_view,
+        name='list'
+    ),
+    url(
         r'^(?P<pk>\d+)/delete/$',
         character_delete_view,
         name='delete'
@@ -35,10 +40,5 @@ urlpatterns = [
         r'^(?P<pk>\d+)/assets/update/$',
         asset_update,
         name='asset_update'
-    ),
-    url(
-        r'^list/$',
-        character_list_view,
-        name='list'
     ),
 ]

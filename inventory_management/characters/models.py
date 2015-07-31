@@ -17,6 +17,9 @@ class Character(models.Model):
     key_id = models.IntegerField()
     v_code = models.CharField(max_length=256)
 
+    def get_api_key(self):
+        return (self.key_id, self.v_code)
+
     def __unicode__(self):
         return self.name
 
