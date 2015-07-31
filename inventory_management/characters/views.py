@@ -4,7 +4,6 @@ from __future__ import absolute_import
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as _login
 from django.contrib.auth import logout as _logout
-from django.db import IntegrityError
 from django.shortcuts import redirect
 from django.shortcuts import render
 import evelink.api
@@ -28,42 +27,180 @@ def fetch_assets(api_key, char_id):
 
     api = evelink.api.API(api_key=api_key)
     char_api = evelink.char.Char(char_id, api)
+    assets = char_api.assets().result
 
-    return char_api.assets().result
+    return assets
 
 
-def save_assets(assets, character):
+def prepare_assets(assets, character):
     """
-    Save a character's assets using the :class:`Character` model
+    Prepares dict of assets for saving to Asset model
 
-    :param dict assets: dict of assets as returned by :func:`fetch_assets`
-    :param obj character: :class:`Character` object
-    :return: None
-    :rtype: None
+    :param dict assets: Dictionary of assets
+    :param character: Instance of :class:`Character` model
+    :return: List of tuples of :class:`Asset` objects
+    :rtype: list
+
+    Sample dict format::
+
+       >>> {
+               60005485: {
+                   'contents': [
+                       {
+                           'id': <13-digit int>,
+                           'item_type_id': <short int>,
+                           'location_flag': 4,
+                           'location_id': <8-digit int>,
+                           'packaged': True,
+                           'quantity': 2200
+                       }
+                   ],
+                   'location_id': <8-digit int>
+               },
+               60012643: {
+                   'contents': [
+                       {
+                           'id': <13-digit int>,
+                           'item_type_id': <short int>,
+                           'location_flag': 4,
+                           'location_id': <8-digit int>,
+                           'packaged': False,
+                           'quantity': 1,
+                           'raw_quantity': -1
+                       },
+                       {
+                           'contents': [
+                               {
+                                   'id': <13-digit int>,
+                                   'item_type_id': <short int>,
+                                   'location_flag': 27,
+                                   'location_id': <8-digit int>,
+                                   'packaged': False,
+                                   'quantity': 1,
+                                   'raw_quantity': -1
+                               }
+                           ],
+                           'id': <13-digit int>,
+                           'item_type_id': <short int>,
+                           'location_flag': 4,
+                           'location_id': <8-digit int>,
+                           'packaged': False,
+                           'quantity': 1,
+                           'raw_quantity': -1
+                       },
+                       {
+                           'id': <13-digit int>,
+                           'item_type_id': <short int>,
+                           'location_flag': 4,
+                           'location_id': <8-digit int>,
+                           'packaged': True,
+                           'quantity': 8
+                       },
+                       {
+                           'contents': [
+                               {
+                                   'id': <13-digit int>,
+                                   'item_type_id': <short int>,
+                                   'location_flag': 27,
+                                   'location_id': <8-digit int>,
+                                   'packaged': False,
+                                   'quantity': 1,
+                                   'raw_quantity': -1
+                               }
+                           ],
+                           'id': <13-digit int>,
+                           'item_type_id': <short int>,
+                           'location_flag': 4,
+                           'location_id': <8-digit int>,
+                           'packaged': False,
+                           'quantity': 1,
+                           'raw_quantity': -1
+                       }
+                   ],
+                   'location_id': <8-digit int>
+               }
+           }
     """
 
-    for loc in assets.itervalues():
-        for i in loc['contents']:
-            item_type_id = i['item_type_id']
-            item = Item.objects.get(type_id=item_type_id)
-            unique_item_id = i['id']
-            location_id = i['location_id']
-            quantity = i['quantity']
-            flag = i['location_flag']
-            packaged = i['packaged']
+    asset_list = []
+    for a in assets.itervalues():
+        for asset in a['contents']:
+            _asset = {
+                'character': character,
+                'item': Item.objects.get(type_id=asset['item_type_id']),
+                'unique_item_id': asset['id'],
+                'location_id': asset['location_id'],
+                'quantity': asset['quantity'],
+                'flag': asset['location_flag'],
+                'packaged': asset['packaged'],
+            }
+            asset_list.append(Asset(**_asset))
 
-            try:
-                Asset.objects.create(
-                    character=character,
-                    item=item,
-                    location_id=location_id,
-                    unique_item_id=unique_item_id,
-                    quantity=quantity,
-                    flag=flag,
-                    packaged=packaged
-                )
-            except IntegrityError as e:
-                print(e)
+    return asset_list
+
+
+def save_assets(assets):
+    """
+    Saves :class:`Asset` objects in bulk
+
+    :param list assets: List of tuples of Asset objects
+    """
+
+    Asset.objects.bulk_create(assets)
+
+
+def fetch_characters(api_key):
+    """
+    Wrapper for API call to EVE's /account/Characters.xml.aspx endpoint,
+    returning a list of characters exposed to given API credentials
+
+    :param tuple api_key: A Key ID and Verification Code in the form: (key_id, v_code)
+    :return: Dictionary of character data
+    :rtype: dict
+    """
+
+    api = evelink.api.API(api_key=api_key)
+    acct = evelink.account.Account(api=api)
+    characters = acct.characters().result
+
+    return characters
+
+
+def prepare_characters(user, characters, api_key):
+    """
+    Prepares dict of characters for saving to Character model
+
+    :param user: Instance of :class:`User` model
+    :param dict characters: Dictionary of characters
+    :param tuple api_key: Tuple of (key_id, v_code)
+    :return: List of tuples of :class:`Character` objects
+    :rtype: list
+    """
+
+    key_id, v_code = api_key
+
+    character_list = []
+    for character in characters.itervalues():
+        _character = {
+            'user': user,
+            'name': character['name'],
+            'char_id': character['id'],
+            'key_id': key_id,
+            'v_code': v_code,
+        }
+        character_list.append(Character(**_character))
+
+    return character_list
+
+
+def save_characters(characters):
+    """
+    Saves :class:`Character` objects in bulk
+
+    :param list characters: List of tuples of Character objects
+    """
+
+    Character.objects.bulk_create(characters)
 
 
 def asset_update(request, pk):
@@ -78,8 +215,9 @@ def asset_update(request, pk):
     char_id = character.char_id
     api_key = (character.key_id, character.v_code)
 
-    assets = fetch_assets(api_key, char_id)
-    save_assets(assets, character)
+    fetched_assets = fetch_assets(api_key, char_id)
+    prepared_assets = prepare_assets(fetched_assets, character)
+    save_assets(prepared_assets)
 
     return redirect('characters:asset_list', pk=pk)
 
@@ -102,34 +240,31 @@ def asset_list_view(request, pk):
     )
 
 
-def character_delete_view(request, pk):
+def character_add_view(request):
     """
-    Delete a single :class:`Character` object
+    Create a new :class:`Character` object
 
-    :param int pk: Primary key of character
-    :return: Redirect to user's list of characters
-    """
-
-    Character.objects.get(pk=pk).delete()
-
-    return redirect('characters:list')
-
-
-def character_detail_view(request, pk):
-    """
-    A view providing an interface for a single character
-
-    :param int pk: Primary key of character
-    :return: Render function for displaying view
+    :return: POST requests: Redirect back to this view.
+             GET requests: view render function
     """
 
-    character = Character.objects.get(pk=pk)
+    if request.method == 'POST':
+        user = request.user
+        key_id = int(request.POST['key_id'])
+        v_code = request.POST['v_code']
 
-    return render(
-        request,
-        'characters/character_detail_view.html',
-        {'character': character}
-    )
+        api_key = (key_id, v_code)
+        fetched_characters = fetch_characters(api_key)
+        prepared_characters = prepare_characters(
+            user,
+            fetched_characters,
+            api_key
+        )
+        save_characters(prepared_characters)
+
+        return redirect('characters:add')
+
+    return render(request, 'characters/character_add_form.html')
 
 
 def character_list_view(request):
@@ -149,71 +284,34 @@ def character_list_view(request):
     )
 
 
-def character_add_view(request):
+def character_detail_view(request, pk):
     """
-    Create a new :class:`Character` object
+    A view providing an interface for a single character
 
-    :return: POST requests: Redirect back to this view.
-             GET requests: view render function
-    """
-
-    if request.method == 'POST':
-        user = request.user
-        key_id = int(request.POST['key_id'])
-        v_code = request.POST['v_code']
-
-        characters = fetch_characters((key_id, v_code))
-        parsed_characters = parse_characters(characters)
-
-        for p in parsed_characters:
-            char_id, name = p
-            Character.objects.create(
-                user=user,
-                name=name,
-                char_id=char_id,
-                key_id=key_id,
-                v_code=v_code,
-            )
-
-        return redirect('characters:add')
-
-    return render(request, 'characters/character_add_form.html')
-
-
-def fetch_characters(api_key):
-    """
-    Wrapper for API call to EVE's /account/Characters.xml.aspx endpoint,
-    returning a list of characters exposed to given API credentials
-
-    :param tuple api_key: A Key ID and Verification Code in the form: (key_id, v_code)
-    :return: Dictionary of character data
-    :rtype: dict
+    :param int pk: Primary key of character
+    :return: Render function for displaying view
     """
 
-    api = evelink.api.API(api_key=api_key)
-    acct = evelink.account.Account(api=api)
-    characters = acct.characters()
+    character = Character.objects.get(pk=pk)
 
-    return characters.result
+    return render(
+        request,
+        'characters/character_detail_view.html',
+        {'character': character}
+    )
 
 
-def parse_characters(characters):
+def character_delete_view(request, pk):
     """
-    Iterates through dict of characters, creating
-    list of tuples of (character ID, character name)
+    Delete a single :class:`Character` object
 
-    :param dict characters: Dictionary of characters
-    :return: List of tuples in the form: (character ID, character name)
-    :rtype: list
+    :param int pk: Primary key of character
+    :return: Redirect to user's list of characters
     """
 
-    chars = []
-    for c in characters:
-        chars.append(
-            (characters[c]['id'], characters[c]['name']),
-        )
+    Character.objects.get(pk=pk).delete()
 
-    return chars
+    return redirect('characters:list')
 
 
 def login(request):
@@ -226,8 +324,8 @@ def login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        user = authenticate(username=username, password=password)
 
+        user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
                 _login(request, user)
