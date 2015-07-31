@@ -3,3 +3,4 @@
 - Add station, system, region data/models
 - Consider adding in non-packaged contents within assets
 - Consider looking up Item object within Price mode's save method
+- Look into making use of the `values` method within the ORM
