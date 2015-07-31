@@ -3,31 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to EVE Online Inventory Manager's documentation!
-========================================================
-
-Contents:
+EVE Online Inventory Manager
+============================
 
 .. toctree::
    :maxdepth: 2
 
-.. automodule:: characters.views
-   :members:
-
-.. automodule:: characters.models
-   :members:
-
-.. automodule:: items.views
-   :members:
-
-.. automodule:: items.models
-   :members:
-
-.. automodule:: shoppinglists.views
-   :members:
-
-.. automodule:: shoppinglists.models
-   :members:
+   user/intro
+   user/characters
+   user/items
+   user/shoppinglists
 
 Indices and tables
 ==================
