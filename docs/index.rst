@@ -13,6 +13,7 @@ EVE Online Inventory Manager
    user/characters
    user/items
    user/shoppinglists
+   user/watchlists
 
 Indices and tables
 ==================

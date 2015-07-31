@@ -43,6 +43,10 @@ class Asset(models.Model):
 
 
 class Order(models.Model):
+    """
+    A model representing a single market order
+    """
+
     character = models.ForeignKey(Character, related_name='orders')
     item = models.ForeignKey(Item, related_name='orders')
     order_id = models.BigIntegerField(unique=True)
