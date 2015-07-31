@@ -1,6 +1,11 @@
 *.DS_Store
 *.py[co]
+
 docs/_build/
-migrations
+
+# Exclude contents of migrations folders with the exception of the __init__.py file
+inventory_management/migrations/**
+!__init__.py
+
 test_data.txt
 utils
