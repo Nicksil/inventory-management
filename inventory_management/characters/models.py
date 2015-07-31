@@ -45,14 +45,13 @@ class Asset(models.Model):
 class Order(models.Model):
     character = models.ForeignKey(Character, related_name='orders')
     item = models.ForeignKey(Item, related_name='orders')
-    order_id = models.IntegerField()
-    order_type = models.CharField(max_length=255)
+    order_id = models.BigIntegerField(unique=True)
     station_id = models.IntegerField()
     vol_entered = models.BigIntegerField()
     vol_remaining = models.BigIntegerField()
     order_state = models.CharField(max_length=255)
     duration = models.IntegerField()
-    price = models.BigIntegerField()
+    price = models.FloatField()
     issued = models.DateTimeField()
 
     def __unicode__(self):

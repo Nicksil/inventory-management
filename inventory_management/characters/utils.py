@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+import datetime
+
 from django.db import IntegrityError
 import evelink.account
 import evelink.api
@@ -8,6 +10,7 @@ import evelink.char
 
 from .models import Asset
 from .models import Character
+from .models import Order
 from items.models import Item
 
 
@@ -201,5 +204,101 @@ def save_characters(characters):
 
     try:
         Character.objects.bulk_create(characters)
+    except IntegrityError as e:
+        print(e)
+
+
+def fetch_orders(api_key, char_id):
+    """
+    Retrieve character's orders
+
+    :param tuple api_key: Passed in the form of a tuple - (key_id, v_code)
+    :param int char_id: Character's ID
+    :return: Dictionary of character's orders
+    :rtype: dict
+    """
+
+    api = evelink.api.API(api_key=api_key)
+    char_api = evelink.char.Char(char_id, api)
+    orders = char_api.orders().result
+
+    return orders
+
+
+def prepare_orders(orders, character):
+    """
+    Prepares dict of orders for saving to Order model
+
+    :param dict orders: Dictionary of orders
+    :param character: Instance of :class:`Character` model
+    :return: List of tuples of :class:`Order` objects
+    :rtype: list
+
+    Sample dict format::
+
+       >>> {
+               <10-digit int>: {
+                   'status': 'expired',
+                   'type_id': 24438,
+                   'timestamp': <10-digit int>,
+                   'price': 708999.99,
+                   'account_key': 1000,
+                   'escrow': 0.0,
+                   'station_id': <8-digit int>,
+                   'amount_left': 0,
+                   'duration': 0,
+                   'id': <10-digit int>,
+                   'char_id': <8-digit int>,
+                   'range': -1,
+                   'amount': 50,
+                   'type': 'buy'
+               },
+               <10-digit int>: {
+                   'status': 'active',
+                   'type_id': 29668,
+                   'timestamp': <10-digit int>,
+                   'price': 1000000000.0,
+                   'account_key': 1000,
+                   'escrow': 0.0,
+                   'station_id': <8-digit int>,
+                   'amount_left': 1,
+                   'duration': 3,
+                   'id': <10-digit int>,
+                   'char_id': <8-digit int>,
+                   'range': 32767,
+                   'amount': 1,
+                   'type': 'sell'
+               },
+           }
+    """
+
+    order_list = []
+    for order in orders.itervalues():
+        _order = {
+            'character': character,
+            'item': Item.objects.get(type_id=order['type_id']),
+            'order_id': order['id'],
+            'station_id': order['station_id'],
+            'vol_entered': order['amount'],
+            'vol_remaining': order['amount_left'],
+            'order_state': order['type'],
+            'duration': order['duration'],
+            'price': order['price'],
+            'issued': datetime.datetime.utcfromtimestamp(order['timestamp']),
+        }
+        order_list.append(Order(**_order))
+
+    return order_list
+
+
+def save_orders(orders):
+    """
+    Saves :class:`Order` objects in bulk
+
+    :param list orders: List of tuples of Order objects
+    """
+
+    try:
+        Order.objects.bulk_create(orders)
     except IntegrityError as e:
         print(e)

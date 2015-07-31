@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
     <h1>{{ character.name }}</h1>
-    <p><a href="{% url 'characters:asset_list' pk=character.pk %}">Assets</a></p>
+    <p><a href="{% url 'characters:asset_list' pk=character.pk %}">Assets</a> | <a href="{% url 'characters:order_list' pk=character.pk %}">Market orders</a></p>
     <ul>
         <li>{{ character.char_id }}</li>
         <li>{{ character.key_id }}</li>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>{{ character.name }}'s Orders</h1>
+    <p><a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a></p>
+    <ul>
+        {% for order in orders %}
+            <li>{{ order }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

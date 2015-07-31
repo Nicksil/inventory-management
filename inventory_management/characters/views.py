@@ -7,10 +7,13 @@ from django.shortcuts import render
 from .models import Character
 from .utils import fetch_assets
 from .utils import fetch_characters
+from .utils import fetch_orders
 from .utils import prepare_assets
 from .utils import prepare_characters
+from .utils import prepare_orders
 from .utils import save_assets
 from .utils import save_characters
+from .utils import save_orders
 
 
 def asset_list_view(request, pk):
@@ -122,3 +125,33 @@ def character_delete_view(request, pk):
     Character.objects.get(pk=pk).delete()
 
     return redirect('characters:list')
+
+
+def orders_list_view(request, pk):
+    """
+    Displays list of orders of character given via `pk`
+
+    :param int pk: Primary key of character
+    :return: Redirect to character's list of orders
+    """
+
+    character = Character.objects.get(pk=pk)
+    orders = character.orders.all().select_related('item')
+
+    return render(
+        request,
+        'characters/orders_list_view.html',
+        {'character': character, 'orders': orders}
+    )
+
+
+def orders_update(request, pk):
+    character = Character.objects.get(pk=pk)
+    char_id = character.char_id
+    api_key = character.get_api_key()
+
+    fetched_orders = fetch_orders(api_key, char_id)
+    prepared_orders = prepare_orders(fetched_orders, character)
+    save_orders(prepared_orders)
+
+    return redirect('characters:order_list', pk=pk)

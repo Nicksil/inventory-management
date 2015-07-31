@@ -9,6 +9,8 @@ from .views import character_add_view
 from .views import character_delete_view
 from .views import character_detail_view
 from .views import character_list_view
+from .views import orders_list_view
+from .views import orders_update
 
 urlpatterns = [
     url(
@@ -40,5 +42,15 @@ urlpatterns = [
         r'^(?P<pk>\d+)/assets/update/$',
         asset_update,
         name='asset_update'
+    ),
+    url(
+        r'^(?P<pk>\d+)/orders/$',
+        orders_list_view,
+        name='order_list'
+    ),
+    url(
+        r'^(?P<pk>\d+)/orders/update/$',
+        orders_update,
+        name='orders_update'
     ),
 ]
