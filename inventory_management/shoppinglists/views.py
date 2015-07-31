@@ -2,43 +2,32 @@ from __future__ import absolute_import
 
 from django.shortcuts import redirect
 from django.shortcuts import render
-from evelink.thirdparty.eve_central import EVECentral
 
 from .models import ShoppingList
 from characters.models import Character
 from items.models import Item
-from items.models import Price
+from items.views import fetch_price_data
+from items.views import prepare_price_data
+from items.views import save_prices
 
 
 def update_item_prices(request, pk):
-    shopping_list = ShoppingList.objects.get(pk=pk)
-    items = shopping_list.items.all()
+    """
+    Updates item pricing data via the eve-central.com market API
 
-    item_ids = [x.type_id for x in items]
-    item_prices = fetch_item_prices(item_ids, hours=4, system=30000142)
+    :param int pk: Primary key for :class:`ShoppingList` instance
+    :return: Redirect function to given shoppinglist's detail view
+    """
 
-    for item in item_prices:
-        item_obj = Item.objects.get(type_id=item)
-        buy = item_prices[item]['buy']['max']
-        sell = item_prices[item]['sell']['min']
-        Price.objects.create(
-            item=item_obj,
-            buy=buy,
-            sell=sell
-        )
+    shoppinglist = ShoppingList.objects.get(pk=pk)
+    items = shoppinglist.items.all()
+    type_ids = [t.type_id for t in items]
+
+    price_data = fetch_price_data(type_ids)
+    prepared_data = prepare_price_data(price_data)
+    save_prices(prepared_data)
 
     return redirect('shoppinglists:detail', pk=pk)
-
-
-def fetch_item_prices(items, hours=24, regions=None, system=None):
-    eve_central = EVECentral()
-
-    if regions:
-        price_data = eve_central.market_stats(items, hours=hours, regions=regions)
-    else:
-        price_data = eve_central.market_stats(items, hours=hours, system=system)
-
-    return price_data
 
 
 def shoppinglist_detail_view(request, pk):
@@ -46,7 +35,7 @@ def shoppinglist_detail_view(request, pk):
 
     return render(
         request,
-        'lists/shoppinglist_detail_view.html',
+        'shoppinglists/shoppinglist_detail_view.html',
         {'shoppinglist': shoppinglist}
     )
 
@@ -64,7 +53,7 @@ def shoppinglist_list_view(request):
 
     return render(
         request,
-        'lists/shoppinglist_list_view.html',
+        'shoppinglists/shoppinglist_list_view.html',
         {'shoppinglists': shoppinglists}
     )
 
@@ -87,7 +76,7 @@ def shoppinglist_update_view(request, pk):
 
     return render(
         request,
-        'lists/shoppinglist_update_view.html',
+        'shoppinglists/shoppinglist_update_view.html',
         {'shoppinglist': shoppinglist}
     )
 
@@ -109,6 +98,6 @@ def shoppinglist_create_view(request):
     characters = request.user.characters.all()
     return render(
         request,
-        'lists/shoppinglist_create_view.html',
+        'shoppinglists/shoppinglist_create_view.html',
         {'characters': characters}
     )

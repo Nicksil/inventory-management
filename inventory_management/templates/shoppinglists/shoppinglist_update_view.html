@@ -15,7 +15,7 @@
     </form>
     <ul>
         {% for item in shoppinglist.items.all %}
-            <li>{{ item.type_name }} <a href="{% url 'shoppinglists:shoppinglist_item_remove' list_pk=shoppinglist.pk item_pk=item.pk %}">x</a></li>
+            <li>{{ item.type_name }} <a href="{% url 'shoppinglists:item_remove' list_pk=shoppinglist.pk item_pk=item.pk %}">x</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

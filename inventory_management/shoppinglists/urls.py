@@ -33,11 +33,11 @@ urlpatterns = [
     url(
         r'^(?P<pk>\d+)/update-prices/$',
         update_item_prices,
-        name='shoppinglist_update_prices'
+        name='update_prices'
     ),
     url(
         r'^(?P<list_pk>\d+)/items/(?P<item_pk>\d+)/remove/$',
         shoppinglist_item_remove,
-        name='shoppinglist_item_remove'
+        name='item_remove'
     ),
 ]
