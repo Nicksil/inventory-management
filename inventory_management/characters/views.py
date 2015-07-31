@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import logging
-
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as _login
 from django.contrib.auth import logout as _logout
@@ -16,8 +14,6 @@ import evelink.char
 from .models import Asset
 from .models import Character
 from items.models import Item
-
-logger = logging.getLogger(__name__)
 
 
 def fetch_assets(api_key, char_id):
@@ -67,7 +63,7 @@ def save_assets(assets, character):
                     packaged=packaged
                 )
             except IntegrityError as e:
-                logger.exception(e)
+                print(e)
 
 
 def asset_update(request, pk):
@@ -237,7 +233,7 @@ def login(request):
                 _login(request, user)
                 return redirect('index')
             else:
-                # Handle disabled account w/loggin
+                # Handle disabled account w/logging
                 pass
         else:
             # Handle invalid login w/logging
