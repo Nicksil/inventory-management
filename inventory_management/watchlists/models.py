@@ -15,7 +15,7 @@ class WatchListItem(models.Model):
 
 class WatchList(models.Model):
 
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=255)
     items = models.ManyToManyField(WatchListItem, related_name='watchlists')
 
     def __unicode__(self):

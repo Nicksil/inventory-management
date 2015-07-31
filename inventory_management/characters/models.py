@@ -12,10 +12,10 @@ class Character(models.Model):
     """
 
     user = models.ForeignKey(User, related_name='characters')
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=255)
     char_id = models.IntegerField(unique=True)
     key_id = models.IntegerField()
-    v_code = models.CharField(max_length=256)
+    v_code = models.CharField(max_length=255)
 
     def get_api_key(self):
         return (self.key_id, self.v_code)
@@ -40,3 +40,20 @@ class Asset(models.Model):
 
     def __unicode__(self):
         return '{} ({})'.format(self.character.name, self.item.type_name)
+
+
+class Order(models.Model):
+    character = models.ForeignKey(Character, related_name='orders')
+    item = models.ForeignKey(Item, related_name='orders')
+    order_id = models.IntegerField()
+    order_type = models.CharField(max_length=255)
+    station_id = models.IntegerField()
+    vol_entered = models.BigIntegerField()
+    vol_remaining = models.BigIntegerField()
+    order_state = models.CharField(max_length=255)
+    duration = models.IntegerField()
+    price = models.BigIntegerField()
+    issued = models.DateTimeField()
+
+    def __unicode__(self):
+        return 'Character: {}, Item: {}'.format(self.character.name, self.item.type_name)

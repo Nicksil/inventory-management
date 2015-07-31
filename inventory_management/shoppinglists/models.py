@@ -9,7 +9,7 @@ from items.models import Item
 
 class ShoppingList(models.Model):
 
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=255)
     character = models.ForeignKey(Character, related_name='shoppinglists')
     items = models.ManyToManyField(Item, related_name='shoppinglists')
 
