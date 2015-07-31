@@ -15,6 +15,25 @@ from .models import Character
 from items.models import Item
 
 
+def asset_update(request, pk):
+    """
+    Update a character's assets
+
+    :param int pk: Primary key of character
+    :return: Redirect to character's asset list
+    """
+
+    character = Character.objects.get(pk=pk)
+    char_id = character.char_id
+    api_key = (character.key_id, character.v_code)
+
+    fetched_assets = fetch_assets(api_key, char_id)
+    prepared_assets = prepare_assets(fetched_assets, character)
+    save_assets(prepared_assets)
+
+    return redirect('characters:asset_list', pk=pk)
+
+
 def fetch_assets(api_key, char_id):
     """
     Retrieve character's assets
@@ -149,6 +168,51 @@ def save_assets(assets):
     Asset.objects.bulk_create(assets)
 
 
+def asset_list_view(request, pk):
+    """
+    A view providing a list of assets for a given character
+
+    :param int pk: Primary key of character
+    :return: Render function for displaying view
+    """
+
+    character = Character.objects.get(pk=pk)
+    assets = character.assets.all()
+
+    return render(
+        request,
+        'characters/asset_list_view.html',
+        {'assets': assets, 'character': character}
+    )
+
+
+def character_add_view(request):
+    """
+    Create a new :class:`Character` object
+
+    :return: POST requests: Redirect back to this view.
+             GET requests: view render function
+    """
+
+    if request.method == 'POST':
+        user = request.user
+        key_id = int(request.POST['key_id'])
+        v_code = request.POST['v_code']
+
+        api_key = (key_id, v_code)
+        fetched_characters = fetch_characters(api_key)
+        prepared_characters = prepare_characters(
+            user,
+            fetched_characters,
+            api_key
+        )
+        save_characters(prepared_characters)
+
+        return redirect('characters:add')
+
+    return render(request, 'characters/character_add_form.html')
+
+
 def fetch_characters(api_key):
     """
     Wrapper for API call to EVE's /account/Characters.xml.aspx endpoint,
@@ -201,70 +265,6 @@ def save_characters(characters):
     """
 
     Character.objects.bulk_create(characters)
-
-
-def asset_update(request, pk):
-    """
-    Update a character's assets
-
-    :param int pk: Primary key of character
-    :return: Redirect to character's asset list
-    """
-
-    character = Character.objects.get(pk=pk)
-    char_id = character.char_id
-    api_key = (character.key_id, character.v_code)
-
-    fetched_assets = fetch_assets(api_key, char_id)
-    prepared_assets = prepare_assets(fetched_assets, character)
-    save_assets(prepared_assets)
-
-    return redirect('characters:asset_list', pk=pk)
-
-
-def asset_list_view(request, pk):
-    """
-    A view providing a list of assets for a given character
-
-    :param int pk: Primary key of character
-    :return: Render function for displaying view
-    """
-
-    character = Character.objects.get(pk=pk)
-    assets = character.assets.all()
-
-    return render(
-        request,
-        'characters/asset_list_view.html',
-        {'assets': assets, 'character': character}
-    )
-
-
-def character_add_view(request):
-    """
-    Create a new :class:`Character` object
-
-    :return: POST requests: Redirect back to this view.
-             GET requests: view render function
-    """
-
-    if request.method == 'POST':
-        user = request.user
-        key_id = int(request.POST['key_id'])
-        v_code = request.POST['v_code']
-
-        api_key = (key_id, v_code)
-        fetched_characters = fetch_characters(api_key)
-        prepared_characters = prepare_characters(
-            user,
-            fetched_characters,
-            api_key
-        )
-        save_characters(prepared_characters)
-
-        return redirect('characters:add')
-
-    return render(request, 'characters/character_add_form.html')
 
 
 def character_list_view(request):
