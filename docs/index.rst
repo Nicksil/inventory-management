@@ -17,6 +17,12 @@ Contents:
 .. automodule:: characters.models
    :members:
 
+.. automodule:: items.views
+   :members:
+
+.. automodule:: items.models
+   :members:
+
 .. automodule:: shoppinglists.views
    :members:
 
