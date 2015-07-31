@@ -4,7 +4,8 @@
 docs/_build/
 
 # Exclude contents of migrations folders with the exception of the __init__.py file
-migrations
+migrations/*
+!migrations/__init__.py
 
 test_data.txt
 utils
