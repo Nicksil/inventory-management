@@ -1,7 +1,7 @@
 *.DS_Store
 *.py[co]
 
-TODO.txt
+**/TODO.txt
 
 # Exclude contents of migrations folders with the exception of the __init__.py file
 **/migrations/*
