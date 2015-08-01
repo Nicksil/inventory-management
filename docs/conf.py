@@ -25,7 +25,7 @@ copyright = u'2015, Nick Silvester'
 author = u'Nick Silvester'
 
 version = '0.1'
-release = '0.1'
+release = '0.2'
 
 language = None
 
