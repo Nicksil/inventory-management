@@ -127,16 +127,17 @@ def prepare_assets(assets, character):
     for a in assets.itervalues():
         for asset in a['contents']:
             item = Item.objects.get(type_id=asset['item_type_id'])
+            location_id = asset['location_id']
+
             _asset = {
                 'character': character,
                 'item': item,
                 'unique_item_id': asset['id'],
-                'location_id': asset['location_id'],
                 'quantity': asset['quantity'],
                 'flag': asset['location_flag'],
                 'packaged': asset['packaged'],
             }
-            location_id = asset['location_id']
+
             try:
                 station = Station.objects.get(station_id=location_id)
                 _asset.update(station=station)
@@ -144,7 +145,34 @@ def prepare_assets(assets, character):
                 print(e)
                 solar_system = SolarSystem.objects.get(solar_system_id=location_id)
                 _asset.update(solar_system=solar_system)
+
             asset_list.append(Asset(**_asset))
+
+            # If sub-contents exist (e.g. items located within a container)
+            # Clean this up - it's ewwgly
+            if asset.get('contents'):
+                for sub_asset in asset['contents']:
+                    item = Item.objects.get(type_id=sub_asset['item_type_id'])
+                    location_id = sub_asset['location_id']
+
+                    _sub_asset = {
+                        'character': character,
+                        'item': item,
+                        'unique_item_id': sub_asset['id'],
+                        'quantity': sub_asset['quantity'],
+                        'flag': sub_asset['location_flag'],
+                        'packaged': sub_asset['packaged'],
+                    }
+
+                    try:
+                        station = Station.objects.get(station_id=location_id)
+                        _sub_asset.update(station=station)
+                    except Station.DoesNotExist as e:
+                        print(e)
+                        solar_system = SolarSystem.objects.get(solar_system_id=location_id)
+                        _sub_asset.update(solar_system=solar_system)
+
+                    asset_list.append(Asset(**_sub_asset))
 
     return asset_list
 

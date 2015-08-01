@@ -52,7 +52,6 @@ class Asset(models.Model):
     character = models.ForeignKey(Character, related_name='assets')
     item = models.ForeignKey(Item, related_name='assets')
     unique_item_id = models.BigIntegerField(unique=True)
-    location_id = models.IntegerField()
     solar_system = models.ForeignKey(SolarSystem, null=True, related_name='assets')
     station = models.ForeignKey(Station, null=True, related_name='assets')
     quantity = models.IntegerField()
