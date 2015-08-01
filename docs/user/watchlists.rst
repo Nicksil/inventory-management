@@ -1,4 +1,4 @@
-.. watchlists:
+.. _watchlists:
 
 Watch Lists
 ===========

@@ -6,7 +6,7 @@ import os
 from django.conf import settings
 settings.configure()
 
-sys.path.insert(0, os.path.abspath('../inventory_management/'))
+sys.path.insert(0, os.path.abspath('../inventory_manager/'))
 # sys.path.insert(0, os.path.abspath('..'))
 
 extensions = [

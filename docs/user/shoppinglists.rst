@@ -1,4 +1,4 @@
-.. shoppinglists:
+.. _shoppinglists:
 
 Shopping Lists
 ==============

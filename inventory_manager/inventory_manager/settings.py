@@ -8,8 +8,8 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = True
 
 ALLOWED_HOSTS = []
-ROOT_URLCONF = 'inventory_management.urls'
-WSGI_APPLICATION = 'inventory_management.wsgi.application'
+ROOT_URLCONF = 'inventory_manager.urls'
+WSGI_APPLICATION = 'inventory_manager.wsgi.application'
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -72,6 +72,6 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'inventory_management',
+        'NAME': 'inventory_manager',
     }
 }
