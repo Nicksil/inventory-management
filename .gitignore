@@ -7,5 +7,4 @@ docs/_build/
 **/migrations/*
 !**/migrations/__init__.py
 
-test_data.txt
 utils
