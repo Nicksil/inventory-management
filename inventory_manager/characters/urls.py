@@ -19,7 +19,7 @@ urlpatterns = [
         name='add'
     ),
     url(
-        r'^list/$',
+        r'^$',
         character_list_view,
         name='list'
     ),

@@ -15,10 +15,10 @@ EVE Online Inventory Manager
    user/shoppinglists
    user/watchlists
 
-Indices and tables
-==================
+.. toctree::
+   :maxdepth: 2
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+   api/characters
+   api/eve
+   api/shoppinglists
+   api/watchlists
