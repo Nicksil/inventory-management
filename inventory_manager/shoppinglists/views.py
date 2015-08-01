@@ -90,15 +90,21 @@ def shoppinglist_update_view(request, pk):
 
 def shoppinglist_create_view(request):
     if request.method == 'POST':
-        character_obj = Character.objects.get(name=request.POST['character'])
-        name = request.POST['name']
-        item_obj = Item.objects.get(type_name=request.POST['items'])
+        character = Character.objects.get(name=request.POST['character'])
 
-        shoppinglist = ShoppingList.objects.create(
+        name = request.POST['name']
+        name = name if not name == '' else None
+
+        # Handle is no items were given
+        items = request.POST.get('items').split(', ')
+        items = [Item.objects.get(type_name__iexact=x) for x in items]
+
+        shoppinglist = ShoppingList(
             name=name,
-            character=character_obj,
+            character=character,
         )
-        shoppinglist.items.add(item_obj)
+        shoppinglist.save()
+        shoppinglist.items.add(*items)
 
         return redirect('shoppinglists:detail', pk=shoppinglist.pk)
 

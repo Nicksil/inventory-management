@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% block body %}
-    <h1>Shopping List</h1>
-    <p><a href="{% url 'shoppinglists:update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'shoppinglists:update_prices' pk=shoppinglist.pk %}">Update prices</a> | <a href="{% url 'shoppinglists:delete' pk=shoppinglist.pk %}">Delete</a> | <a href="{% url 'shoppinglists:list' %}">All Lists</a></p>
+    {% if shoppinglist.name %}
+        <h1>{{ shoppinglist.name }}</h1>
+    {% else %}
+        <strong>Your shopping list has no name, yo</strong>
+    {% endif %}
+    <p><a href="{% url 'shoppinglists:list' %}">< All shopping lists</a> | <a href="{% url 'shoppinglists:update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'shoppinglists:update_prices' pk=shoppinglist.pk %}">Update prices</a> | <a href="{% url 'shoppinglists:delete' pk=shoppinglist.pk %}">Delete</a></p>
     <table>
         <caption>{{ shoppinglist.name }}</caption>
         <thead>
