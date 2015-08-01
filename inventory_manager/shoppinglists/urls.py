@@ -4,6 +4,7 @@ from __future__ import absolute_import
 from django.conf.urls import url
 
 from .views import shoppinglist_create_view
+from .views import shoppinglist_delete
 from .views import shoppinglist_detail_view
 from .views import shoppinglist_item_remove
 from .views import shoppinglist_list_view
@@ -30,6 +31,11 @@ urlpatterns = [
         r'^(?P<pk>\d+)/update/$',
         shoppinglist_update_view,
         name='update'
+    ),
+    url(
+        r'^(?P<pk>\d+)/delete/$',
+        shoppinglist_delete,
+        name='delete'
     ),
     url(
         r'^(?P<pk>\d+)/update-prices/$',

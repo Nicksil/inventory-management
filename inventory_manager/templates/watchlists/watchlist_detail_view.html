@@ -2,7 +2,7 @@
 {% load humanize %}
 {% block body %}
     <h1>Watch List</h1>
-    <a href="{% url 'watchlists:update' pk=watchlist.pk %}">Update</a>
+    <a href="{% url 'watchlists:update' pk=watchlist.pk %}">Update</a> | <a href="{% url 'watchlists:delete' pk=watchlist.pk %}">Delete</a>
     <table>
         <caption>{{ watchlist.name }}</caption>
         <thead>

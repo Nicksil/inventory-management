@@ -1,10 +1,27 @@
 # -*- coding: utf-8 -*-
+import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 
 from eve.models import Item
 from eve.models import SolarSystem
 from eve.models import Station
+
+
+# http://stackoverflow.com/a/8907269/1770233
+def strfdelta(tdelta, fmt):
+    d = {'days': tdelta.days}
+    d['hours'], rem = divmod(tdelta.seconds, 3600)
+    d['minutes'], d['seconds'] = divmod(rem, 60)
+
+    return fmt.format(**d)
+
+
+class ActiveOrderManager(models.Manager):
+
+    def get_queryset(self):
+        return super(ActiveOrderManager, self).get_queryset().filter(order_state='active')
 
 
 class Character(models.Model):
@@ -63,8 +80,15 @@ class Order(models.Model):
     price = models.FloatField()
     issued = models.DateTimeField()
 
+    objects = models.Manager()
+    active_orders = ActiveOrderManager()
+
     class Meta:
         ordering = ['-issued']
+
+    def expires_in(self):
+        tdelta = (self.issued + datetime.timedelta(days=self.duration)) - datetime.datetime.utcnow()
+        return strfdelta(tdelta, '{days}d {hours}h {minutes}m {seconds}s')
 
     def __unicode__(self):
         return 'Character: {}, Item: {}'.format(self.character.name, self.item.type_name)

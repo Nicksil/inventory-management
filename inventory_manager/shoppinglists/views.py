@@ -31,6 +31,12 @@ def update_item_prices(request, pk):
     return redirect('shoppinglists:detail', pk=pk)
 
 
+def shoppinglist_delete(request, pk):
+    ShoppingList.objects.get(pk=pk).delete()
+
+    return redirect('shoppinglists:list')
+
+
 def shoppinglist_detail_view(request, pk):
     shoppinglist = ShoppingList.objects.get(pk=pk)
 

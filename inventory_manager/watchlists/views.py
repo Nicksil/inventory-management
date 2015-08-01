@@ -32,6 +32,12 @@ def watchlist_update_view(request, pk):
     )
 
 
+def watchlist_delete(request, pk):
+    WatchList.objects.get(pk=pk).delete()
+
+    return redirect('watchlists:list')
+
+
 def watchlist_detail_view(request, pk):
     watchlist = WatchList.objects.get(pk=pk)
 

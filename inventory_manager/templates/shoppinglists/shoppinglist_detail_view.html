@@ -2,7 +2,7 @@
 {% load humanize %}
 {% block body %}
     <h1>Shopping List</h1>
-    <p><a href="{% url 'shoppinglists:update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'shoppinglists:update_prices' pk=shoppinglist.pk %}">Update prices</a> | <a href="{% url 'shoppinglists:list' %}">All Lists</a></p>
+    <p><a href="{% url 'shoppinglists:update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'shoppinglists:update_prices' pk=shoppinglist.pk %}">Update prices</a> | <a href="{% url 'shoppinglists:delete' pk=shoppinglist.pk %}">Delete</a> | <a href="{% url 'shoppinglists:list' %}">All Lists</a></p>
     <table>
         <caption>{{ shoppinglist.name }}</caption>
         <thead>

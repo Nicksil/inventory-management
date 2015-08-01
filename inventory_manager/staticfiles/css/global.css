@@ -1,6 +1,10 @@
 header {
     height: 30px;
 }
+
+th {
+    text-align: left;
+}
 .nav-list {
     display: inline-block;
     margin-top: 0;

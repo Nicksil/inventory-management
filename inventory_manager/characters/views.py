@@ -114,7 +114,7 @@ def character_detail_view(request, pk):
     )
 
 
-def character_delete_view(request, pk):
+def character_delete(request, pk):
     """
     Delete a single :class:`Character` object
 
@@ -136,7 +136,7 @@ def orders_list_view(request, pk):
     """
 
     character = Character.objects.get(pk=pk)
-    orders = character.orders.all().select_related('item').select_related('station')
+    orders = character.orders.all().filter(order_state='active').select_related('item').select_related('station')
 
     return render(
         request,
