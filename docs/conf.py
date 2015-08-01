@@ -7,7 +7,7 @@ from django.conf import settings
 settings.configure()
 
 sys.path.insert(0, os.path.abspath('../inventory_manager/'))
-# sys.path.insert(0, os.path.abspath('..'))
+sys.path.append(os.path.abspath('_themes'))
 
 extensions = [
   'sphinx.ext.autodoc',
@@ -32,6 +32,9 @@ language = None
 exclude_patterns = ['_build']
 
 add_function_parentheses = True
+
+html_theme_path = ['_themes']
+html_theme = 'kr'
 
 pygments_style = 'sphinx'
 
@@ -64,15 +67,12 @@ pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
-html_theme = 'sphinx_rtd_theme'
+
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 # html_theme_options = {}
-
-# Add any paths that contain custom themes here, relative to this directory.
-# html_theme_path = []
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
