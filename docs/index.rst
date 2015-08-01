@@ -12,7 +12,6 @@ EVE Online Inventory Manager
    user/intro
    user/characters
    user/eve
-   user/items
    user/shoppinglists
    user/watchlists
 

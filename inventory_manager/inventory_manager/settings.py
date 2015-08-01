@@ -36,7 +36,6 @@ INSTALLED_APPS = (
 
     'characters',
     'eve',
-    'items',
     'monitoring',
     'shoppinglists',
     'watchlists',

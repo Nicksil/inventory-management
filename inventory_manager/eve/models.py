@@ -1,4 +1,35 @@
+# -*- coding: utf-8 -*-
 from django.db import models
+
+
+class Item(models.Model):
+    """
+    A model to represent a single Item or "Type"
+    """
+
+    type_id = models.IntegerField(unique=True)
+    type_name = models.CharField(max_length=255)
+
+    def __unicode__(self):
+        return self.type_name
+
+
+class Price(models.Model):
+    """
+    A model to represent a price point on a single Item
+    """
+
+    item = models.ForeignKey(Item, related_name='prices')
+    buy = models.FloatField(default=0.0)
+    sell = models.FloatField(default=0.0)
+    added = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return '({}, {}): ({}, {})'.format(
+            self.item.type_name,
+            self.item.type_id,
+            self.buy, self.sell
+        )
 
 
 class Region(models.Model):

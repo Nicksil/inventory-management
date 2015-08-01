@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from django.db import models
 
 from characters.models import Character
-from items.models import Item
+from eve.models import Item
 
 
 class ShoppingList(models.Model):

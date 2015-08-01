@@ -6,10 +6,10 @@ from django.shortcuts import render
 
 from .models import ShoppingList
 from characters.models import Character
-from items.models import Item
-from items.views import fetch_price_data
-from items.views import prepare_price_data
-from items.views import save_prices
+from eve.models import Item
+from eve.views import fetch_price_data
+from eve.views import prepare_price_data
+from eve.views import save_prices
 
 
 def update_item_prices(request, pk):

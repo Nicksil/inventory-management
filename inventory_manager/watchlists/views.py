@@ -6,7 +6,7 @@ from django.shortcuts import render
 
 from .models import WatchList
 from .models import WatchListItem
-from items.models import Item
+from eve.models import Item
 
 
 def watchlist_update_view(request, pk):

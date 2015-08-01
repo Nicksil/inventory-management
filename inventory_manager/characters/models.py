@@ -2,7 +2,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from items.models import Item
+from eve.models import Item
 
 
 class Character(models.Model):

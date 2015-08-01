@@ -11,7 +11,7 @@ import evelink.char
 from .models import Asset
 from .models import Character
 from .models import Order
-from items.models import Item
+from eve.models import Item
 
 
 def fetch_assets(api_key, char_id):

@@ -5,8 +5,8 @@ import logging
 
 from evelink.thirdparty.eve_central import EVECentral
 
-from items.models import Item
-from items.models import Price
+from eve.models import Item
+from eve.models import Price
 from watchlists.models import WatchList
 
 logger = logging.getLogger(__name__)

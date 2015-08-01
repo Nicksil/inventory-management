@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from items.models import Item
+from eve.models import Item
 
 
 class WatchListItem(models.Model):

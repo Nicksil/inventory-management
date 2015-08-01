@@ -8,7 +8,7 @@ from eve.models import Region
 from eve.models import Constellation
 from eve.models import SolarSystem
 from eve.models import Station
-from items.models import Item
+from eve.models import Item
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
