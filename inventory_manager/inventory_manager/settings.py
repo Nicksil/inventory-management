@@ -35,6 +35,7 @@ INSTALLED_APPS = (
     'django_extensions',
 
     'characters',
+    'eve',
     'items',
     'monitoring',
     'shoppinglists',
