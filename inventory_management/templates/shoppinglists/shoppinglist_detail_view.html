@@ -1,10 +1,23 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% block body %}
-    <h1>{{ shoppinglist.name }}</h1>
+    <h1>Shopping List</h1>
     <p><a href="{% url 'shoppinglists:update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'shoppinglists:update_prices' pk=shoppinglist.pk %}">Update prices</a> | <a href="{% url 'shoppinglists:list' %}">All Lists</a></p>
-    <ul>
-        {% for item in shoppinglist.items.all %}
-            <li>{{ item.type_name }}: {{ item.prices.last.sell }}</li>
-        {% endfor %}
-    </ul>
+    <table>
+        <caption>{{ shoppinglist.name }}</caption>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Last Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in shoppinglist.items.all %}
+                <tr>
+                    <td>{{ item.type_name }}</td>
+                    <td>{{ item.prices.all.last.sell|floatformat:2|intcomma }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

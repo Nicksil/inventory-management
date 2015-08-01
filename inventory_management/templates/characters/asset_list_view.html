@@ -1,10 +1,24 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% block body %}
-    <h1>Assets</h1>
+    <h1>{{ character.name }}'s Assets</h1>
     <p><a href="{% url 'characters:asset_update' pk=character.pk %}">Update assets</a></p>
-    <ul>
-        {% for asset in assets %}
-            <li>{{ asset.quantity }} {{ asset.item.type_name }}</li>
-        {% endfor %}
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asset in assets %}
+                <tr>
+                    <td>{{ asset.item.type_name }}</td>
+                    <td>{{ asset.quantity|intcomma }}</td>
+                    <td>{{ asset.location_id }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

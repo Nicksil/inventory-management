@@ -1,10 +1,32 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% block body %}
     <h1>{{ character.name }}'s Orders</h1>
     <p><a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a></p>
-    <ul>
-        {% for order in orders %}
-            <li>{{ order }}</li>
-        {% endfor %}
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Issued</th>
+                <th>Item</th>
+                <th>Price</th>
+                <th>Buy/Sell</th>
+                <th>Vol. Entered</th>
+                <th>Vol. Remaining</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>{{ order.issued|date:"Y m/d H:i" }}</td>
+                    <td>{{ order.item.type_name }}</td>
+                    <td>{{ order.price|floatformat:2|intcomma }}</td>
+                    <td>{{ order.order_type }}</td>
+                    <td>{{ order.vol_entered|intcomma }}</td>
+                    <td>{{ order.vol_remaining|intcomma }}</td>
+                    <td>{{ order.station_id }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

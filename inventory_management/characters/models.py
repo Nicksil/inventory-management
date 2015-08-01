@@ -54,9 +54,13 @@ class Order(models.Model):
     vol_entered = models.BigIntegerField()
     vol_remaining = models.BigIntegerField()
     order_state = models.CharField(max_length=255)
+    order_type = models.CharField(max_length=255)
     duration = models.IntegerField()
     price = models.FloatField()
     issued = models.DateTimeField()
+
+    class Meta:
+        ordering = ['-issued']
 
     def __unicode__(self):
         return 'Character: {}, Item: {}'.format(self.character.name, self.item.type_name)

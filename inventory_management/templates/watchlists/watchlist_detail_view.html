@@ -1,10 +1,25 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% block body %}
-    <h1>{{ watchlist.name }}</h1>
+    <h1>Watch List</h1>
     <a href="{% url 'watchlists:update' pk=watchlist.pk %}">Update</a>
-    <ul>
-        {% for item in watchlist.items.all %}
-            <li>{{ item.item.type_name }} | {{ item.desired_price }}</li>
-        {% endfor %}
-    </ul>
+    <table>
+        <caption>{{ watchlist.name }}</caption>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Desired Price</th>
+                <th>Last Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in watchlist.items.all %}
+                <tr>
+                    <td>{{ item.item.type_name }}</td>
+                    <td>{{ item.desired_price|floatformat:2|intcomma }}</td>
+                    <td>{{ item.item.prices.all.last.sell|floatformat:2|intcomma }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
