@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
     <h1>Watch Lists</h1>
+    <p><a href="{% url 'watchlists:create' %}">Create</a></p>
     <ul>
         {% for watchlist in watchlists %}
             <li><a href="{% url 'watchlists:detail' pk=watchlist.pk %}">{{ watchlist }}</a></li>

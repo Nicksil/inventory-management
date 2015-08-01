@@ -16,15 +16,9 @@
                     <li><a href="{% url 'index' %}">Home</a></li>
                     |
                     {% if user.is_authenticated %}
-                        <li><a href="{% url 'characters:add' %}">Add Character</a></li>
-                        |
                         <li><a href="{% url 'characters:list' %}">Characters</a></li>
                         |
-                        <li><a href="{% url 'shoppinglists:create' %}">Create Shopping List</a></li>
-                        |
                         <li><a href="{% url 'shoppinglists:list' %}">Shopping Lists</a></li>
-                        |
-                        <li><a href="{% url 'watchlists:create' %}">Create Watch List</a></li>
                         |
                         <li><a href="{% url 'watchlists:list' %}">Watch Lists</a></li>
                         |

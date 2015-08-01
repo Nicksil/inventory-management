@@ -2,7 +2,7 @@
 {% load humanize %}
 {% block body %}
     <h1>{{ character.name }}'s Assets</h1>
-    <p><a href="{% url 'characters:asset_update' pk=character.pk %}">Update assets</a></p>
+    <p><a href="{% url 'characters:detail' pk=character.pk %}">< {{ character.name }}</a> | <a href="{% url 'characters:asset_update' pk=character.pk %}">Update assets</a></p>
     <table>
         <thead>
             <tr>
