@@ -136,7 +136,7 @@ def orders_list_view(request, pk):
     """
 
     character = Character.objects.get(pk=pk)
-    orders = character.orders.all().select_related('item')
+    orders = character.orders.all().select_related('item').select_related('station')
 
     return render(
         request,

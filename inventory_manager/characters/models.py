@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from eve.models import Item
+from eve.models import SolarSystem
+from eve.models import Station
 
 
 class Character(models.Model):
@@ -34,6 +36,8 @@ class Asset(models.Model):
     item = models.ForeignKey(Item, related_name='assets')
     unique_item_id = models.BigIntegerField(unique=True)
     location_id = models.IntegerField()
+    solar_system = models.ForeignKey(SolarSystem, null=True, related_name='assets')
+    station = models.ForeignKey(Station, null=True, related_name='assets')
     quantity = models.IntegerField()
     flag = models.SmallIntegerField()
     packaged = models.BooleanField()
@@ -50,7 +54,7 @@ class Order(models.Model):
     character = models.ForeignKey(Character, related_name='orders')
     item = models.ForeignKey(Item, related_name='orders')
     order_id = models.BigIntegerField(unique=True)
-    station_id = models.IntegerField()
+    station = models.ForeignKey(Station, related_name='orders')
     vol_entered = models.BigIntegerField()
     vol_remaining = models.BigIntegerField()
     order_state = models.CharField(max_length=255)

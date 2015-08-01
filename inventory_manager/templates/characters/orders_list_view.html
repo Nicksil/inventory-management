@@ -24,7 +24,7 @@
                     <td>{{ order.order_type }}</td>
                     <td>{{ order.vol_entered|intcomma }}</td>
                     <td>{{ order.vol_remaining|intcomma }}</td>
-                    <td>{{ order.station_id }}</td>
+                    <td>{{ order.station.station_name }}</td>
                 </tr>
             {% endfor %}
         </tbody>

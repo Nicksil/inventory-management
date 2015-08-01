@@ -12,6 +12,8 @@ from .models import Asset
 from .models import Character
 from .models import Order
 from eve.models import Item
+from eve.models import SolarSystem
+from eve.models import Station
 
 
 def fetch_assets(api_key, char_id):
@@ -124,15 +126,24 @@ def prepare_assets(assets, character):
     asset_list = []
     for a in assets.itervalues():
         for asset in a['contents']:
+            item = Item.objects.get(type_id=asset['item_type_id'])
             _asset = {
                 'character': character,
-                'item': Item.objects.get(type_id=asset['item_type_id']),
+                'item': item,
                 'unique_item_id': asset['id'],
                 'location_id': asset['location_id'],
                 'quantity': asset['quantity'],
                 'flag': asset['location_flag'],
                 'packaged': asset['packaged'],
             }
+            location_id = asset['location_id']
+            try:
+                station = Station.objects.get(station_id=location_id)
+                _asset.update(station=station)
+            except Station.DoesNotExist as e:
+                print(e)
+                solar_system = SolarSystem.objects.get(solar_system_id=location_id)
+                _asset.update(solar_system=solar_system)
             asset_list.append(Asset(**_asset))
 
     return asset_list
@@ -274,11 +285,13 @@ def prepare_orders(orders, character):
 
     order_list = []
     for order in orders.itervalues():
+        item = Item.objects.get(type_id=order['type_id'])
+        station = Station.objects.get(station_id=order['station_id'])
         _order = {
             'character': character,
-            'item': Item.objects.get(type_id=order['type_id']),
+            'item': item,
             'order_id': order['id'],
-            'station_id': order['station_id'],
+            'station': station,
             'vol_entered': order['amount'],
             'vol_remaining': order['amount_left'],
             'order_state': order['status'],
