@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
     <h1>Shopping List Update View</h1>
-    <p><a href="{% url 'shoppinglists:detail' pk=shoppinglist.pk %}">< Back to list</a></p>
+    <p><a href="{% url 'shoppinglists:detail' pk=shoppinglist.pk %}">&lt; Back to list</a></p>
     <form action="" method="POST">
         {% csrf_token %}
         {{ shoppinglist.character }}

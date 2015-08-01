@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
     <h1>{{ character.name }}</h1>
-    <a href="{% url 'characters:list' %}">< characters</a>
+    <a href="{% url 'characters:list' %}">&lt; characters</a>
     <p><a href="{% url 'characters:asset_list' pk=character.pk %}">Assets</a> | <a href="{% url 'characters:order_list' pk=character.pk %}">Market orders</a> | <a href="{% url 'characters:delete' pk=character.pk %}">Delete character</a></p>
 {% endblock %}

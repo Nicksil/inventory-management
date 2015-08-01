@@ -2,7 +2,7 @@
 {% load humanize %}
 {% block body %}
     <h1>{{ character.name }}'s Orders</h1>
-    <p><a href="{% url 'characters:detail' pk=character.pk %}">< {{ character.name }}</a> | <a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a></p>
+    <p><a href="{% url 'characters:detail' pk=character.pk %}">&lt; {{ character.name }}</a> | <a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a></p>
     <table>
         <thead>
             <tr>
