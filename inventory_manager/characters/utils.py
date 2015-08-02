@@ -266,7 +266,8 @@ def fetch_orders(api_key, char_id):
 
 def prepare_orders(orders, character):
     """
-    Prepares dict of orders for saving to Order model
+    Finds and updates existing order or prepares
+    dict of orders for saving to Order model
 
     :param dict orders: Dictionary of orders
     :param character: Instance of :class:`Character` model
@@ -312,23 +313,42 @@ def prepare_orders(orders, character):
     """
 
     order_list = []
+
     for order in orders.itervalues():
-        item = Item.objects.get(type_id=order['type_id'])
-        station = Station.objects.get(station_id=order['station_id'])
-        _order = {
-            'character': character,
-            'item': item,
-            'order_id': order['id'],
-            'station': station,
-            'vol_entered': order['amount'],
-            'vol_remaining': order['amount_left'],
-            'order_state': order['status'],
-            'order_type': order['type'],
-            'duration': order['duration'],
-            'price': order['price'],
-            'issued': datetime.datetime.utcfromtimestamp(order['timestamp']),
-        }
-        order_list.append(Order(**_order))
+        order_id = order['id']
+
+        try:
+            # If order object already exists, grab it, update it, save it
+            order_obj = Order.objects.get(order_id=order_id)
+
+            # Update pertinent fields only
+            order_obj.vol_remaining = order['amount_left']
+            order_obj.order_state = order['status']
+            order_obj.price = order['price']
+            order_obj.issued = datetime.datetime.utcfromtimestamp(order['timestamp'])
+
+            order_obj.save()
+        except Order.DoesNotExist:
+            # Order doesn't exist, create new object,
+            # adding to list, to be saved in bulk
+            item = Item.objects.get(type_id=order['type_id'])
+            station = Station.objects.get(station_id=order['station_id'])
+
+            _order = {
+                'character': character,
+                'item': item,
+                'order_id': order_id,
+                'station': station,
+                'vol_entered': order['amount'],
+                'vol_remaining': order['amount_left'],
+                'order_state': order['status'],
+                'order_type': order['type'],
+                'duration': order['duration'],
+                'price': order['price'],
+                'issued': datetime.datetime.utcfromtimestamp(order['timestamp']),
+            }
+
+            order_list.append(Order(**_order))
 
     return order_list
 
@@ -340,7 +360,7 @@ def save_orders(orders):
     :param list orders: List of tuples of Order objects
     """
 
-    try:
-        Order.objects.bulk_create(orders)
-    except IntegrityError as e:
-        print(e)
+    # try:
+    #     Order.objects.bulk_create(orders)
+    # except IntegrityError as e:
+    #     print(e)

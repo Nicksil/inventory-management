@@ -13,11 +13,11 @@
             </tr>
         </thead>
         <tbody>
-            {% for item in watchlist.items.all %}
+            {% for list_item in watchlist.items.all %}
                 <tr>
-                    <td>{{ item.item.type_name }}</td>
-                    <td>{{ item.desired_price|floatformat:2|intcomma }}</td>
-                    <td>{{ item.item.prices.all.last.sell|floatformat:2|intcomma }}</td>
+                    <td>{{ list_item.item.type_name }}</td>
+                    <td>{{ list_item.desired_price|floatformat:2|intcomma }}</td>
+                    <td>{{ list_item.item.prices.all.last.sell|floatformat:2|intcomma }}</td>
                 </tr>
             {% endfor %}
         </tbody>

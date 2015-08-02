@@ -69,7 +69,7 @@ class Order(models.Model):
 
     character = models.ForeignKey(Character, related_name='orders')
     item = models.ForeignKey(Item, related_name='orders')
-    order_id = models.BigIntegerField(unique=True)
+    order_id = models.BigIntegerField(unique=True, db_index=True)
     station = models.ForeignKey(Station, related_name='orders')
     vol_entered = models.BigIntegerField()
     vol_remaining = models.BigIntegerField()

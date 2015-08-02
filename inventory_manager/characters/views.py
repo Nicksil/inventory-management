@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+import logging
+
 from django.shortcuts import redirect
 from django.shortcuts import render
 
@@ -14,6 +16,8 @@ from .utils import prepare_orders
 from .utils import save_assets
 from .utils import save_characters
 from .utils import save_orders
+
+logger = logging.getLogger(__name__)
 
 
 def asset_list_view(request, pk):
