@@ -20,7 +20,7 @@
                         {% csrf_token %}
                         <tr>
                             <td>{{ order.item.type_name }}</td>
-                            <td>{{ order.vol_remaining|intcomma }}/{{ order.vol_entered|intcomma }}</td>
+                            <td {% if order.met_qty_threshold %}style="color: red;"{% endif %}>{{ order.vol_remaining|intcomma }}/{{ order.vol_entered|intcomma }}</td>
                             <td>
                                 <input type="text" name="qty_threshold"><button type="submit">set</button></td>
                                 <input type="hidden" name="order_id" value="{{ order.order_id }}">

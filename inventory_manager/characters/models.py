@@ -86,6 +86,10 @@ class Order(models.Model):
     class Meta:
         ordering = ['-issued']
 
+    @property
+    def met_qty_threshold(self):
+        return self.vol_remaining <= self.qty_threshold
+
     def expires_in(self):
         tdelta = (self.issued + datetime.timedelta(days=self.duration)) - datetime.datetime.utcnow()
         return strfdelta(tdelta, '{days}d {hours}h {minutes}m {seconds}s')
