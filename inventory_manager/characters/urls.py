@@ -11,6 +11,7 @@ from .views import character_detail_view
 from .views import character_list_view
 from .views import orders_list_view
 from .views import orders_update
+from .views import threshold_update
 
 urlpatterns = [
     url(
@@ -52,5 +53,10 @@ urlpatterns = [
         r'^(?P<pk>\d+)/orders/update/$',
         orders_update,
         name='orders_update'
+    ),
+    url(
+        r'^(?P<pk>\d+)/orders/update/qty-threshold/$',
+        threshold_update,
+        name='threshold_update'
     ),
 ]

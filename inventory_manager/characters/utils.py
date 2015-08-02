@@ -360,7 +360,4 @@ def save_orders(orders):
     :param list orders: List of tuples of Order objects
     """
 
-    # try:
-    #     Order.objects.bulk_create(orders)
-    # except IntegrityError as e:
-    #     print(e)
+    Order.objects.bulk_create(orders)

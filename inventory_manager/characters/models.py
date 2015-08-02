@@ -78,6 +78,7 @@ class Order(models.Model):
     duration = models.IntegerField()
     price = models.FloatField()
     issued = models.DateTimeField()
+    qty_threshold = models.IntegerField(null=True, blank=True)
 
     objects = models.Manager()
     active_orders = ActiveOrderManager()

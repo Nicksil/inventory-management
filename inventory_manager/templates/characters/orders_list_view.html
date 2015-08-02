@@ -3,26 +3,33 @@
 {% block body %}
     <h1>{{ character.name }}'s Orders</h1>
     <p><a href="{% url 'characters:detail' pk=character.pk %}">&lt; {{ character.name }}</a> | <a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a></p>
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Location</th>
-                <th>Expires in</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for order in orders %}
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ order.item.type_name }}</td>
-                    <td>{{ order.vol_remaining|intcomma }}/{{ order.vol_entered|intcomma }}</td>
-                    <td>{{ order.price|floatformat:2|intcomma }}</td>
-                    <td title="{{ order.station.station_name }}">{{ order.station.station_name|truncatechars:30 }}</td>
-                    <td>{{ order.expires_in }}</td>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Qty Threshold</th>
+                    <th>Price</th>
+                    <th>Location</th>
+                    <th>Expires in</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <form action="{% url 'characters:threshold_update' pk=character.pk %}" method="GET">
+                        {% csrf_token %}
+                        <tr>
+                            <td>{{ order.item.type_name }}</td>
+                            <td>{{ order.vol_remaining|intcomma }}/{{ order.vol_entered|intcomma }}</td>
+                            <td>
+                                <input type="text" name="qty_threshold"><button type="submit">set</button></td>
+                                <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                            <td>{{ order.price|floatformat:2|intcomma }}</td>
+                            <td title="{{ order.station.station_name }}">{{ order.station.station_name|truncatechars:30 }}</td>
+                            <td>{{ order.expires_in }}</td>
+                        </tr>
+                    </form>
+                {% endfor %}
+            </tbody>
+        </table>
 {% endblock %}
