@@ -7,7 +7,7 @@ from eve.models import Item
 class WatchListItem(models.Model):
 
     item = models.ForeignKey(Item, related_name='watchlistitems')
-    desired_price = models.FloatField(default=0.0)
+    desired_price = models.FloatField()
 
     def __unicode__(self):
         return 'Item: {}, Desired Price: {}, Last Sell Price: {}'.format(self.item.type_name, self.desired_price, self.item.prices.last().sell)
