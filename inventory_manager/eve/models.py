@@ -14,24 +14,6 @@ class Item(models.Model):
         return self.type_name
 
 
-class Price(models.Model):
-    """
-    A model to represent a price point on a single Item
-    """
-
-    item = models.ForeignKey(Item, related_name='prices')
-    buy = models.FloatField(default=0.0)
-    sell = models.FloatField(default=0.0)
-    added = models.DateTimeField(auto_now_add=True)
-
-    def __unicode__(self):
-        return '({}, {}): ({}, {})'.format(
-            self.item.type_name,
-            self.item.type_id,
-            self.buy, self.sell
-        )
-
-
 class Region(models.Model):
     """
     A model to represent a single Region
@@ -96,4 +78,24 @@ class Station(models.Model):
         return 'Station: {} - {}'.format(
             self.station_name,
             self.station_id
+        )
+
+
+class Price(models.Model):
+    """
+    A model to represent a price point on a single Item
+    """
+
+    item = models.ForeignKey(Item, related_name='prices')
+    buy = models.FloatField(default=0.0)
+    sell = models.FloatField(default=0.0)
+    added = models.DateTimeField(auto_now_add=True)
+    solar_system = models.ForeignKey(SolarSystem, null=True, related_name='prices')
+    region = models.ForeignKey(Region, null=True, related_name='prices')
+
+    def __unicode__(self):
+        return '({}, {}): ({}, {})'.format(
+            self.item.type_name,
+            self.item.type_id,
+            self.buy, self.sell
         )

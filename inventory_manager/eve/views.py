@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+import logging
 
 from evelink.thirdparty.eve_central import EVECentral
 
 from .models import Item
 from .models import Price
+from .models import Region
+from .models import SolarSystem
+
+logger = logging.getLogger(__name__)
 
 
-def fetch_price_data(type_ids, hours=24, regions=None, system=30000142):
+def fetch_price_data(type_ids, hours=24, regions=10000048, system=None):
     """
     Get item prices from evecentral.com
 
@@ -61,10 +66,12 @@ def fetch_price_data(type_ids, hours=24, regions=None, system=30000142):
 
     if regions:
         price_data = eve_central.market_stats(type_ids, hours=hours, regions=regions)
+        location = regions
     else:
         price_data = eve_central.market_stats(type_ids, hours=hours, system=system)
+        location = system
 
-    return price_data
+    return (price_data, location)
 
 
 def prepare_price_data(price_data):
@@ -76,12 +83,23 @@ def prepare_price_data(price_data):
     :rtype: list
     """
 
+    price_data, location = price_data
+
+    try:
+        location_obj = SolarSystem.objects.get(solar_system_id=location)
+        location = 'solar_system'
+    except SolarSystem.DoesNotExist as e:
+        logger.exception(e)
+        location_obj = Region.objects.get(region_id=location)
+        location = 'region'
+
     price_list = []
     for price in price_data.itervalues():
         _price = {
             'item': Item.objects.get(type_id=price['id']),
             'buy': price['buy']['max'],
             'sell': price['sell']['min'],
+            location: location_obj,
         }
         price_list.append(Price(**_price))
 
