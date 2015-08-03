@@ -41,7 +41,8 @@ class Constellation(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.region_name:
-            self.region_name = Region.objects.get(region_id=self.region_id)
+            region = Region.objects.get(region_id=self.region_id)
+            self.region_name = region.region_name
 
         super(Constellation, self).save(*args, **kwargs)
 
@@ -67,10 +68,13 @@ class SolarSystem(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.constellation_name:
-            self.constellation_name = Constellation.objects.get(
+            constellation = Constellation.objects.get(
                 constellation_id=self.constellation_id
             )
-            self.region_name = Region.objects.get(region_id=self.region_id)
+            self.constellation_name = constellation.constellation_name
+
+            region = Region.objects.get(region_id=self.region_id)
+            self.region_name = region.region_name
 
         super(SolarSystem, self).save(*args, **kwargs)
 
@@ -97,13 +101,18 @@ class Station(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.solar_system_name:
-            self.solar_system_name = SolarSystem.objects.get(
+            solar_system = SolarSystem.objects.get(
                 solar_system_id=self.solar_system_id
             )
-            self.constellation_name = Constellation.objects.get(
+            self.solar_system_name = solar_system.solar_system_name
+
+            constellation = Constellation.objects.get(
                 constellation_id=self.constellation_id
             )
-            self.region_name = Region.objects.get(region_id=self.region_id)
+            self.constellation_name = constellation.constellation_name
+
+            region = Region.objects.get(region_id=self.region_id)
+            self.region_name = region.region_name
 
         super(Station, self).save(*args, **kwargs)
 
