@@ -53,10 +53,29 @@ class Asset(models.Model):
     type_id = models.IntegerField()
     type_name = models.CharField(max_length=255)
     unique_item_id = models.BigIntegerField(unique=True)
-    location = models.BigIntegerField()
+    location_id = models.IntegerField()
+    location_name = models.CharField(max_length=255)
     quantity = models.IntegerField()
     flag = models.SmallIntegerField()
     packaged = models.BooleanField()
+
+    class Meta:
+        ordering = ['type_name']
+
+    def save(self, *args, **kwargs):
+        if not self.type_name:
+            item = Item.objects.get(type_id=self.type_id)
+            self.type_name = item.type_name
+
+        if not self.location_name:
+            try:
+                station = Station.objects.get(station_id=self.location_id)
+                self.location_name = station.station_name
+            except Station.DoesNotExist:
+                solar_system = SolarSystem.objects.get(solar_system_id=self.location_id)
+                self.location_name = solar_system.solar_system_name
+
+        super(Asset, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return '{} ({})'.format(self.character.name, self.type_name)

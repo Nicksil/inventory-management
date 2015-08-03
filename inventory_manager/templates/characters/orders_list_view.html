@@ -15,23 +15,6 @@
                 </tr>
             </thead>
             <tbody>
-                {% for order in orders %}
-                    <form action="{% url 'characters:threshold_update' pk=character.pk %}" method="GET">
-                        {% csrf_token %}
-                        <tr>
-                            <td>{{ order.item.type_name }}</td>
-                            <td {% if order.met_qty_threshold %}style="color: red;"{% endif %}>
-                                {{ order.vol_remaining|intcomma }}/{{ order.vol_entered|intcomma }}
-                            </td>
-                            <td>
-                                <input type="text" name="qty_threshold"><button type="submit">set</button></td>
-                                <input type="hidden" name="order_id" value="{{ order.order_id }}">
-                            <td>{{ order.price|floatformat:2|intcomma }}</td>
-                            <td title="{{ order.station.station_name }}">{{ order.station.station_name|truncatechars:30 }}</td>
-                            <td>{{ order.expires_in }}</td>
-                        </tr>
-                    </form>
-                {% endfor %}
             </tbody>
         </table>
 {% endblock %}
