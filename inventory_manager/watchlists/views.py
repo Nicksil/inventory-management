@@ -5,31 +5,31 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 
 from .models import WatchList
-from .models import WatchListItem
 from eve.models import Item
 
 
 def watchlist_update_view(request, pk):
-    watchlist = WatchList.objects.get(pk=pk)
+    pass
+    # watchlist = WatchList.objects.get(pk=pk)
 
-    if request.method == 'POST':
-        item = request.POST['item']
-        desired_price = float(request.POST['desired_price'])
+    # if request.method == 'POST':
+    #     item = request.POST['item']
+    #     desired_price = float(request.POST['desired_price'])
 
-        item_obj = Item.objects.get(type_name__iexact=item)
-        watchlist_item = WatchListItem.objects.create(
-            item=item_obj,
-            desired_price=desired_price
-        )
-        watchlist.items.add(watchlist_item)
+    #     item_obj = Item.objects.get(type_name__iexact=item)
+    #     watchlist_item = WatchListItem.objects.create(
+    #         item=item_obj,
+    #         desired_price=desired_price
+    #     )
+    #     watchlist.items.add(watchlist_item)
 
-        return redirect('watchlists:detail', pk=pk)
+    #     return redirect('watchlists:detail', pk=pk)
 
-    return render(
-        request,
-        'watchlists/watchlist_update_view.html',
-        {'watchlist': watchlist}
-    )
+    # return render(
+    #     request,
+    #     'watchlists/watchlist_update_view.html',
+    #     {'watchlist': watchlist}
+    # )
 
 
 def watchlist_delete(request, pk):
@@ -59,20 +59,21 @@ def watchlist_list_view(request):
 
 
 def watchlist_create_view(request):
-    if request.method == 'POST':
-        name = request.POST['name']
-        item = request.POST['item']
-        desired_price = request.POST['desired_price']
+    pass
+    # if request.method == 'POST':
+    #     name = request.POST['name']
+    #     item = request.POST['item']
+    #     desired_price = request.POST['desired_price']
 
-        item = Item.objects.get(type_name__iexact=item)
+    #     item = Item.objects.get(type_name__iexact=item)
 
-        watchlist_item = WatchListItem.objects.create(
-            item=item,
-            desired_price=desired_price
-        )
-        watchlist = WatchList.objects.create(name=name)
-        watchlist.items.add(watchlist_item)
+    #     watchlist_item = WatchListItem.objects.create(
+    #         item=item,
+    #         desired_price=desired_price
+    #     )
+    #     watchlist = WatchList.objects.create(name=name)
+    #     watchlist.items.add(watchlist_item)
 
-        return redirect('watchlists:detail', pk=watchlist.pk)
+    #     return redirect('watchlists:detail', pk=watchlist.pk)
 
-    return render(request, 'watchlists/watchlist_create_view.html')
+    # return render(request, 'watchlists/watchlist_create_view.html')

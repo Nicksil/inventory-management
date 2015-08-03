@@ -49,11 +49,10 @@ def populate_constellations():
         for num, row in enumerate(reader):
             if num:
                 region_id, const_id, const_name = row
-                region = Region.objects.get(region_id=region_id)
                 Constellation.objects.create(
                     constellation_id=const_id,
                     constellation_name=const_name,
-                    region=region,
+                    region_id=region_id,
                 )
 
 
@@ -65,13 +64,11 @@ def populate_solar_systems():
         for num, row in enumerate(reader):
             if num:
                 region_id, const_id, sys_id, sys_name, sec = row
-                region = Region.objects.get(region_id=region_id)
-                const = Constellation.objects.get(constellation_id=const_id)
                 SolarSystem.objects.create(
                     solar_system_id=sys_id,
                     solar_system_name=sys_name,
-                    region=region,
-                    constellation=const,
+                    region_id=region_id,
+                    constellation_id=const_id,
                     security=sec,
                 )
 
@@ -84,15 +81,12 @@ def populate_stations():
         for num, row in enumerate(reader):
             if num:
                 sta_id, sys_id, const_id, region_id, sta_name = row
-                region = Region.objects.get(region_id=region_id)
-                const = Constellation.objects.get(constellation_id=const_id)
-                solar_system = SolarSystem.objects.get(solar_system_id=sys_id)
                 Station.objects.create(
                     station_id=sta_id,
                     station_name=sta_name,
-                    region=region,
-                    constellation=const,
-                    solar_system=solar_system,
+                    region_id=region_id,
+                    constellation_id=const_id,
+                    solar_system_id=sys_id,
                 )
 
 

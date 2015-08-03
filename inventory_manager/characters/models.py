@@ -50,16 +50,16 @@ class Asset(models.Model):
     """
 
     character = models.ForeignKey(Character, related_name='assets')
-    item = models.ForeignKey(Item, related_name='assets')
+    type_id = models.IntegerField()
+    type_name = models.CharField(max_length=255)
     unique_item_id = models.BigIntegerField(unique=True)
-    solar_system = models.ForeignKey(SolarSystem, null=True, related_name='assets')
-    station = models.ForeignKey(Station, null=True, related_name='assets')
+    location = models.BigIntegerField()
     quantity = models.IntegerField()
     flag = models.SmallIntegerField()
     packaged = models.BooleanField()
 
     def __unicode__(self):
-        return '{} ({})'.format(self.character.name, self.item.type_name)
+        return '{} ({})'.format(self.character.name, self.type_name)
 
 
 class Order(models.Model):
@@ -68,9 +68,10 @@ class Order(models.Model):
     """
 
     character = models.ForeignKey(Character, related_name='orders')
-    item = models.ForeignKey(Item, related_name='orders')
+    type_id = models.IntegerField()
+    type_name = models.CharField(max_length=255)
     order_id = models.BigIntegerField(unique=True, db_index=True)
-    station = models.ForeignKey(Station, related_name='orders')
+    station = models.IntegerField()
     vol_entered = models.BigIntegerField()
     vol_remaining = models.BigIntegerField()
     order_state = models.CharField(max_length=255)
@@ -95,4 +96,4 @@ class Order(models.Model):
         return strfdelta(tdelta, '{days}d {hours}h {minutes}m {seconds}s')
 
     def __unicode__(self):
-        return 'Character: {}, Item: {}'.format(self.character.name, self.item.type_name)
+        return 'Character: {}, Item: {}'.format(self.character.name, self.type_name)

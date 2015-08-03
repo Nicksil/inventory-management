@@ -36,7 +36,14 @@ class Constellation(models.Model):
 
     constellation_id = models.IntegerField()
     constellation_name = models.CharField(max_length=255)
-    region = models.ForeignKey(Region, related_name='constellations')
+    region_id = models.IntegerField()
+    region_name = models.CharField(max_length=255)
+
+    def save(self, *args, **kwargs):
+        if not self.region_name:
+            self.region_name = Region.objects.get(region_id=self.region_id)
+
+        super(Constellation, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return 'Constellation: {} - {}'.format(
@@ -52,9 +59,20 @@ class SolarSystem(models.Model):
 
     solar_system_id = models.IntegerField()
     solar_system_name = models.CharField(max_length=255)
-    region = models.ForeignKey(Region, related_name='solar_systems')
-    constellation = models.ForeignKey(Constellation, related_name='solar_systems')
+    region_id = models.IntegerField()
+    region_name = models.CharField(max_length=255)
+    constellation_id = models.IntegerField()
+    constellation_name = models.CharField(max_length=255)
     security = models.FloatField()
+
+    def save(self, *args, **kwargs):
+        if not self.constellation_name:
+            self.constellation_name = Constellation.objects.get(
+                constellation_id=self.constellation_id
+            )
+            self.region_name = Region.objects.get(region_id=self.region_id)
+
+        super(SolarSystem, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return 'Solar System: {} - {}'.format(
@@ -70,9 +88,24 @@ class Station(models.Model):
 
     station_id = models.IntegerField()
     station_name = models.CharField(max_length=255)
-    region = models.ForeignKey(Region, related_name='stations')
-    constellation = models.ForeignKey(Constellation, related_name='stations')
-    solar_system = models.ForeignKey(SolarSystem, related_name='stations')
+    region_id = models.IntegerField()
+    region_name = models.CharField(max_length=255)
+    constellation_id = models.IntegerField()
+    constellation_name = models.CharField(max_length=255)
+    solar_system_id = models.IntegerField()
+    solar_system_name = models.CharField(max_length=255)
+
+    def save(self, *args, **kwargs):
+        if not self.solar_system_name:
+            self.solar_system_name = SolarSystem.objects.get(
+                solar_system_id=self.solar_system_id
+            )
+            self.constellation_name = Constellation.objects.get(
+                constellation_id=self.constellation_id
+            )
+            self.region_name = Region.objects.get(region_id=self.region_id)
+
+        super(Station, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return 'Station: {} - {}'.format(
@@ -86,16 +119,12 @@ class Price(models.Model):
     A model to represent a price point on a single Item
     """
 
-    item = models.ForeignKey(Item, related_name='prices')
-    buy = models.FloatField(default=0.0)
-    sell = models.FloatField(default=0.0)
+    type_id = models.IntegerField()
+    type_name = models.CharField(max_length=255)
+    buy = models.FloatField()
+    sell = models.FloatField()
     added = models.DateTimeField(auto_now_add=True)
-    solar_system = models.ForeignKey(SolarSystem, null=True, related_name='prices')
-    region = models.ForeignKey(Region, null=True, related_name='prices')
+    location = models.IntegerField()
 
     def __unicode__(self):
-        return '({}, {}): ({}, {})'.format(
-            self.item.type_name,
-            self.item.type_id,
-            self.buy, self.sell
-        )
+        return '{}: {}'.format(self.type_name, self.sell)
