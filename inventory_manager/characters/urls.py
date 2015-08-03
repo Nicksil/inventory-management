@@ -6,7 +6,7 @@ from django.conf.urls import url
 from .views import asset_list_view
 from .views import asset_update
 from .views import character_add_view
-from .views import character_delete
+from .views import CharacterDelete
 from .views import character_detail_view
 from .views import character_list_view
 from .views import orders_list_view
@@ -26,7 +26,7 @@ urlpatterns = [
     ),
     url(
         r'^(?P<pk>\d+)/delete/$',
-        character_delete,
+        CharacterDelete.as_view(),
         name='delete'
     ),
     url(

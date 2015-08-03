@@ -3,8 +3,10 @@ from __future__ import absolute_import
 
 import logging
 
+from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.views.generic import DeleteView
 
 from .models import Character
 from .models import Order
@@ -131,17 +133,10 @@ def character_detail_view(request, pk):
     )
 
 
-def character_delete(request, pk):
-    """
-    Delete a single :class:`Character` object
+class CharacterDelete(DeleteView):
 
-    :param int pk: Primary key of character
-    :return: Redirect to user's list of characters
-    """
-
-    Character.objects.get(pk=pk).delete()
-
-    return redirect('characters:list')
+    model = Character
+    success_url = reverse_lazy('characters:list')
 
 
 def orders_list_view(request, pk):
