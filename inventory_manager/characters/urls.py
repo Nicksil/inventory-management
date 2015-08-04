@@ -7,6 +7,7 @@ from .views import asset_list_view
 from .views import asset_update
 from .views import character_add_view
 from .views import CharacterDelete
+from .views import CharacterDetailView
 from .views import character_detail_view
 from .views import character_list_view
 from .views import orders_list_view
@@ -31,7 +32,7 @@ urlpatterns = [
     ),
     url(
         r'^(?P<pk>\d+)/detail/$',
-        character_detail_view,
+        CharacterDetailView.as_view(),
         name='detail'
     ),
     url(

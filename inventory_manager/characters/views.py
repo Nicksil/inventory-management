@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic import DeleteView
+from django.views.generic import DetailView
 
 from .models import Character
 from .models import Order
@@ -131,6 +132,11 @@ def character_detail_view(request, pk):
         'characters/character_detail_view.html',
         {'character': character}
     )
+
+
+class CharacterDetailView(DetailView):
+
+    model = Character
 
 
 class CharacterDelete(DeleteView):
