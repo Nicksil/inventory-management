@@ -8,4 +8,5 @@ TODO.txt
 !**/migrations/__init__.py
 
 docs/_build/
+logs
 utils

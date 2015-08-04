@@ -3,6 +3,7 @@
 {% block body %}
     <h1>{{ character.name }}'s Orders</h1>
     <p><a href="{% url 'characters:detail' pk=character.pk %}">&lt; {{ character.name }}</a> | <a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a></p>
+    {% if orders %}
         <table>
             <thead>
                 <tr>
@@ -15,6 +16,31 @@
                 </tr>
             </thead>
             <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>
+                            {{ order.type_name }}
+                        </td>
+                        <td>
+                            {{ order.quantity }}
+                        </td>
+                        <td>
+                            {{ order.qty_threshold }}
+                        </td>
+                        <td>
+                            {{ order.price }}
+                        </td>
+                        <td>
+                            {{ order.station_name }}
+                        </td>
+                        <td>
+                            {{ order.expires_in }}
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
+    {% else %}
+        <p>No orders to display.</p>
+    {% endif %}
 {% endblock %}

@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 
 import datetime
+import logging
 
 from django.db import IntegrityError
 import evelink.account
@@ -11,9 +12,8 @@ import evelink.char
 from .models import Asset
 from .models import Character
 from .models import Order
-from eve.models import Item
-from eve.models import SolarSystem
-from eve.models import Station
+
+logger = logging.getLogger(__name__)
 
 
 def fetch_assets(api_key, char_id):
@@ -160,8 +160,11 @@ def save_assets(assets):
     :param list assets: List of tuples of Asset objects
     """
 
-    for a in assets:
-        a.save()
+    for asset in assets:
+        try:
+            asset.save()
+        except IntegrityError as e:
+            logger.exception(e)
 
 
 def fetch_characters(api_key):
@@ -287,12 +290,11 @@ def prepare_orders(orders, character):
     """
 
     order_list = []
-
     for order in orders.itervalues():
         order_id = order['id']
 
         try:
-            # If order object already exists, grab it, update it, save it
+            # If order exists, update
             order_obj = Order.objects.get(order_id=order_id)
 
             # Update pertinent fields only
@@ -302,17 +304,14 @@ def prepare_orders(orders, character):
             order_obj.issued = datetime.datetime.utcfromtimestamp(order['timestamp'])
 
             order_obj.save()
-        except Order.DoesNotExist:
-            # Order doesn't exist, create new object,
-            # adding to list, to be saved in bulk
-            item = Item.objects.get(type_id=order['type_id'])
-            station = Station.objects.get(station_id=order['station_id'])
-
+        except Order.DoesNotExist as e:
+            logger.exception(e)
+            # Order doesn't exist, create new
             _order = {
                 'character': character,
-                'item': item,
+                'type_id': order['type_id'],
                 'order_id': order_id,
-                'station': station,
+                'station_id': order['station_id'],
                 'vol_entered': order['amount'],
                 'vol_remaining': order['amount_left'],
                 'order_state': order['status'],
@@ -334,4 +333,8 @@ def save_orders(orders):
     :param list orders: List of tuples of Order objects
     """
 
-    Order.objects.bulk_create(orders)
+    for order in orders:
+        try:
+            order.save()
+        except IntegrityError as e:
+            logger.exception(e)

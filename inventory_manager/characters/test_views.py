@@ -86,19 +86,6 @@ class CharactersAppViewsTests(TestCase):
 
         self.assertEqual(200, status_code)
 
-    def test_character_delete_view_deletes_character_object_and_redirects_to_character_list_view(self):
-        self.client.login(username='test_user', password='mah_test_password')
-
-        self.assertEqual(1, Character.objects.count())
-
-        uri = reverse('characters:delete', kwargs={'pk': self.character_1.pk})
-        response = self.client.get(uri, follow=True)
-
-        expected_url = reverse('characters:list')
-        self.assertRedirects(response, expected_url=expected_url)
-
-        self.assertEqual(0, Character.objects.count())
-
     def test_asset_list_view_renders_correct_template(self):
         self.client.login(username='test_user', password='mah_test_password')
 

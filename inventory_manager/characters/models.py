@@ -67,6 +67,9 @@ class Asset(models.Model):
             item = Item.objects.get(type_id=self.type_id)
             self.type_name = item.type_name
 
+        # Location may be a station or a solar system. Most assets are located
+        # in a station, so try looking that up first. If that fails, the location
+        # ID must be that of a solar system.
         if not self.location_name:
             try:
                 station = Station.objects.get(station_id=self.location_id)
@@ -90,7 +93,8 @@ class Order(models.Model):
     type_id = models.IntegerField()
     type_name = models.CharField(max_length=255)
     order_id = models.BigIntegerField(unique=True, db_index=True)
-    station = models.IntegerField()
+    station_id = models.IntegerField()
+    station_name = models.CharField(max_length=255)
     vol_entered = models.BigIntegerField()
     vol_remaining = models.BigIntegerField()
     order_state = models.CharField(max_length=255)
@@ -108,11 +112,24 @@ class Order(models.Model):
 
     @property
     def met_qty_threshold(self):
+
         return self.vol_remaining <= self.qty_threshold
 
     def expires_in(self):
         tdelta = (self.issued + datetime.timedelta(days=self.duration)) - datetime.datetime.utcnow()
+
         return strfdelta(tdelta, '{days}d {hours}h {minutes}m {seconds}s')
 
+    def save(self, *args, **kwargs):
+        if not self.type_name:
+            item = Item.objects.get(type_id=self.type_id)
+            self.type_name = item.type_name
+        if not self.station_name:
+            station = Station.objects.get(station_id=self.station_id)
+            self.station_name = station.station_name
+
+        super(Order, self).save(*args, **kwargs)
+
     def __unicode__(self):
+
         return 'Character: {}, Item: {}'.format(self.character.name, self.type_name)

@@ -1,3 +1,6 @@
 import logging
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(
+    filename='../logs/characters.log',
+    level=logging.INFO
+)

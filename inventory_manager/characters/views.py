@@ -148,7 +148,7 @@ def orders_list_view(request, pk):
     """
 
     character = Character.objects.get(pk=pk)
-    orders = character.orders.all().filter(order_state='active').select_related('item').select_related('station')
+    orders = character.orders.all().filter(order_state='active')
 
     return render(
         request,
