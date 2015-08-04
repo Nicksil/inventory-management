@@ -2,8 +2,8 @@
 {% load humanize %}
 {% block body %}
     <h1>{{ watchlist.name }}</h1>
-    <p><a href="{% url 'watchlists:list' %}">&lt; All watch lists</a> |
-    <a href="{% url 'watchlists:update' pk=watchlist.pk %}">Update</a> | <a href="{% url 'watchlists:delete' pk=watchlist.pk %}">Delete</a></p>
+    <p><a href="{% url 'lists:list' %}">&lt; All watch lists</a> |
+    <a href="{% url 'lists:update' pk=watchlist.pk %}">Update</a> | <a href="{% url 'lists:delete' pk=watchlist.pk %}">Delete</a></p>
     <table>
         <thead>
             <tr>

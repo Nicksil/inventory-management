@@ -83,23 +83,18 @@ def prepare_price_data(price_data):
     :rtype: list
     """
 
-    price_data, location = price_data
-
-    try:
-        location_obj = SolarSystem.objects.get(solar_system_id=location)
-        location = 'solar_system'
-    except SolarSystem.DoesNotExist as e:
-        logger.exception(e)
-        location_obj = Region.objects.get(region_id=location)
-        location = 'region'
+    price_data, location_id = price_data
 
     price_list = []
     for price in price_data.itervalues():
+        type_id = price['id']
+        _type = Item.objects.get(type_id=type_id)
         _price = {
-            'item': Item.objects.get(type_id=price['id']),
+            '_type': _type,
+            'type_id': type_id,
             'buy': price['buy']['max'],
             'sell': price['sell']['min'],
-            location: location_obj,
+            'location_id': location_id,
         }
         price_list.append(Price(**_price))
 
@@ -113,4 +108,5 @@ def save_prices(prices):
     :param list prices: List of tuples of :class:`Price` objects
     """
 
-    Price.objects.bulk_create(prices)
+    for price in prices:
+        price.save()

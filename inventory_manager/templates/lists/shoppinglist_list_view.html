@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>Shopping Lists</h1>
+    <p><a href="{% url 'lists:create' %}">Create</a></p>
+    <ul>
+        {% for shoppinglist in shoppinglists %}
+            <li><a href="{% url 'lists:detail' pk=shoppinglist.pk %}">{{ shoppinglist.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

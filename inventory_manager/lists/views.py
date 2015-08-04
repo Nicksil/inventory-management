@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 
 from .models import ShoppingList
+from .models import WatchList
 from characters.models import Character
 from eve.models import Item
 from eve.views import fetch_price_data
@@ -28,13 +29,13 @@ def update_item_prices(request, pk):
     prepared_data = prepare_price_data(price_data)
     save_prices(prepared_data)
 
-    return redirect('shoppinglists:detail', pk=pk)
+    return redirect('lists:detail', pk=pk)
 
 
 def shoppinglist_delete(request, pk):
     ShoppingList.objects.get(pk=pk).delete()
 
-    return redirect('shoppinglists:list')
+    return redirect('lists:list')
 
 
 def shoppinglist_detail_view(request, pk):
@@ -42,7 +43,7 @@ def shoppinglist_detail_view(request, pk):
 
     return render(
         request,
-        'shoppinglists/shoppinglist_detail_view.html',
+        'lists/shoppinglist_detail_view.html',
         {'shoppinglist': shoppinglist}
     )
 
@@ -52,7 +53,7 @@ def shoppinglist_item_remove(request, list_pk, item_pk):
     item = Item.objects.get(pk=item_pk)
     shoppinglist.items.remove(item)
 
-    return redirect('shoppinglists:update', pk=list_pk)
+    return redirect('lists:update', pk=list_pk)
 
 
 def shoppinglist_list_view(request):
@@ -60,7 +61,7 @@ def shoppinglist_list_view(request):
 
     return render(
         request,
-        'shoppinglists/shoppinglist_list_view.html',
+        'lists/shoppinglist_list_view.html',
         {'shoppinglists': shoppinglists}
     )
 
@@ -79,11 +80,11 @@ def shoppinglist_update_view(request, pk):
             item_obj = Item.objects.get(type_name=items)
             shoppinglist.items.add(item_obj)
 
-        return redirect('shoppinglists:detail', pk=pk)
+        return redirect('lists:detail', pk=pk)
 
     return render(
         request,
-        'shoppinglists/shoppinglist_update_view.html',
+        'lists/shoppinglist_update_view.html',
         {'shoppinglist': shoppinglist}
     )
 
@@ -106,11 +107,82 @@ def shoppinglist_create_view(request):
         shoppinglist.save()
         shoppinglist.items.add(*items)
 
-        return redirect('shoppinglists:detail', pk=shoppinglist.pk)
+        return redirect('lists:detail', pk=shoppinglist.pk)
 
     characters = request.user.characters.all()
     return render(
         request,
-        'shoppinglists/shoppinglist_create_view.html',
+        'lists/shoppinglist_create_view.html',
         {'characters': characters}
     )
+
+
+def watchlist_update_view(request, pk):
+    pass
+    # watchlist = WatchList.objects.get(pk=pk)
+
+    # if request.method == 'POST':
+    #     item = request.POST['item']
+    #     desired_price = float(request.POST['desired_price'])
+
+    #     item_obj = Item.objects.get(type_name__iexact=item)
+    #     watchlist_item = WatchListItem.objects.create(
+    #         item=item_obj,
+    #         desired_price=desired_price
+    #     )
+    #     watchlist.items.add(watchlist_item)
+
+    #     return redirect('lists:detail', pk=pk)
+
+    # return render(
+    #     request,
+    #     'lists/watchlist_update_view.html',
+    #     {'watchlist': watchlist}
+    # )
+
+
+def watchlist_delete(request, pk):
+    WatchList.objects.get(pk=pk).delete()
+
+    return redirect('lists:list')
+
+
+def watchlist_detail_view(request, pk):
+    watchlist = WatchList.objects.get(pk=pk)
+
+    return render(
+        request,
+        'lists/watchlist_detail_view.html',
+        {'watchlist': watchlist}
+    )
+
+
+def watchlist_list_view(request):
+    watchlists = WatchList.objects.all()
+
+    return render(
+        request,
+        'lists/watchlist_list_view.html',
+        {'watchlists': watchlists}
+    )
+
+
+def watchlist_create_view(request):
+    pass
+    # if request.method == 'POST':
+    #     name = request.POST['name']
+    #     item = request.POST['item']
+    #     desired_price = request.POST['desired_price']
+
+    #     item = Item.objects.get(type_name__iexact=item)
+
+    #     watchlist_item = WatchListItem.objects.create(
+    #         item=item,
+    #         desired_price=desired_price
+    #     )
+    #     watchlist = WatchList.objects.create(name=name)
+    #     watchlist.items.add(watchlist_item)
+
+    #     return redirect('lists:detail', pk=watchlist.pk)
+
+    # return render(request, 'lists/watchlist_create_view.html')

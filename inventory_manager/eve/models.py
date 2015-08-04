@@ -128,12 +128,29 @@ class Price(models.Model):
     A model to represent a price point on a single Item
     """
 
+    _type = models.ForeignKey(Item, related_name='prices')
     type_id = models.IntegerField()
     type_name = models.CharField(max_length=255)
     buy = models.FloatField()
     sell = models.FloatField()
     added = models.DateTimeField(auto_now_add=True)
-    location = models.IntegerField()
+    location_id = models.IntegerField()
+    location_name = models.CharField(max_length=255)
+
+    def save(self, *args, **kwargs):
+        if not self.type_name:
+            item = Item.objects.get(type_id=self.type_id)
+            self.type_name = item.type_name
+
+        if not self.location_name:
+            try:
+                solar_system = SolarSystem.objects.get(solar_system_id=self.location_id)
+                self.location_name = solar_system.solar_system_name
+            except SolarSystem.DoesNotExist:
+                region = Region.objects.get(region_id=self.location_id)
+                self.location_name = region.region_name
+
+        super(Price, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return '{}: {}'.format(self.type_name, self.sell)

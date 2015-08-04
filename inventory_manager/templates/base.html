@@ -18,9 +18,9 @@
                     {% if user.is_authenticated %}
                         <li><a href="{% url 'characters:list' %}">Characters</a></li>
                         |
-                        <li><a href="{% url 'shoppinglists:list' %}">Shopping Lists</a></li>
+                        <li><a href="{% url 'lists:list' %}">Shopping Lists</a></li>
                         |
-                        <li><a href="{% url 'watchlists:list' %}">Watch Lists</a></li>
+                        <li><a href="{% url 'lists:list' %}">Watch Lists</a></li>
                         |
                         <li><a href="{% url 'logout' %}">Log out</a></li>
                     {% else %}

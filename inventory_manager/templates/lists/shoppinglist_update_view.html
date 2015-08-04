@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
     <h1>Shopping List Update View</h1>
-    <p><a href="{% url 'shoppinglists:detail' pk=shoppinglist.pk %}">&lt; Back to list</a></p>
+    <p><a href="{% url 'lists:detail' pk=shoppinglist.pk %}">&lt; Back to list</a></p>
     <form action="" method="POST">
         {% csrf_token %}
         {{ shoppinglist.character }}
@@ -16,7 +16,7 @@
     </form>
     <ul>
         {% for item in shoppinglist.items.all %}
-            <li>{{ item.type_name }} <a href="{% url 'shoppinglists:item_remove' list_pk=shoppinglist.pk item_pk=item.pk %}">x</a></li>
+            <li>{{ item.type_name }} <a href="{% url 'lists:item_remove' list_pk=shoppinglist.pk item_pk=item.pk %}">x</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

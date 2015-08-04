@@ -36,9 +36,8 @@ INSTALLED_APPS = (
 
     'characters',
     'eve',
+    'lists',
     'monitoring',
-    'shoppinglists',
-    'watchlists',
 )
 
 MIDDLEWARE_CLASSES = (

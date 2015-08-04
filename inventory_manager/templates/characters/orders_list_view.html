@@ -22,13 +22,13 @@
                             {{ order.type_name }}
                         </td>
                         <td>
-                            {{ order.quantity }}
+                            {{ order.vol_remaining }}/{{ order.vol_entered|intcomma }}
                         </td>
                         <td>
                             {{ order.qty_threshold }}
                         </td>
                         <td>
-                            {{ order.price }}
+                            {{ order.price|floatformat:2|intcomma }}
                         </td>
                         <td>
                             {{ order.station_name }}

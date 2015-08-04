@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
     <h1>Create Watch List</h1>
-    <p><a href="{% url 'watchlists:list' %}">&lt; All watch lists</a></p>
+    <p><a href="{% url 'lists:list' %}">&lt; All watch lists</a></p>
     <form action="" method="POST">
         {% csrf_token %}
         <label for="_name">Name</label>
