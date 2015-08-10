@@ -12,101 +12,28 @@ from .models import Order
 from .models import strfdelta
 from eve.models import Item
 from eve.models import Region
+from eve.models import Constellation
 from eve.models import SolarSystem
 from eve.models import Station
 
 
 class CharactersAppModelsTests(TestCase):
 
+    fixtures = ['characters.json']
+
     @classmethod
     def setUpTestData(cls):
-        cls.user = User.objects.create_user(
-            'test_user',
-            'test_user@elohel.biz',
-            'mah_test_password'
-        )
-        cls.character = Character.objects.create(
-            user=cls.user,
-            name='Test Character 1',
-            char_id=12345,
-            key_id=98765,
-            v_code='heres_a_v_code_123',
-        )
-        cls.region = Region.objects.create(
-            region_id=10000002,
-            region_name='The Forge',
-        )
-        cls.station = Station.objects.create(
-            station_id=60003760,
-            station_name='Jita IV - Moon 4 - Caldari Navy Assembly Plant',
-            region_id=10000002,
-            region_name='The Forge',
-            constellation_id=20000020,
-            constellation_name='Kimotoro',
-            solar_system_id=30000142,
-            solar_system_name='Jita',
-        )
-        cls.solar_system = SolarSystem.objects.create(
-            solar_system_id=60003760,
-            solar_system_name='Jita IV - Moon 4 - Caldari Navy Assembly Plant',
-            region_id=10000002,
-            region_name='The Forge',
-            constellation_id=20000020,
-            constellation_name='Kimotoro',
-            security=1.0,
-        )
-        cls.order_active = Order.objects.create(
-            character=cls.character,
-            type_id=35,
-            type_name='Pyerite',
-            order_id=1234567,
-            station_id=60003760,
-            station_name='Jita IV - Moon 4 - Caldari Navy Assembly Plant',
-            vol_entered=50000,
-            vol_remaining=40000,
-            order_state='active',
-            order_type='sell',
-            duration=90,
-            price=5.00,
-            issued=datetime.datetime.now(),
-        )
-        cls.order_expired = Order.objects.create(
-            character=cls.character,
-            type_id=35,
-            type_name='Pyerite',
-            order_id=56789,
-            station_id=60003760,
-            station_name='Jita IV - Moon 4 - Caldari Navy Assembly Plant',
-            vol_entered=50000,
-            vol_remaining=40000,
-            order_state='expired',
-            order_type='sell',
-            duration=90,
-            price=5.00,
-            issued=datetime.datetime.now(),
-        )
-        cls.pyerite = Item.objects.create(
-            type_id=35,
-            type_name='Pyerite',
-        )
-        cls.asset_station = Asset.objects.create(
-            character=cls.character,
-            type_id=35,
-            unique_item_id=123,
-            location_id=60003760,
-            quantity=50000,
-            flag=4,
-            packaged=False,
-        )
-        cls.asset_region = Asset.objects.create(
-            character=cls.character,
-            type_id=35,
-            unique_item_id=1234,
-            location_id=10000002,
-            quantity=50000,
-            flag=4,
-            packaged=False,
-        )
+        cls.user = User.objects.get(pk=1)
+        cls.character = Character.objects.get(pk=1)
+        cls.region = Region.objects.get(pk=1)
+        cls.constellation = Constellation.objects.get(pk=1)
+        cls.solar_system = SolarSystem.objects.get(pk=1)
+        cls.station = Station.objects.get(pk=1)
+        cls.item = Item.objects.get(pk=1)
+        cls.order_active = Order.objects.get(pk=1)
+        cls.order_expired = Order.objects.get(pk=2)
+        cls.asset_station = Asset.objects.get(pk=1)
+        cls.asset_solar_system = Asset.objects.get(pk=2)
 
     def test_strfdelta_function_returns_correct_string(self):
         issued = datetime.datetime(2015, 7, 10, 17, 53, 48)
@@ -133,17 +60,6 @@ class CharactersAppModelsTests(TestCase):
 
     def test_character_model_method_get_api_key_actually_works(self):
         self.assertTupleEqual(
-            (98765, 'heres_a_v_code_123'),
+            (self.character.key_id, self.character.v_code),
             self.character.get_api_key()
-        )
-
-    def test_asset_model_save_method(self):
-        self.assertEqual('Pyerite', self.asset_station.type_name)
-        self.assertEqual(
-            'Jita IV - Moon 4 - Caldari Navy Assembly Plant',
-            self.asset_station.location_name
-        )
-        self.assertEqual(
-            'The Forge',
-            self.asset_region.location_name
         )

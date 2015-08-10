@@ -1,0 +1,172 @@
+[
+    {
+        "fields": {
+            "type_name": "Pyerite",
+            "type_id": 35
+        },
+        "model": "eve.item",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "type_name": "Sabre",
+            "type_id": 22456
+        },
+        "model": "eve.item",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "type_name": "Svipul",
+            "type_id": 34562
+        },
+        "model": "eve.item",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "type_name": "Caldari Navy Antimatter Charge M",
+            "type_id": 23025
+        },
+        "model": "eve.item",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "type_name": "Erebus",
+            "type_id": 671
+        },
+        "model": "eve.item",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "region_id": 10000002,
+            "region_name": "The Forge"
+        },
+        "model": "eve.region",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "region": 1,
+            "constellation_id": 20000020,
+            "constellation_name": "Kimotoro"
+        },
+        "model": "eve.constellation",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "solar_system_name": "Jita",
+            "solar_system_id": 30000142,
+            "region": 1,
+            "constellation": 1,
+            "security": 0.858324
+        },
+        "model": "eve.solarsystem",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "station_name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+            "region": 1,
+            "constellation": 1,
+            "solar_system": 1,
+            "station_id": 60003760
+        },
+        "model": "eve.station",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "username": "admin",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "last_login": null,
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$20000$MiZlFgxmidcc$p5ygWKSAFBFj6ZB8Q5vlbFcBkd59SKHH4rpcELhLSDA=",
+            "email": "",
+            "date_joined": "2015-08-10T22:10:16.257"
+        },
+        "model": "auth.user",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "user": 1,
+            "name": "Test Character",
+            "char_id": 12345,
+            "key_id": 67890,
+            "v_code": "testv_code1234"
+        },
+        "model": "characters.character",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "character": 1,
+            "item": 1,
+            "station": 1,
+            "order_id": 1234567,
+            "vol_entered": 5000,
+            "vol_remaining": 4000,
+            "order_state": "active",
+            "order_type": "sell",
+            "duration": 90,
+            "price": 5.00,
+            "issued": "2015-08-01T23:00:00.000",
+            "qty_threshold": 100
+        },
+        "model": "characters.order",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "character": 1,
+            "item": 1,
+            "station": 1,
+            "order_id": 12345678,
+            "vol_entered": 5000,
+            "vol_remaining": 4000,
+            "order_state": "expired",
+            "order_type": "sell",
+            "duration": 90,
+            "price": 5.00,
+            "issued": "2015-08-01T23:00:00.000",
+            "qty_threshold": 100
+        },
+        "model": "characters.order",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "character": 1,
+            "item": 1,
+            "station": 1,
+            "quantity": 50,
+            "unique_item_id": 123456,
+            "flag": 4,
+            "packaged": false
+        },
+        "model": "characters.asset",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "character": 1,
+            "item": 1,
+            "solar_system": 1,
+            "quantity": 50,
+            "unique_item_id": 1234567,
+            "flag": 4,
+            "packaged": false
+        },
+        "model": "characters.asset",
+        "pk": 2
+    }
+]

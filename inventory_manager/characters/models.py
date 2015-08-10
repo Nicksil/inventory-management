@@ -56,6 +56,7 @@ class Asset(models.Model):
     solar_system = models.ForeignKey(SolarSystem, null=True, related_name='assets')
     station = models.ForeignKey(Station, null=True, related_name='assets')
 
+    quantity = models.IntegerField()
     unique_item_id = models.BigIntegerField(unique=True)
     flag = models.SmallIntegerField()
     packaged = models.BooleanField()
