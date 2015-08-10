@@ -21,7 +21,9 @@ def strfdelta(tdelta, fmt):
 class ActiveOrderManager(models.Manager):
 
     def get_queryset(self):
-        return super(ActiveOrderManager, self).get_queryset().filter(order_state='active')
+        return super(ActiveOrderManager, self).get_queryset().filter(
+            order_state='active'
+        )
 
 
 class Character(models.Model):
