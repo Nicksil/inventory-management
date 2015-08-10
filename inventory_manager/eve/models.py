@@ -9,8 +9,6 @@ class Item(models.Model):
 
     type_id = models.IntegerField(unique=True)
     type_name = models.CharField(max_length=255)
-    group_id = models.IntegerField(null=True)
-    market_group_id = models.IntegerField(null=True)
 
     def __unicode__(self):
         return self.type_name

@@ -20,13 +20,11 @@ def populate_items():
     with open(file_loc, 'r') as f:
         reader = csv.reader(f)
         for num, row in enumerate(reader):
-            type_id, group_id, type_name, market_group_id = row
+            type_id, _, type_name, __ = row
             if num:
                 Item.objects.create(
                     type_id=type_id,
                     type_name=unicode(type_name).encode('utf-8').strip(),
-                    group_id=group_id,
-                    market_group_id=market_group_id,
                 )
 
 

@@ -60,11 +60,8 @@ class Asset(models.Model):
     flag = models.SmallIntegerField()
     packaged = models.BooleanField()
 
-    class Meta:
-        ordering = ['type_name']
-
     def __unicode__(self):
-        return '{} ({})'.format(self.character.name, self.type_name)
+        return '{} ({})'.format(self.character.name, self.item.type_name)
 
 
 class Order(models.Model):
@@ -102,16 +99,9 @@ class Order(models.Model):
 
         return strfdelta(tdelta, '{days}d {hours}h {minutes}m {seconds}s')
 
-    def save(self, *args, **kwargs):
-        if not self.type_name:
-            item = Item.objects.get(type_id=self.type_id)
-            self.type_name = item.type_name
-        if not self.station_name:
-            station = Station.objects.get(station_id=self.station_id)
-            self.station_name = station.station_name
-
-        super(Order, self).save(*args, **kwargs)
-
     def __unicode__(self):
 
-        return 'Character: {}, Item: {}'.format(self.character.name, self.type_name)
+        return 'Character: {}, Item: {}'.format(
+            self.character.name,
+            self.item.type_name
+        )
