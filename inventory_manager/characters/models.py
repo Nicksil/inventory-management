@@ -92,7 +92,6 @@ class Order(models.Model):
 
     @property
     def met_qty_threshold(self):
-
         return self.vol_remaining <= self.qty_threshold
 
     def expires_in(self):
@@ -101,7 +100,6 @@ class Order(models.Model):
         return strfdelta(tdelta, '{days}d {hours}h {minutes}m {seconds}s')
 
     def __unicode__(self):
-
         return 'Character: {}, Item: {}'.format(
             self.character.name,
             self.item.type_name

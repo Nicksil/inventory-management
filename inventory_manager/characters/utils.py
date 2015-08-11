@@ -33,6 +33,17 @@ def fetch_assets(api_key, char_id):
     return assets
 
 
+def get_station_or_system_object(location_id):
+    try:
+        location_obj = Station.objects.get(station_id=location_id)
+        location = 'station'
+    except Station.DoesNotExist:
+        location_obj = SolarSystem.objects.get(solar_system_id=location_id)
+        location = 'solar_system'
+
+    return (location, location_obj)
+
+
 def save_assets(assets, character):
     """
     Prepares dict of assets for saving to Asset model
@@ -129,12 +140,7 @@ def save_assets(assets, character):
             item = Item.objects.get(type_id=type_id)
 
             location_id = asset['location_id']
-            try:
-                location = 'station'
-                location_obj = Station.objects.get(station_id=location_id)
-            except Station.DoesNotExist:
-                location = 'solar_system'
-                location_obj = SolarSystem.objects.get(solar_system_id=location_id)
+            location, location_obj = get_station_or_system_object(location_id)
 
             _asset = {
                 'character': character,
@@ -153,12 +159,7 @@ def save_assets(assets, character):
                     item = Item.objects.get(type_id=type_id)
 
                     location_id = sub_asset['location_id']
-                    try:
-                        location = 'station'
-                        location_obj = Station.objects.get(station_id=location_id)
-                    except Station.DoesNotExist:
-                        location = 'solar_system'
-                        location_obj = SolarSystem.objects.get(solar_system_id=location_id)
+                    location, location_obj = get_station_or_system_object(location_id)
 
                     _sub_asset = {
                         'character': character,
@@ -213,8 +214,8 @@ def save_characters(user, characters, api_key):
 
         try:
             Character.objects.create(**_character)
-        except IntegrityError as e:
-            print(e)
+        except IntegrityError:
+            pass
 
 
 def fetch_orders(api_key, char_id):

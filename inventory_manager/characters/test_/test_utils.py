@@ -3,9 +3,12 @@ from __future__ import absolute_import
 from collections import namedtuple
 
 from django.test import TestCase
+from evelink import api
 
 from characters.models import Asset as _Asset
+from characters.models import Order as Order
 from characters.models import Character
+from characters.utils import prepare_orders
 from characters.utils import save_assets
 
 
@@ -46,3 +49,25 @@ class TestCharactersUtils(TestCase):
 
         # Check if there are now 2 records with a non-null solar_system attribute
         self.assertEqual(2, len(char_assets.filter(solar_system__isnull=False)))
+
+    def test_prepare_orders_existing_order_object(self):
+        # Make sure order currently has 'vol_remaining' attribute at 4000
+        existing_order = Order.objects.get(pk=1)
+        self.assertEqual(4000, existing_order.vol_remaining)
+
+        updated_order_data = {
+            existing_order.order_id: {
+                'id': existing_order.order_id,
+                'amount_left': 1000,
+                'status': existing_order.order_state,
+                'price': existing_order.price,
+                'timestamp': api.parse_ts("2015-08-07 22:35:00"),
+            }
+        }
+
+        # Send in an updated version of existing_order
+        prepare_orders(updated_order_data, self.character)
+
+        # Make sure order now has 'vol_remaining' attribute at 1000
+        existing_order = Order.objects.get(pk=1)
+        self.assertEqual(1000, existing_order.vol_remaining)
