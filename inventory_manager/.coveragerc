@@ -1,0 +1,15 @@
+[run]
+branch = true
+
+[report]
+exclude_lines =
+    def __unicode__
+omit =
+    */data/*
+    */manage*
+    */migrations/*
+    */test_/*
+    */wsgi*
+
+[html]
+directory = coverage_html_report
