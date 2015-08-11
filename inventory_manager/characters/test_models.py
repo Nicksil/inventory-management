@@ -63,3 +63,26 @@ class CharactersAppModelsTests(TestCase):
             (self.character.key_id, self.character.v_code),
             self.character.get_api_key()
         )
+
+    def test_order_model_qty_threshold_check_method(self):
+        self.assertFalse(self.order_active.met_qty_threshold)
+
+    def test_order_model_expires_in_method_returns_string(self):
+        self.assertIsInstance(self.order_active.expires_in(), str)
+
+    def test_character_model_unicode_method_returns_correct_string(self):
+        self.assertEqual(str(self.character), self.character.name)
+
+    def test_asset_model_unicode_method_returns_correct_string(self):
+        expected_return_str = '{} ({})'.format(
+            self.asset_station.character.name,
+            self.asset_station.item.type_name
+        )
+        self.assertEqual(str(self.asset_station), expected_return_str)
+
+    def test_order_model_unicode_method_returns_correct_string(self):
+        expected_return_str = 'Character: {}, Item: {}'.format(
+            self.order_active.character.name,
+            self.order_active.item.type_name
+        )
+        self.assertEqual(str(self.order_active), expected_return_str)

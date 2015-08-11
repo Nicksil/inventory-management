@@ -117,23 +117,6 @@ def character_list_view(request):
     )
 
 
-def character_detail_view(request, pk):
-    """
-    A view providing an interface for a single character
-
-    :param int pk: Primary key of character
-    :return: Render function for displaying view
-    """
-
-    character = Character.objects.get(pk=pk)
-
-    return render(
-        request,
-        'characters/character_detail_view.html',
-        {'character': character}
-    )
-
-
 class CharacterDetailView(DetailView):
 
     model = Character

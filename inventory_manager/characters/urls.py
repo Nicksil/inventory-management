@@ -8,7 +8,6 @@ from .views import asset_update
 from .views import character_add_view
 from .views import CharacterDelete
 from .views import CharacterDetailView
-from .views import character_detail_view
 from .views import character_list_view
 from .views import orders_list_view
 from .views import orders_update

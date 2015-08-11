@@ -1,3 +1,4 @@
+.coverage
 *.DS_Store
 *.py[co]
 
@@ -8,5 +9,6 @@ TODO.txt
 !**/migrations/__init__.py
 
 docs/_build/
+htmlcov
 logs
 utils
