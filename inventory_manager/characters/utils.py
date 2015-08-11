@@ -12,6 +12,9 @@ import evelink.char
 from .models import Asset
 from .models import Character
 from .models import Order
+from eve.models import Item
+from eve.models import SolarSystem
+from eve.models import Station
 
 logger = logging.getLogger(__name__)
 
@@ -126,10 +129,21 @@ def prepare_assets(assets, character):
     asset_list = []
     for a in assets.itervalues():
         for asset in a['contents']:
+            type_id = asset['item_type_id']
+            item = Item.objects.get(type_id=type_id)
+
+            location_id = asset['location_id']
+            try:
+                location = 'station'
+                location_obj = Station.objects.get(station_id=location_id)
+            except Station.DoesNotExist:
+                location = 'solar_system'
+                location_obj = SolarSystem.objects.get(solar_system_id=location_id)
+
             _asset = {
                 'character': character,
-                'type_id': asset['item_type_id'],
-                'location_id': asset['location_id'],
+                'item': item,
+                location: location_obj,
                 'unique_item_id': asset['id'],
                 'quantity': asset['quantity'],
                 'flag': asset['location_flag'],
@@ -139,10 +153,21 @@ def prepare_assets(assets, character):
 
             if asset.get('contents'):
                 for sub_asset in asset['contents']:
+                    type_id = sub_asset['item_type_id']
+                    item = Item.objects.get(type_id=type_id)
+
+                    location_id = sub_asset['location_id']
+                    try:
+                        location = 'station'
+                        location_obj = Station.objects.get(station_id=location_id)
+                    except Station.DoesNotExist:
+                        location = 'solar_system'
+                        location_obj = SolarSystem.objects.get(solar_system_id=location_id)
+
                     _sub_asset = {
                         'character': character,
-                        'type_id': sub_asset['item_type_id'],
-                        'location_id': sub_asset['location_id'],
+                        'item': item,
+                        location: location_obj,
                         'unique_item_id': sub_asset['id'],
                         'quantity': sub_asset['quantity'],
                         'flag': sub_asset['location_flag'],
