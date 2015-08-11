@@ -13,11 +13,9 @@ from .models import Character
 from .utils import fetch_assets
 from .utils import fetch_characters
 from .utils import fetch_orders
-from .utils import prepare_assets
-from .utils import prepare_characters
+from .utils import save_characters
 from .utils import prepare_orders
 from .utils import save_assets
-from .utils import save_characters
 from .utils import save_orders
 
 logger = logging.getLogger(__name__)
@@ -54,8 +52,7 @@ def asset_update(request, pk):
     api_key = (character.key_id, character.v_code)
 
     fetched_assets = fetch_assets(api_key, char_id)
-    prepared_assets = prepare_assets(fetched_assets, character)
-    save_assets(prepared_assets)
+    save_assets(fetched_assets, character)
 
     return redirect('characters:asset_list', pk=pk)
 
@@ -75,12 +72,11 @@ def character_add_view(request):
 
         api_key = (key_id, v_code)
         fetched_characters = fetch_characters(api_key)
-        prepared_characters = prepare_characters(
+        save_characters(
             user,
             fetched_characters,
             api_key
         )
-        save_characters(prepared_characters)
 
         return redirect('characters:list')
 

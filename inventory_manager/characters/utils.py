@@ -2,7 +2,6 @@
 from __future__ import absolute_import
 
 import datetime
-import logging
 
 from django.db import IntegrityError
 import evelink.account
@@ -15,8 +14,6 @@ from .models import Order
 from eve.models import Item
 from eve.models import SolarSystem
 from eve.models import Station
-
-logger = logging.getLogger(__name__)
 
 
 def fetch_assets(api_key, char_id):
@@ -36,7 +33,7 @@ def fetch_assets(api_key, char_id):
     return assets
 
 
-def prepare_assets(assets, character):
+def save_assets(assets, character):
     """
     Prepares dict of assets for saving to Asset model
 
@@ -126,7 +123,6 @@ def prepare_assets(assets, character):
            }
     """
 
-    asset_list = []
     for a in assets.itervalues():
         for asset in a['contents']:
             type_id = asset['item_type_id']
@@ -149,7 +145,7 @@ def prepare_assets(assets, character):
                 'flag': asset['location_flag'],
                 'packaged': asset['packaged'],
             }
-            asset_list.append(Asset(**_asset))
+            Asset.objects.create(**_asset)
 
             if asset.get('contents'):
                 for sub_asset in asset['contents']:
@@ -173,23 +169,7 @@ def prepare_assets(assets, character):
                         'flag': sub_asset['location_flag'],
                         'packaged': sub_asset['packaged'],
                     }
-                    asset_list.append(Asset(**_sub_asset))
-
-    return asset_list
-
-
-def save_assets(assets):
-    """
-    Saves :class:`Asset` objects in bulk
-
-    :param list assets: List of tuples of Asset objects
-    """
-
-    for asset in assets:
-        try:
-            asset.save()
-        except IntegrityError as e:
-            logger.exception(e)
+                    Asset.objects.create(**_sub_asset)
 
 
 def fetch_characters(api_key):
@@ -209,7 +189,7 @@ def fetch_characters(api_key):
     return characters
 
 
-def prepare_characters(user, characters, api_key):
+def save_characters(user, characters, api_key):
     """
     Prepares dict of characters for saving to Character model
 
@@ -222,7 +202,6 @@ def prepare_characters(user, characters, api_key):
 
     key_id, v_code = api_key
 
-    character_list = []
     for character in characters.itervalues():
         _character = {
             'user': user,
@@ -231,22 +210,11 @@ def prepare_characters(user, characters, api_key):
             'key_id': key_id,
             'v_code': v_code,
         }
-        character_list.append(Character(**_character))
 
-    return character_list
-
-
-def save_characters(characters):
-    """
-    Saves :class:`Character` objects in bulk
-
-    :param list characters: List of tuples of Character objects
-    """
-
-    try:
-        Character.objects.bulk_create(characters)
-    except IntegrityError as e:
-        print(e)
+        try:
+            Character.objects.create(**_character)
+        except IntegrityError as e:
+            print(e)
 
 
 def fetch_orders(api_key, char_id):
@@ -329,14 +297,20 @@ def prepare_orders(orders, character):
             order_obj.issued = datetime.datetime.utcfromtimestamp(order['timestamp'])
 
             order_obj.save()
-        except Order.DoesNotExist as e:
-            logger.exception(e)
+        except Order.DoesNotExist:
             # Order doesn't exist, create new
+
+            type_id = order['type_id']
+            item = Item.objects.get(type_id=type_id)
+
+            station_id = order['station_id']
+            station = Station.objects.get(station_id=station_id)
+
             _order = {
                 'character': character,
-                'type_id': order['type_id'],
+                'item': item,
                 'order_id': order_id,
-                'station_id': order['station_id'],
+                'station': station,
                 'vol_entered': order['amount'],
                 'vol_remaining': order['amount_left'],
                 'order_state': order['status'],
@@ -361,5 +335,5 @@ def save_orders(orders):
     for order in orders:
         try:
             order.save()
-        except IntegrityError as e:
-            logger.exception(e)
+        except IntegrityError:
+            pass
