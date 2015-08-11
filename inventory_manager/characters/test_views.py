@@ -6,9 +6,12 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from .models import Character
+from .models import Order
 
 
 class CharactersAppViewsTests(TestCase):
+
+    fixtures = ['characters.json']
 
     @classmethod
     def setUpTestData(cls):
@@ -17,13 +20,8 @@ class CharactersAppViewsTests(TestCase):
             'test_user@elohel.biz',
             'mah_test_password'
         )
-        cls.character = Character.objects.create(
-            user=cls.user,
-            name='Test Character 1',
-            char_id=12345,
-            key_id=98765,
-            v_code='heres_a_v_code_123',
-        )
+        cls.character = Character.objects.get(pk=1)
+        cls.order = Order.objects.get(pk=1)
 
     def test_character_add_view_renders_correct_template(self):
         uri = reverse('characters:add')

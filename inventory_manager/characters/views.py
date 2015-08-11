@@ -10,7 +10,6 @@ from django.views.generic import DeleteView
 from django.views.generic import DetailView
 
 from .models import Character
-from .models import Order
 from .utils import fetch_assets
 from .utils import fetch_characters
 from .utils import fetch_orders
@@ -22,18 +21,6 @@ from .utils import save_characters
 from .utils import save_orders
 
 logger = logging.getLogger(__name__)
-
-
-def threshold_update(request, pk):
-    if request.method == 'GET':
-        order_id = request.GET['order_id']
-        qty_threshold = request.GET['qty_threshold']
-
-        order = Order.objects.get(order_id=order_id)
-        order.qty_threshold = qty_threshold
-        order.save()
-
-    return redirect('characters:order_list', pk=pk)
 
 
 def asset_list_view(request, pk):
