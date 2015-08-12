@@ -34,4 +34,4 @@ def check_price(orders):
         if order_price > last_price:
             data.append(order.item.type_name)
 
-    return data
+    return sorted(data)

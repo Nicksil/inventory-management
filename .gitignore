@@ -1,6 +1,7 @@
 .coverage
 *.DS_Store
 *.py[co]
+*.log
 
 TODO.txt
 

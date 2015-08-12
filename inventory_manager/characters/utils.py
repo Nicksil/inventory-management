@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 
 import datetime
+import logging
 
 from django.db import IntegrityError
 import evelink.account
@@ -14,6 +15,8 @@ from .models import Order
 from eve.models import Item
 from eve.models import SolarSystem
 from eve.models import Station
+
+logger = logging.getLogger(__name__)
 
 
 def fetch_assets(api_key, char_id):
@@ -30,6 +33,7 @@ def fetch_assets(api_key, char_id):
     char_api = evelink.char.Char(char_id, api)
     assets = char_api.assets().result
 
+    logger.info(assets)
     return assets
 
 
@@ -151,7 +155,11 @@ def save_assets(assets, character):
                 'flag': asset['location_flag'],
                 'packaged': asset['packaged'],
             }
-            Asset.objects.create(**_asset)
+
+            try:
+                Asset.objects.create(**_asset)
+            except IntegrityError:
+                pass
 
             if asset.get('contents'):
                 for sub_asset in asset['contents']:
@@ -170,7 +178,11 @@ def save_assets(assets, character):
                         'flag': sub_asset['location_flag'],
                         'packaged': sub_asset['packaged'],
                     }
-                    Asset.objects.create(**_sub_asset)
+
+                    try:
+                        Asset.objects.create(**_sub_asset)
+                    except IntegrityError:
+                        pass
 
 
 def fetch_characters(api_key):
@@ -187,6 +199,7 @@ def fetch_characters(api_key):
     acct = evelink.account.Account(api=api)
     characters = acct.characters().result
 
+    logger.info(characters)
     return characters
 
 
@@ -232,6 +245,7 @@ def fetch_orders(api_key, char_id):
     char_api = evelink.char.Char(char_id, api)
     orders = char_api.orders().result
 
+    logger.info(orders)
     return orders
 
 
@@ -282,6 +296,14 @@ def prepare_orders(orders, character):
                },
            }
     """
+
+    # WARNING: INCREDIBLY DUBIOUS HACK AHEAD
+    # Set all orders to 'expired' to weed-out
+    # order that SHOULD be expired, but aren't
+    # showing as such in the API data. Once we
+    # figure out WTF is up with the API data,
+    # we'll remove this nasty creature and burn it
+    Order.objects.all().update(order_state='expired')
 
     order_list = []
     for order in orders.itervalues():
