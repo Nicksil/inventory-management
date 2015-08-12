@@ -90,7 +90,7 @@ class Price(models.Model):
 
     item = models.ForeignKey(Item, related_name='prices')
     region = models.ForeignKey(Region, related_name='prices')
-    solar_system = models.ForeignKey(SolarSystem, related_name='prices')
+    solar_system = models.ForeignKey(SolarSystem, null=True, related_name='prices')
 
     buy = models.FloatField()
     sell = models.FloatField()

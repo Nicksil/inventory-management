@@ -9,8 +9,7 @@ from .models import WatchList
 from characters.models import Character
 from eve.models import Item
 from eve.views import fetch_price_data
-from eve.views import prepare_price_data
-from eve.views import save_prices
+from eve.views import save_price_data
 
 
 def update_item_prices(request, pk):
@@ -26,8 +25,7 @@ def update_item_prices(request, pk):
     type_ids = [t.type_id for t in items]
 
     price_data = fetch_price_data(type_ids)
-    prepared_data = prepare_price_data(price_data)
-    save_prices(prepared_data)
+    save_price_data(price_data)
 
     return redirect('lists:detail', pk=pk)
 

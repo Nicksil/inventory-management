@@ -64,17 +64,17 @@ def fetch_price_data(type_ids, hours=24, regions=10000048, system=None):
 
     eve_central = EVECentral()
 
-    if regions:
-        price_data = eve_central.market_stats(type_ids, hours=hours, regions=regions)
-        location = regions
-    else:
+    if system:
         price_data = eve_central.market_stats(type_ids, hours=hours, system=system)
         location = system
+    else:
+        price_data = eve_central.market_stats(type_ids, hours=hours, regions=regions)
+        location = regions
 
     return (price_data, location)
 
 
-def prepare_price_data(price_data):
+def save_price_data(price_data):
     """
     Prepares dict of item price data for saving to Price model
 
@@ -84,29 +84,25 @@ def prepare_price_data(price_data):
     """
 
     price_data, location_id = price_data
-
-    price_list = []
     for price in price_data.itervalues():
         type_id = price['id']
-        _type = Item.objects.get(type_id=type_id)
+        item = Item.objects.get(type_id=type_id)
+
         _price = {
-            '_type': _type,
-            'type_id': type_id,
+            'item': item,
             'buy': price['buy']['max'],
             'sell': price['sell']['min'],
-            'location_id': location_id,
         }
-        price_list.append(Price(**_price))
 
-    return price_list
+        try:
+            solar_system = SolarSystem.objects.get(solar_system_id=location_id)
+            region = solar_system.region
 
+            _price['solar_system'] = solar_system
+            _price['region'] = region
+        except SolarSystem.DoesNotExist:
+            region = Region.objects.get(region_id=location_id)
 
-def save_prices(prices):
-    """
-    Saves price data using :class:`Price` model
+            _price['region'] = region
 
-    :param list prices: List of tuples of :class:`Price` objects
-    """
-
-    for price in prices:
-        price.save()
+        Price.objects.create(**_price)
