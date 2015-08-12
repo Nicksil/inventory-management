@@ -11,6 +11,7 @@ omit =
     */manage*
     */migrations/*
     */test_/*
+    */auth_views*
     */wsgi*
 
 [html]
