@@ -35,7 +35,10 @@ def asset_list_view(request, pk):
     return render(
         request,
         'characters/asset_list_view.html',
-        {'assets': assets, 'character': character}
+        {
+            'assets': assets,
+            'character': character
+        }
     )
 
 

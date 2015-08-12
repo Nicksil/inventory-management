@@ -77,14 +77,12 @@ class TestListsViews(TestCase):
         self.assertRedirects(response, expected_redirect_uri)
 
     def test_shoppinglist_delete_view(self):
-        all_shoppinglists = ShoppingList.objects.all()
-        self.assertEqual(1, len(all_shoppinglists))
+        self.assertEqual(1, ShoppingList.objects.count())
 
         uri = reverse('lists:delete', kwargs={'pk': self.shoppinglist.pk})
-        response = self.client.get(uri, follow=True)
+        response = self.client.post(uri, follow=True)
 
-        all_shoppinglists = ShoppingList.objects.all()
-        self.assertEqual(0, len(all_shoppinglists))
+        self.assertEqual(0, ShoppingList.objects.count())
 
         expected_redirect_uri = reverse('lists:list')
         self.assertRedirects(response, expected_redirect_uri)

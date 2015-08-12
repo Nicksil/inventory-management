@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block title %}{{ character.name }} | {% endblock %}
 {% block body %}
     <h1>{{ character.name }}</h1>
     <a href="{% url 'characters:list' %}">&lt; characters</a>

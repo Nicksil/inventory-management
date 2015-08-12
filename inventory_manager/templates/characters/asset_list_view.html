@@ -15,9 +15,9 @@
             <tbody>
                 {% for asset in assets %}
                     <tr>
-                        <td>{{ asset.type_name }}</td>
+                        <td>{{ asset.item.type_name }}</td>
                         <td>{{ asset.quantity|intcomma }}</td>
-                        <td>{{ asset.location_name }}</td>
+                        <td>{% if asset.station %}{{ asset.station.station_name }}{% else %}{{ asset.solar_system.solar_system_name }}{% endif %}</td>
                     </tr>
                 {% endfor %}
             </tbody>

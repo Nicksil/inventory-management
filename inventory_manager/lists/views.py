@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.views.generic import DeleteView
 
 from .models import ShoppingList
 from .models import WatchList
@@ -30,10 +32,10 @@ def update_item_prices(request, pk):
     return redirect('lists:detail', pk=pk)
 
 
-def shoppinglist_delete(request, pk):
-    ShoppingList.objects.get(pk=pk).delete()
+class ShoppingListDeleteView(DeleteView):
 
-    return redirect('lists:list')
+    model = ShoppingList
+    success_url = reverse_lazy('lists:list')
 
 
 def shoppinglist_detail_view(request, pk):

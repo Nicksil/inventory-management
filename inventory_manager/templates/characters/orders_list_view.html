@@ -25,13 +25,13 @@
                             {{ order.vol_remaining }}/{{ order.vol_entered|intcomma }}
                         </td>
                         <td>
-                            {{ order.qty_threshold }}
+                            {% if order.qty_threshold %}{{ order.qty_threshold }}{% else %}-{% endif %}
                         </td>
                         <td>
                             {{ order.price|floatformat:2|intcomma }}
                         </td>
                         <td>
-                            {{ order.station_name }}
+                            {{ order.station.station_name }}
                         </td>
                         <td>
                             {{ order.expires_in }}
