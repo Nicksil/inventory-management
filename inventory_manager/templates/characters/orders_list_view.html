@@ -19,7 +19,7 @@
                 {% for order in orders %}
                     <tr>
                         <td>
-                            {{ order.type_name }}
+                            {{ order.item.type_name }}
                         </td>
                         <td>
                             {{ order.vol_remaining }}/{{ order.vol_entered|intcomma }}

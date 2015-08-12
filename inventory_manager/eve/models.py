@@ -97,4 +97,4 @@ class Price(models.Model):
     added = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return '{}: {}'.format(self.type_name, self.sell)
+        return '{}: {}'.format(self.item.type_name, self.sell)

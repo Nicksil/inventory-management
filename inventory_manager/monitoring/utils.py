@@ -1,58 +1,37 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import logging
-
-from evelink.thirdparty.eve_central import EVECentral
-
-from eve.models import Item
-from eve.models import Price
-from lists.models import WatchList
-
-logger = logging.getLogger(__name__)
+from eve.views import fetch_price_data
+from eve.views import save_price_data
 
 
-def update_watchlists():
-    watchlists = WatchList.objects.all()
-
-    updated_lists = []
-    for watchlist in watchlists:
-        # Update pricing on each item within watchlist
-        update_item_price(watchlist=watchlist)
-
-        for item in watchlist.items.all():
-            desired_price = item.desired_price
-            last_price = item.item.prices.last().sell
-
-            if last_price <= desired_price:
-                updated_lists.append((watchlist, True, item))
-            else:
-                updated_lists.append((watchlist, False, item))
-
-    return updated_lists
+# http://stackoverflow.com/a/434328/1770233
+def chunker(seq, size):
+    return (seq[pos:pos + size] for pos in xrange(0, len(seq), size))
 
 
-def update_item_price(shoppinglist=None, watchlist=None):
-    if shoppinglist:
-        items = shoppinglist.items.all()
-    elif watchlist:
-        items = watchlist.items.all()
-        items = [item.item for item in items]
-    else:
-        logger.error('Must provide shoppinglist or watchlist')
-        raise
+def check_price(orders):
+    order_dict = {}
+    for order in orders:
+        solar_system_id = order.station.solar_system.solar_system_id
+        type_id = order.item.type_id
+        try:
+            order_dict[solar_system_id].append(type_id)
+        except KeyError:
+            order_dict[solar_system_id] = [type_id]
 
-    eve_central = EVECentral()
-    item_ids = [item.type_id for item in items]
+    for system_id, type_ids in order_dict.iteritems():
+        chunked = chunker(type_ids, 10)
+        for chunk in chunked:
+            fetched_data = fetch_price_data(chunk, system=system_id)
+            save_price_data(fetched_data)
 
-    item_prices = eve_central.market_stats(item_ids, hours=5, system=30000142)
+    data = []
+    for order in orders:
+        order_price = order.price
+        last_price = order.item.prices.last().sell
 
-    for item in item_prices:
-        item_obj = Item.objects.get(type_id=item)
-        buy = item_prices[item]['buy']['max']
-        sell = item_prices[item]['sell']['min']
-        Price.objects.create(
-            item=item_obj,
-            buy=buy,
-            sell=sell
-        )
+        if order_price > last_price:
+            data.append(order.item.type_name)
+
+    return data
