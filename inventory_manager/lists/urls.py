@@ -9,11 +9,11 @@ from .views import shoppinglist_detail_view
 from .views import shoppinglist_item_remove
 from .views import shoppinglist_list_view
 from .views import shoppinglist_update_view
-from .views import watchlist_create_view
+# from .views import watchlist_create_view
 from .views import watchlist_delete
 from .views import watchlist_detail_view
 from .views import watchlist_list_view
-from .views import watchlist_update_view
+# from .views import watchlist_update_view
 from .views import update_item_prices
 
 urlpatterns = [
@@ -52,9 +52,9 @@ urlpatterns = [
         shoppinglist_item_remove,
         name='item_remove'
     ),
-    url(r'^create/$', watchlist_create_view, name='create'),
-    url(r'^list/$', watchlist_list_view, name='list'),
-    url(r'^(?P<pk>\d+)/detail/$', watchlist_detail_view, name='detail'),
-    url(r'^(?P<pk>\d+)/delete/$', watchlist_delete, name='delete'),
-    url(r'^(?P<pk>\d+)/update/$', watchlist_update_view, name='update'),
+    # url(r'^create/$', watchlist_create_view, name='create'),
+    url(r'^watchlist/list/$', watchlist_list_view, name='watchlist_list'),
+    url(r'^watchlist/(?P<pk>\d+)/detail/$', watchlist_detail_view, name='watchlist_detail'),
+    url(r'^watchlist/(?P<pk>\d+)/delete/$', watchlist_delete, name='watchlist_delete'),
+    # url(r'^(?P<pk>\d+)/update/$', watchlist_update_view, name='update'),
 ]

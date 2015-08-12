@@ -52,8 +52,8 @@ class TestEveViews(TestCase):
     def test_fetch_price_data(self, mock_market_stats):
         mock_market_stats.return_value = ('price_data')
 
-        # Check for use w/regions (default region ID 10000048) argument
-        fetch_price = fetch_price_data([1, 2, 3])
+        # Check for use w/regions argument
+        fetch_price = fetch_price_data([1, 2, 3], regions=10000048)
         self.assertEqual(('price_data', 10000048), fetch_price)
 
         # Check for use w/system argument

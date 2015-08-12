@@ -94,7 +94,7 @@ def shoppinglist_create_view(request):
         name = request.POST['name']
         name = name if not name == '' else None
 
-        # Handle is no items were given
+        # Handle if no items were given
         items = request.POST.get('items').split(', ')
         items = [Item.objects.get(type_name__iexact=x) for x in items]
 
@@ -115,8 +115,8 @@ def shoppinglist_create_view(request):
     )
 
 
-def watchlist_update_view(request, pk):
-    pass
+# def watchlist_update_view(request, pk):
+#     pass
     # watchlist = WatchList.objects.get(pk=pk)
 
     # if request.method == 'POST':
@@ -165,8 +165,8 @@ def watchlist_list_view(request):
     )
 
 
-def watchlist_create_view(request):
-    pass
+# def watchlist_create_view(request):
+#     pass
     # if request.method == 'POST':
     #     name = request.POST['name']
     #     item = request.POST['item']

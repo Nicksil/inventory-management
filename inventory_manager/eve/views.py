@@ -13,7 +13,7 @@ from .models import SolarSystem
 logger = logging.getLogger(__name__)
 
 
-def fetch_price_data(type_ids, hours=24, regions=10000048, system=None):
+def fetch_price_data(type_ids, hours=24, regions=10000002, system=None):
     """
     Get item prices from evecentral.com
 
