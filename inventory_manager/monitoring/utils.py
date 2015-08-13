@@ -13,18 +13,16 @@ def chunker(seq, size):
 def check_price(orders):
     order_dict = {}
     for order in orders:
-        solar_system_id = order.station.solar_system.solar_system_id
+        region_id = order.station.region.region_id
         type_id = order.item.type_id
         try:
-            order_dict[solar_system_id].append(type_id)
+            order_dict[region_id].append(type_id)
         except KeyError:
-            order_dict[solar_system_id] = [type_id]
+            order_dict[region_id] = [type_id]
 
-    for system_id, type_ids in order_dict.iteritems():
-        chunked = chunker(type_ids, 10)
-        for chunk in chunked:
-            fetched_data = fetch_price_data(chunk, system=system_id)
-            save_price_data(fetched_data)
+    for region_id, type_ids in order_dict.iteritems():
+        fetched_data = fetch_price_data(type_ids, region_id)
+        save_price_data(fetched_data)
 
     data = []
     for order in orders:

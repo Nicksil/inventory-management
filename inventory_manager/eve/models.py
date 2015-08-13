@@ -89,11 +89,12 @@ class Price(models.Model):
     """
 
     item = models.ForeignKey(Item, related_name='prices')
-    region = models.ForeignKey(Region, related_name='prices')
+    region = models.ForeignKey(Region, null=True, related_name='prices')
     solar_system = models.ForeignKey(SolarSystem, null=True, related_name='prices')
+    station = models.ForeignKey(Station, null=True, related_name='prices')
 
-    buy = models.FloatField()
-    sell = models.FloatField()
+    buy = models.FloatField(null=True)
+    sell = models.FloatField(null=True)
     added = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
