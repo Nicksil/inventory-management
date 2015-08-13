@@ -29,7 +29,7 @@
             {% for item in shoppinglist.items.all %}
                 <tr>
                     <td>{{ item.type_name }}</td>
-                    <td>{{ item.prices.all.last.sell|floatformat:2|intcomma }}</td>
+                    <td>{{ item.prices.last.sell|floatformat:2|intcomma }}</td>
                 </tr>
             {% endfor %}
         </tbody>

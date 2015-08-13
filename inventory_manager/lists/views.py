@@ -42,7 +42,7 @@ class ShoppingListDeleteView(DeleteView):
 
 
 def shoppinglist_detail_view(request, pk):
-    shoppinglist = ShoppingList.objects.get(pk=pk)
+    shoppinglist = ShoppingList.objects.prefetch_related('items').get(pk=pk)
     regions = Region.objects.all()
 
     return render(

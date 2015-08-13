@@ -30,7 +30,8 @@ def asset_list_view(request, pk):
     """
 
     character = Character.objects.get(pk=pk)
-    assets = character.assets.all()
+    assets = character.assets.all() \
+        .select_related('item').select_related('station')
 
     return render(
         request,
@@ -123,7 +124,8 @@ def orders_list_view(request, pk):
     """
 
     character = Character.objects.get(pk=pk)
-    orders = character.orders.all().filter(order_state='active')
+    orders = character.orders.all().filter(order_state='active') \
+        .select_related('station').select_related('item')
 
     return render(
         request,
