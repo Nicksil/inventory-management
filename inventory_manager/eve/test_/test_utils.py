@@ -51,3 +51,27 @@ class TestEveViews(TestCase):
         save_price_data(results)
 
         self.assertEqual(Price.objects.count(), 2)
+
+    def test_save_price_data_with_station_exception(self):
+        self.assertEqual(Price.objects.count(), 0)
+
+        expected_json_return = json.loads(crest_orders_data)
+
+        # Insert an unrecognized station into last result
+        expected_json_return['items'][1]['location']['id'] = 1222234
+
+        with mock.patch('eve.utils.requests') as mock_requests:
+            mock_requests.get.return_value = mock_response = mock.Mock()
+            mock_response.json.return_value = expected_json_return
+
+            results = fetch_price_data([self.item_1.type_id], 10000002)
+
+        save_price_data(results)
+
+        # Check to see if station attribute is None
+        self.assertIsNone(Price.objects.last().station)
+
+        # Check to see if station_name attribute is present
+        self.assertIsNotNone(Price.objects.last().station_name)
+
+        self.assertEqual(Price.objects.count(), 2)
