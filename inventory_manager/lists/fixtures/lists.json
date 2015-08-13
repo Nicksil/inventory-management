@@ -190,8 +190,8 @@
             "item": 1,
             "region": 1,
             "solar_system": 1,
-            "buy": 4.00,
-            "sell": 5.00,
+            "buy": 0.75,
+            "sell": 1.00,
             "added": "2015-08-11 20:49:22.993918"
         },
         "model": "eve.price",

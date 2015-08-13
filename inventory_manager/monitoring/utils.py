@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from eve.views import fetch_price_data
-from eve.views import save_price_data
+from eve.utils import fetch_price_data
+from eve.utils import save_price_data
 
 
 # http://stackoverflow.com/a/434328/1770233

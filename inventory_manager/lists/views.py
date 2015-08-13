@@ -10,8 +10,8 @@ from .models import ShoppingList
 from .models import WatchList
 from characters.models import Character
 from eve.models import Item
-from eve.views import fetch_price_data
-from eve.views import save_price_data
+from eve.utils import fetch_price_data
+from eve.utils import save_price_data
 
 
 def update_item_prices(request, pk):
@@ -26,7 +26,13 @@ def update_item_prices(request, pk):
     items = shoppinglist.items.all()
     type_ids = [t.type_id for t in items]
 
-    price_data = fetch_price_data(type_ids)
+    # HACK... Until better implemented, region_id will
+    # be hardcoded into this function call
+    # 'The Forge' region_id = 10000002
+    region_id = 10000002
+
+    price_data = fetch_price_data(type_ids, region_id)
+
     save_price_data(price_data)
 
     return redirect('lists:detail', pk=pk)

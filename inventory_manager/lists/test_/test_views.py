@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+
+import json
 import mock
 
 from django.contrib.auth.models import User
@@ -8,7 +10,7 @@ from django.test import TestCase
 
 from characters.models import Character
 from eve.models import Item
-from eve.models import Price
+from lists.test_.data import crest_orders_data
 from lists.models import ShoppingList
 from lists.models import WatchList
 
@@ -62,16 +64,25 @@ class TestListsViews(TestCase):
             }
         }
 
-    @mock.patch('evelink.thirdparty.eve_central.EVECentral.market_stats')
-    def test_update_item_prices(self, mock_market_stats):
-        mock_market_stats.return_value = self.price_data
+    def test_update_item_prices(self):
         shoppinglist_pk = self.shoppinglist.pk
-
         uri = reverse('lists:update_prices', kwargs={'pk': shoppinglist_pk})
-        response = self.client.get(uri, follow=True)
 
-        last_price = Price.objects.last()
-        self.assertEqual(9.43, last_price.sell)
+        list_item = self.shoppinglist.items.all()[0]
+        list_item_price = list_item.prices.last().sell
+        self.assertEqual(list_item_price, 1.00)
+
+        expected_json_return = json.loads(crest_orders_data)
+
+        with mock.patch('eve.utils.requests') as mock_requests:
+            mock_requests.get.return_value = mock_response = mock.Mock()
+            mock_response.json.return_value = expected_json_return
+
+            response = self.client.get(uri, follow=True)
+
+        list_item = self.shoppinglist.items.all()[0]
+        list_item_price = list_item.prices.last().sell
+        self.assertEqual(list_item_price, 3.00)
 
         expected_redirect_uri = reverse('lists:detail', kwargs={'pk': shoppinglist_pk})
         self.assertRedirects(response, expected_redirect_uri)
