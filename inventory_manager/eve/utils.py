@@ -36,16 +36,35 @@ def save_price_data(price_data):
     for price in price_data:
         type_id = price['type']['id']
         item = Item.objects.get(type_id=type_id)
-        station_id = price['location']['id']
-        station = Station.objects.get(station_id=station_id)
-        region = station.region
-        solar_system = station.solar_system
         sell = price['price']
 
-        Price.objects.create(
-            item=item,
-            region=region,
-            solar_system=solar_system,
-            station=station,
-            sell=sell
-        )
+        new_price = {
+            'item': item,
+            'sell': sell,
+        }
+
+        # Not all stations are included within the SDK
+        # therefore, a look-up for Station will fail as
+        # no object for that station_id exists
+        # In this case, we'll instead just use the
+        # station name included within the price_data
+        try:
+            station_id = price['location']['id']
+            station = Station.objects.get(station_id=station_id)
+            region = station.region
+            solar_system = station.solar_system
+
+            new_price['station'] = station
+            new_price['region'] = region
+            new_price['solar_system'] = solar_system
+        except Station.DoesNotExist as e:
+            new_price['station_name'] = price['location']['name']
+
+            logger.exception(e)
+            logger.info('Station NOT FOUND:{} - {}'.format(
+                price['location']['name'],
+                price['location']['id']
+                )
+            )
+
+        Price.objects.create(**new_price)

@@ -78,7 +78,7 @@ class TestListsViews(TestCase):
             mock_requests.get.return_value = mock_response = mock.Mock()
             mock_response.json.return_value = expected_json_return
 
-            response = self.client.get(uri, follow=True)
+            response = self.client.post(uri, data={'region': 10000002}, follow=True)
 
         list_item = self.shoppinglist.items.all()[0]
         list_item_price = list_item.prices.last().sell

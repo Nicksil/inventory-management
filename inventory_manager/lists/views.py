@@ -10,6 +10,7 @@ from .models import ShoppingList
 from .models import WatchList
 from characters.models import Character
 from eve.models import Item
+from eve.models import Region
 from eve.utils import fetch_price_data
 from eve.utils import save_price_data
 
@@ -25,11 +26,7 @@ def update_item_prices(request, pk):
     shoppinglist = ShoppingList.objects.get(pk=pk)
     items = shoppinglist.items.all()
     type_ids = [t.type_id for t in items]
-
-    # HACK... Until better implemented, region_id will
-    # be hardcoded into this function call
-    # 'The Forge' region_id = 10000002
-    region_id = 10000002
+    region_id = int(request.POST['region'])
 
     price_data = fetch_price_data(type_ids, region_id)
 
@@ -46,11 +43,15 @@ class ShoppingListDeleteView(DeleteView):
 
 def shoppinglist_detail_view(request, pk):
     shoppinglist = ShoppingList.objects.get(pk=pk)
+    regions = Region.objects.all()
 
     return render(
         request,
         'lists/shoppinglist_detail_view.html',
-        {'shoppinglist': shoppinglist}
+        {
+            'shoppinglist': shoppinglist,
+            'regions': regions,
+        }
     )
 
 

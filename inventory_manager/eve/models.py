@@ -92,6 +92,7 @@ class Price(models.Model):
     region = models.ForeignKey(Region, null=True, related_name='prices')
     solar_system = models.ForeignKey(SolarSystem, null=True, related_name='prices')
     station = models.ForeignKey(Station, null=True, related_name='prices')
+    station_name = models.CharField(max_length=255, null=True)
 
     buy = models.FloatField(null=True)
     sell = models.FloatField(null=True)
