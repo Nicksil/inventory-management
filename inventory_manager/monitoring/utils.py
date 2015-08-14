@@ -12,11 +12,11 @@ def is_outbid(order):
 
     # Try to get last sell price for item,
     # if not price exists for item yet, return
-    # False... for now
+    # None... for now
     try:
         last_item_price = order.item.prices.last().sell
     except AttributeError:
         print('NO SELL PRICE FOUND FOR {}'.format(order.item.type_name))
-        return False
+        return
 
     return order_price > last_item_price

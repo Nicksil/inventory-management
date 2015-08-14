@@ -28,7 +28,8 @@ def update_item_prices(request, pk):
     type_ids = [t.type_id for t in items]
     region_id = int(request.POST['region'])
 
-    price_data = fetch_price_data(type_ids, region_id)
+    payload = [(type_id, region_id) for type_id in type_ids]
+    price_data = fetch_price_data(payload)
 
     save_price_data(price_data)
 

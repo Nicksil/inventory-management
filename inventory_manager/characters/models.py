@@ -84,7 +84,6 @@ class Order(models.Model):
     price = models.FloatField()
     issued = models.DateTimeField()
     qty_threshold = models.IntegerField(null=True, blank=True)
-    outbid = models.BooleanField()
 
     objects = models.Manager()
     active_orders = ActiveOrderManager()
@@ -101,10 +100,6 @@ class Order(models.Model):
              - datetime.datetime.utcnow()
 
         return strfdelta(tdelta, '{days}d {hours}h {minutes}m {seconds}s')
-
-    def save(self, *args, **kwargs):
-        self.outbid = is_outbid(self)
-        super(Order, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return 'Character: {}, Item: {}'.format(

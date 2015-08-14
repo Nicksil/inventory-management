@@ -33,7 +33,7 @@ class TestEveViews(TestCase):
             mock_requests.get.return_value = mock_response = mock.Mock()
             mock_response.json.return_value = expected_json_return
 
-            results = fetch_price_data([self.item_1.type_id], 10000002)
+            results = fetch_price_data([(self.item_1.type_id, 10000002)])
 
         self.assertIsInstance(results, list)
 
@@ -46,7 +46,7 @@ class TestEveViews(TestCase):
             mock_requests.get.return_value = mock_response = mock.Mock()
             mock_response.json.return_value = expected_json_return
 
-            results = fetch_price_data([self.item_1.type_id], 10000002)
+            results = fetch_price_data([(self.item_1.type_id, 10000002)])
 
         save_price_data(results)
 
@@ -64,7 +64,7 @@ class TestEveViews(TestCase):
             mock_requests.get.return_value = mock_response = mock.Mock()
             mock_response.json.return_value = expected_json_return
 
-            results = fetch_price_data([self.item_1.type_id], 10000002)
+            results = fetch_price_data([(self.item_1.type_id, 10000002)])
 
         save_price_data(results)
 
