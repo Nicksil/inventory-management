@@ -12,15 +12,18 @@ from .models import Station
 logger = logging.getLogger(__name__)
 
 
-def fetch_price_data(type_ids, region_id):
+def fetch_price_data(data):
+    # `data` is list of tuple [(type_id, region_id)]
+
     BASE_MARKET_URL = 'https://public-crest.eveonline.com/market/'
     BASE_TYPE_URL = 'https://public-crest.eveonline.com/types/'
 
     price_data = []
-    for t in type_ids:
+    for d in data:
+        type_id, region_id = d
         url = '{}{}/orders/sell/'.format(BASE_MARKET_URL, region_id)
         payload = {
-            'type': '{}{}/'.format(BASE_TYPE_URL, t),
+            'type': '{}{}/'.format(BASE_TYPE_URL, type_id),
         }
 
         resp = requests.get(url, params=payload)

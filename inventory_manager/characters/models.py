@@ -7,6 +7,7 @@ from django.db import models
 from eve.models import Item
 from eve.models import SolarSystem
 from eve.models import Station
+from monitoring.utils import is_outbid
 
 
 # http://stackoverflow.com/a/8907269/1770233
@@ -83,6 +84,7 @@ class Order(models.Model):
     price = models.FloatField()
     issued = models.DateTimeField()
     qty_threshold = models.IntegerField(null=True, blank=True)
+    outbid = models.BooleanField()
 
     objects = models.Manager()
     active_orders = ActiveOrderManager()
@@ -95,9 +97,14 @@ class Order(models.Model):
         return self.vol_remaining <= self.qty_threshold
 
     def expires_in(self):
-        tdelta = (self.issued + datetime.timedelta(days=self.duration)) - datetime.datetime.utcnow()
+        tdelta = (self.issued + datetime.timedelta(days=self.duration)) \
+             - datetime.datetime.utcnow()
 
         return strfdelta(tdelta, '{days}d {hours}h {minutes}m {seconds}s')
+
+    def save(self, *args, **kwargs):
+        self.outbid = is_outbid(self)
+        super(Order, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return 'Character: {}, Item: {}'.format(

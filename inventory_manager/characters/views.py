@@ -17,6 +17,8 @@ from .utils import save_characters
 from .utils import prepare_orders
 from .utils import save_assets
 from .utils import save_orders
+from eve.utils import fetch_price_data
+from eve.utils import save_price_data
 
 logger = logging.getLogger(__name__)
 
@@ -138,6 +140,16 @@ def orders_update(request, pk):
     character = Character.objects.get(pk=pk)
     char_id = character.char_id
     api_key = character.get_api_key()
+
+    active_orders = character.orders.filter(order_state='active')
+    order_data = []
+    for order in active_orders:
+        type_id = order.item.type_id
+        region_id = order.station.region.region_id
+        order_data.append((type_id, region_id))
+
+    new_prices = fetch_price_data(order_data)
+    save_price_data(new_prices)
 
     fetched_orders = fetch_orders(api_key, char_id)
     prepared_orders = prepare_orders(fetched_orders, character)

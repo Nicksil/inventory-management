@@ -17,7 +17,7 @@
             </thead>
             <tbody>
                 {% for order in orders %}
-                    <tr>
+                    <tr{% if order.outbid %} style="color: red;"{% endif %}>
                         <td>
                             {{ order.item.type_name }}
                         </td>
