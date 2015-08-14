@@ -19,6 +19,52 @@ from eve.utils import get_station_or_system
 logger = logging.getLogger(__name__)
 
 
+class CharacterManager(object):
+
+    def __init__(self, user, key_id, v_code):
+        self.user = user
+        self.key_id = key_id
+        self.v_code = v_code
+        self.api_key = (key_id, v_code)
+
+    def update(self):
+        data = self.fetch
+        parsed = self.parse(data)
+        self.save(parsed)
+
+    def fetch(self):
+        api = evelink.api.API(api_key=self.api_key)
+        acct = evelink.account.Account(api=api)
+
+        return acct.characters().result
+
+    def parse(self, chars):
+        parsed = []
+        for char in chars:
+            prepped = self.prepare(char)
+            parsed.append(prepped)
+
+        return parsed
+
+    def prepare(self, char):
+        prepped = {
+            'user': self.user,
+            'name': char['name'],
+            'char_id': char['id'],
+            'key_id': self.key_id,
+            'v_code': self.v_code,
+        }
+
+        return prepped
+
+    def save(self, chars):
+        for char in chars:
+            try:
+                Character.objects.create(**char)
+            except IntegrityError as e:
+                logger.exception(e)
+
+
 class AssetManager(object):
 
     def __init__(self, char, char_id, api_key):
@@ -34,8 +80,8 @@ class AssetManager(object):
     def fetch(self):
         api = evelink.api.API(api_key=self.api_key)
         char_api = evelink.char.Char(self.char_id, api)
-        result = char_api.assets().result
-        return result
+
+        return char_api.assets().result
 
     def parse(self, assets):
         parsed = []
@@ -49,6 +95,7 @@ class AssetManager(object):
                     for sub_asset in asset['contents']:
                         prepped = self.prepare(sub_asset)
                         parsed.append(prepped)
+
         return parsed
 
     def prepare(self, asset):
@@ -67,6 +114,7 @@ class AssetManager(object):
             'flag': asset['location_flag'],
             'packaged': asset['packaged'],
         }
+
         return prepped
 
     def save(self, assets):
@@ -75,52 +123,6 @@ class AssetManager(object):
                 Asset.objects.create(**asset)
             except IntegrityError as e:
                 logger.exception(e)
-
-
-def fetch_characters(api_key):
-    """
-    Wrapper for API call to EVE's /account/Characters.xml.aspx endpoint,
-    returning a list of characters exposed to given API credentials
-
-    :param tuple api_key: A Key ID and Verification Code in the form: (key_id, v_code)
-    :return: Dictionary of character data
-    :rtype: dict
-    """
-
-    api = evelink.api.API(api_key=api_key)
-    acct = evelink.account.Account(api=api)
-    characters = acct.characters().result
-
-    logger.info(characters)
-    return characters
-
-
-def save_characters(user, characters, api_key):
-    """
-    Prepares dict of characters for saving to Character model
-
-    :param user: Instance of :class:`User` model
-    :param dict characters: Dictionary of characters
-    :param tuple api_key: Tuple of (key_id, v_code)
-    :return: List of tuples of :class:`Character` objects
-    :rtype: list
-    """
-
-    key_id, v_code = api_key
-
-    for character in characters.itervalues():
-        _character = {
-            'user': user,
-            'name': character['name'],
-            'char_id': character['id'],
-            'key_id': key_id,
-            'v_code': v_code,
-        }
-
-        try:
-            Character.objects.create(**_character)
-        except IntegrityError:
-            pass
 
 
 def fetch_orders(api_key, char_id):
