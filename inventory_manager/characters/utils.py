@@ -13,176 +13,68 @@ from .models import Asset
 from .models import Character
 from .models import Order
 from eve.models import Item
-from eve.models import SolarSystem
 from eve.models import Station
+from eve.utils import get_station_or_system
 
 logger = logging.getLogger(__name__)
 
 
-def fetch_assets(api_key, char_id):
-    """
-    Retrieve character's assets
+class AssetManager(object):
 
-    :param tuple api_key: Passed in the form of a tuple - (key_id, v_code)
-    :param int char_id: Character's ID
-    :return: Dictionary of character's assets
-    :rtype: dict
-    """
+    def __init__(self, char, char_id, api_key):
+        self.char = char
+        self.char_id = char_id
+        self.api_key = api_key
 
-    api = evelink.api.API(api_key=api_key)
-    char_api = evelink.char.Char(char_id, api)
-    assets = char_api.assets().result
+    def update(self):
+        data = self.fetch()
+        parsed = self.parse(data)
+        self.save(parsed)
 
-    logger.info(assets)
-    return assets
+    def fetch(self):
+        api = evelink.api.API(api_key=self.api_key)
+        char_api = evelink.char.Char(self.char_id, api)
+        result = char_api.assets().result
+        return result
 
+    def parse(self, assets):
+        parsed = []
+        for a in assets.itervalues():
+            for asset in a['contents']:
+                prepped = self.prepare(asset)
+                parsed.append(prepped)
 
-def get_station_or_system_object(location_id):
-    try:
-        location_obj = Station.objects.get(station_id=location_id)
-        location = 'station'
-    except Station.DoesNotExist:
-        location_obj = SolarSystem.objects.get(solar_system_id=location_id)
-        location = 'solar_system'
+                # 'Sub-assets' may exist within an asset
+                if asset.get('contents'):
+                    for sub_asset in asset['contents']:
+                        prepped = self.prepare(sub_asset)
+                        parsed.append(prepped)
+        return parsed
 
-    return (location, location_obj)
+    def prepare(self, asset):
+        type_id = asset['item_type_id']
+        location_id = asset['location_id']
 
+        item = Item.objects.get(type_id=type_id)
+        location, location_obj = get_station_or_system(location_id)
 
-def save_assets(assets, character):
-    """
-    Prepares dict of assets for saving to Asset model
+        prepped = {
+            'character': self.char,
+            'item': item,
+            location: location_obj,
+            'unique_item_id': asset['id'],
+            'quantity': asset['quantity'],
+            'flag': asset['location_flag'],
+            'packaged': asset['packaged'],
+        }
+        return prepped
 
-    :param dict assets: Dictionary of assets
-    :param character: Instance of :class:`Character` model
-    :return: List of tuples of :class:`Asset` objects
-    :rtype: list
-
-    Sample dict format::
-
-       >>> {
-               60005485: {
-                   'contents': [
-                       {
-                           'id': <13-digit int>,
-                           'item_type_id': <short int>,
-                           'location_flag': 4,
-                           'location_id': <8-digit int>,
-                           'packaged': True,
-                           'quantity': 2200
-                       }
-                   ],
-                   'location_id': <8-digit int>
-               },
-               60012643: {
-                   'contents': [
-                       {
-                           'id': <13-digit int>,
-                           'item_type_id': <short int>,
-                           'location_flag': 4,
-                           'location_id': <8-digit int>,
-                           'packaged': False,
-                           'quantity': 1,
-                           'raw_quantity': -1
-                       },
-                       {
-                           'contents': [
-                               {
-                                   'id': <13-digit int>,
-                                   'item_type_id': <short int>,
-                                   'location_flag': 27,
-                                   'location_id': <8-digit int>,
-                                   'packaged': False,
-                                   'quantity': 1,
-                                   'raw_quantity': -1
-                               }
-                           ],
-                           'id': <13-digit int>,
-                           'item_type_id': <short int>,
-                           'location_flag': 4,
-                           'location_id': <8-digit int>,
-                           'packaged': False,
-                           'quantity': 1,
-                           'raw_quantity': -1
-                       },
-                       {
-                           'id': <13-digit int>,
-                           'item_type_id': <short int>,
-                           'location_flag': 4,
-                           'location_id': <8-digit int>,
-                           'packaged': True,
-                           'quantity': 8
-                       },
-                       {
-                           'contents': [
-                               {
-                                   'id': <13-digit int>,
-                                   'item_type_id': <short int>,
-                                   'location_flag': 27,
-                                   'location_id': <8-digit int>,
-                                   'packaged': False,
-                                   'quantity': 1,
-                                   'raw_quantity': -1
-                               }
-                           ],
-                           'id': <13-digit int>,
-                           'item_type_id': <short int>,
-                           'location_flag': 4,
-                           'location_id': <8-digit int>,
-                           'packaged': False,
-                           'quantity': 1,
-                           'raw_quantity': -1
-                       }
-                   ],
-                   'location_id': <8-digit int>
-               }
-           }
-    """
-
-    for a in assets.itervalues():
-        for asset in a['contents']:
-            type_id = asset['item_type_id']
-            item = Item.objects.get(type_id=type_id)
-
-            location_id = asset['location_id']
-            location, location_obj = get_station_or_system_object(location_id)
-
-            _asset = {
-                'character': character,
-                'item': item,
-                location: location_obj,
-                'unique_item_id': asset['id'],
-                'quantity': asset['quantity'],
-                'flag': asset['location_flag'],
-                'packaged': asset['packaged'],
-            }
-
+    def save(self, assets):
+        for asset in assets:
             try:
-                Asset.objects.create(**_asset)
-            except IntegrityError:
-                pass
-
-            if asset.get('contents'):
-                for sub_asset in asset['contents']:
-                    type_id = sub_asset['item_type_id']
-                    item = Item.objects.get(type_id=type_id)
-
-                    location_id = sub_asset['location_id']
-                    location, location_obj = get_station_or_system_object(location_id)
-
-                    _sub_asset = {
-                        'character': character,
-                        'item': item,
-                        location: location_obj,
-                        'unique_item_id': sub_asset['id'],
-                        'quantity': sub_asset['quantity'],
-                        'flag': sub_asset['location_flag'],
-                        'packaged': sub_asset['packaged'],
-                    }
-
-                    try:
-                        Asset.objects.create(**_sub_asset)
-                    except IntegrityError:
-                        pass
+                Asset.objects.create(**asset)
+            except IntegrityError as e:
+                logger.exception(e)
 
 
 def fetch_characters(api_key):

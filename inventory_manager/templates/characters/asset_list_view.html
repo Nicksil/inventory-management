@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% block body %}
-    <h1>{{ character.name }}'s Assets</h1>
-    <p><a href="{% url 'characters:detail' pk=character.pk %}">&lt; {{ character.name }}</a> | <a href="{% url 'characters:asset_update' pk=character.pk %}">Update assets</a></p>
+    <h1>{{ char.name }}'s Assets</h1>
+    <p><a href="{% url 'characters:detail' pk=char.pk %}">&lt; {{ char.name }}</a></p>
+    <p>
+        <form action="{% url 'characters:asset_list' pk=char.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">Update</button>
+        </form>
+    </p>
     {% if assets %}
         <table>
             <thead>

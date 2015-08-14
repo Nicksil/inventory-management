@@ -10,12 +10,11 @@ from django.views.generic import DeleteView
 from django.views.generic import DetailView
 
 from .models import Character
-from .utils import fetch_assets
+from .utils import AssetManager
 from .utils import fetch_characters
 from .utils import fetch_orders
 from .utils import save_characters
 from .utils import prepare_orders
-from .utils import save_assets
 from .utils import save_orders
 from eve.utils import fetch_price_data
 from eve.utils import save_price_data
@@ -59,27 +58,24 @@ class CharacterDelete(DeleteView):
     success_url = reverse_lazy('characters:list')
 
 
-def asset_update(request, pk):
-
-    character = Character.objects.get(pk=pk)
-    char_id = character.char_id
-    api_key = (character.key_id, character.v_code)
-
-    fetched_assets = fetch_assets(api_key, char_id)
-    save_assets(fetched_assets, character)
-
-    return redirect('characters:asset_list', pk=pk)
-
-
 def asset_list_view(request, pk):
+    char = Character.objects.get(pk=pk)
 
-    character = Character.objects.get(pk=pk)
-    assets = character.assets.all() \
+    if request.method == 'POST':
+        char_id = char.char_id
+        api_key = (char.key_id, char.v_code)
+
+        manager = AssetManager(char, char_id, api_key)
+        manager.update()
+
+        return redirect('characters:asset_list', pk=pk)
+
+    assets = char.assets.all() \
         .select_related('item').select_related('station')
 
     return render(
         request, 'characters/asset_list_view.html',
-        {'assets': assets, 'character': character})
+        {'assets': assets, 'char': char})
 
 
 def orders_update(request, pk):

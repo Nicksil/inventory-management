@@ -7,9 +7,29 @@ import requests
 
 from .models import Item
 from .models import Price
+from .models import SolarSystem
 from .models import Station
 
 logger = logging.getLogger(__name__)
+
+
+def get_station_or_system(location_id):
+    """
+    Given a location ID, determine whether the ID corresponds to
+    a station or a solar system.
+
+    Returns tuple of string of location type and its object:
+    ('station', station_obj)
+    """
+
+    try:
+        location_obj = Station.objects.get(station_id=location_id)
+        location = 'station'
+    except Station.DoesNotExist:
+        location_obj = SolarSystem.objects.get(solar_system_id=location_id)
+        location = 'solar_system'
+
+    return (location, location_obj)
 
 
 def fetch_price_data(data):

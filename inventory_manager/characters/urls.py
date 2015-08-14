@@ -4,7 +4,6 @@ from __future__ import absolute_import
 from django.conf.urls import url
 
 from .views import asset_list_view
-from .views import asset_update
 from .views import character_add_view
 from .views import CharacterDelete
 from .views import CharacterDetailView
@@ -37,11 +36,6 @@ urlpatterns = [
         r'^(?P<pk>\d+)/assets/$',
         asset_list_view,
         name='asset_list'
-    ),
-    url(
-        r'^(?P<pk>\d+)/assets/update/$',
-        asset_update,
-        name='asset_update'
     ),
     url(
         r'^(?P<pk>\d+)/orders/$',

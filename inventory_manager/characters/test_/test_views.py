@@ -94,17 +94,6 @@ class TestCharactersViews(TestCase):
             }
         )
 
-    @mock.patch('evelink.char.Char.assets')
-    def test_asset_update(self, mock_assets):
-        mock_assets.return_value = self.test_asset
-        char_pk = self.character.pk
-
-        uri = reverse('characters:asset_update', kwargs={'pk': char_pk})
-        response = self.client.get(uri, follow=True)
-
-        expected_redirect_uri = reverse('characters:asset_list', kwargs={'pk': char_pk})
-        self.assertRedirects(response, expected_redirect_uri)
-
     @mock.patch('evelink.account.Account.characters')
     def test_character_add_view_post_request(self, mock_characters):
         mock_characters.return_value = self.test_char
@@ -150,6 +139,26 @@ class TestCharactersViews(TestCase):
 
         expected_redirect_uri = reverse(
             'characters:order_list',
+            kwargs={'pk': self.character.pk}
+        )
+
+        self.assertRedirects(response, expected_redirect_uri)
+
+    def test_asset_list_view_get(self):
+        uri = reverse('characters:asset_list', kwargs={'pk': self.character.pk})
+        response = self.client.get(uri)
+
+        self.assertTemplateUsed(response, 'characters/asset_list_view.html')
+
+    @mock.patch('evelink.char.Char.assets')
+    def test_asset_list_view_post(self, mock_assets):
+        mock_assets.return_value = self.test_asset
+
+        uri = reverse('characters:asset_list', kwargs={'pk': self.character.pk})
+        response = self.client.post(uri, follow=True)
+
+        expected_redirect_uri = reverse(
+            'characters:asset_list',
             kwargs={'pk': self.character.pk}
         )
 

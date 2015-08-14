@@ -2,14 +2,15 @@
 from __future__ import absolute_import
 from collections import namedtuple
 
+import mock
 from django.test import TestCase
 from evelink import api
 
 from characters.models import Asset as _Asset
-from characters.models import Order as Order
+from characters.models import Order
 from characters.models import Character
+from characters.utils import AssetManager
 from characters.utils import prepare_orders
-from characters.utils import save_assets
 
 
 class TestCharactersUtils(TestCase):
@@ -31,7 +32,17 @@ class TestCharactersUtils(TestCase):
                             'location_flag': 4,
                             'location_id': 30000142,
                             'packaged': True,
-                            'quantity': 2200
+                            'quantity': 2200,
+                            'contents': [
+                                {
+                                    'id': 1234567890133,
+                                    'item_type_id': 35,
+                                    'location_flag': 4,
+                                    'location_id': 30000142,
+                                    'packaged': True,
+                                    'quantity': 2200
+                                }
+                            ]
                         }
                     ],
                     'location_id': 30000142
@@ -39,16 +50,42 @@ class TestCharactersUtils(TestCase):
             }
         )
 
-    def test_prepare_assets_station_does_not_exist(self):
-        char_assets = _Asset.objects.all()
+    @mock.patch('evelink.char.Char.assets')
+    def test_asset_manager(self, mock_assets):
+        mock_assets.return_value = self.test_asset
 
-        # Check to make sure only 1 asset record has the solar_system attribute
-        self.assertEqual(1, len(char_assets.filter(solar_system__isnull=False)))
+        char = self.character
+        char_id = char.char_id
+        api_key = self.character.get_api_key()
 
-        save_assets(self.test_asset.result, self.character)
+        manager = AssetManager(char, char_id, api_key)
+        fetch = manager.fetch()
+        self.assertIsInstance(fetch, dict)
+        self.assertEqual(fetch, self.test_asset.result)
 
-        # Check if there are now 2 records with a non-null solar_system attribute
-        self.assertEqual(2, len(char_assets.filter(solar_system__isnull=False)))
+        parse = manager.parse(fetch)
+        self.assertIsInstance(parse, list)
+
+        manager.save(parse)
+        last_saved_asset = _Asset.objects.last()
+        asset_unique_id = last_saved_asset.unique_item_id
+        self.assertEqual(asset_unique_id, parse[1]['unique_item_id'])
+
+    @mock.patch('evelink.char.Char.assets')
+    def test_asset_manager_update(self, mock_assets):
+        mock_assets.return_value = self.test_asset
+
+        prev_num_assets = _Asset.objects.count()
+
+        char = self.character
+        char_id = char.char_id
+        api_key = self.character.get_api_key()
+
+        manager = AssetManager(char, char_id, api_key)
+        manager.update()
+
+        current_num_assets = _Asset.objects.count()
+        self.assertEqual(prev_num_assets + 2, current_num_assets)
 
     def test_prepare_orders_existing_order_object(self):
         # Make sure order currently has 'vol_remaining' attribute at 4000

@@ -9,8 +9,11 @@ from django.test import TestCase
 from eve.models import Item
 from eve.models import Price
 from eve.models import Region
+from eve.models import SolarSystem
+from eve.models import Station
 from eve.test_.data import crest_orders_data
 from eve.utils import fetch_price_data
+from eve.utils import get_station_or_system
 from eve.utils import save_price_data
 
 
@@ -75,3 +78,14 @@ class TestEveViews(TestCase):
         self.assertIsNotNone(Price.objects.last().station_name)
 
         self.assertEqual(Price.objects.count(), 2)
+
+    def test_get_station_or_system(self):
+        station_id = Station.objects.get(pk=1).station_id
+
+        location_name, location_obj = get_station_or_system(station_id)
+        self.assertEqual(location_name, 'station')
+
+        solar_system_id = SolarSystem.objects.get(pk=1).solar_system_id
+
+        location_name, location_obj = get_station_or_system(solar_system_id)
+        self.assertEqual(location_name, 'solar_system')
