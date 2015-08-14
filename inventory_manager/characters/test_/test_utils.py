@@ -7,10 +7,10 @@ from django.test import TestCase
 from evelink import api
 
 from characters.models import Asset as _Asset
-from characters.models import Order
+from characters.models import Order as _Order
 from characters.models import Character
 from characters.utils import AssetManager
-from characters.utils import prepare_orders
+from characters.utils import OrderManager
 
 
 class TestCharactersUtils(TestCase):
@@ -46,6 +46,28 @@ class TestCharactersUtils(TestCase):
                         }
                     ],
                     'location_id': 30000142
+                }
+            }
+        )
+
+        cls.Order = namedtuple('Order', ['result'])
+        cls.test_order_existing = cls.Order(
+            {
+                12345678: {
+                    'status': 'active',
+                    'type_id': 35,
+                    'timestamp': 1350502273,
+                    'price': 708999.99,
+                    'account_key': 1000,
+                    'escrow': 0.0,
+                    'station_id': 60003760,
+                    'amount_left': 0,
+                    'duration': 0,
+                    'id': 12345678,
+                    'char_id': 12345,
+                    'range': -1,
+                    'amount': 50,
+                    'type': 'sell'
                 }
             }
         )
@@ -87,24 +109,36 @@ class TestCharactersUtils(TestCase):
         current_num_assets = _Asset.objects.count()
         self.assertEqual(prev_num_assets + 2, current_num_assets)
 
-    def test_prepare_orders_existing_order_object(self):
-        # Make sure order currently has 'vol_remaining' attribute at 4000
-        existing_order = Order.objects.get(pk=1)
-        self.assertEqual(4000, existing_order.vol_remaining)
-
-        updated_order_data = {
-            existing_order.order_id: {
-                'id': existing_order.order_id,
-                'amount_left': 1000,
-                'status': existing_order.order_state,
-                'price': existing_order.price,
-                'timestamp': api.parse_ts("2015-08-07 22:35:00"),
+    @mock.patch('evelink.char.Char.orders')
+    def test_order_manager_save_method_handles_existing_object_correctly(self, mock_orders):
+        existing_order = _Order.objects.get(pk=1)
+        updated_order = self.Order(
+            {
+                1234567: {
+                    'status': 'expired',
+                    'type_id': 35,
+                    'timestamp': 1350502273,
+                    'price': 100.00,
+                    'account_key': 1000,
+                    'escrow': 0.0,
+                    'station_id': 60003760,
+                    'amount_left': 0,
+                    'duration': 0,
+                    'id': 1234567,
+                    'char_id': 12345,
+                    'range': -1,
+                    'amount': 50,
+                    'type': 'sell'
+                }
             }
-        }
+        )
+        mock_orders.return_value = updated_order
 
-        # Send in an updated version of existing_order
-        prepare_orders(updated_order_data, self.character)
+        self.assertEqual(existing_order.order_state, 'active')
 
-        # Make sure order now has 'vol_remaining' attribute at 1000
-        existing_order = Order.objects.get(pk=1)
-        self.assertEqual(1000, existing_order.vol_remaining)
+        manager = OrderManager(self.character, self.character.char_id, self.character.get_api_key())
+        manager.update()
+
+        existing_order = _Order.objects.get(pk=1)
+
+        self.assertEqual(existing_order.order_state, 'expired')
