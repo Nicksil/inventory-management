@@ -28,7 +28,7 @@ class CharacterManager(object):
         self.api_key = (key_id, v_code)
 
     def update(self):
-        data = self.fetch
+        data = self.fetch()
         parsed = self.parse(data)
         self.save(parsed)
 
@@ -40,7 +40,7 @@ class CharacterManager(object):
 
     def parse(self, chars):
         parsed = []
-        for char in chars:
+        for char in chars.itervalues():
             prepped = self.prepare(char)
             parsed.append(prepped)
 

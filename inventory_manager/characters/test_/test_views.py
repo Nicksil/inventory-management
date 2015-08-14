@@ -102,12 +102,8 @@ class TestCharactersViews(TestCase):
         uri = reverse('characters:add')
         response = self.client.post(
             uri,
-            data={
-                'key_id': 1234567,
-                'v_code': 'test_v_code_123'
-            },
-            follow=True
-        )
+            data={'key_id': 1234567, 'v_code': 'test_v_code_123'},
+            follow=True)
 
         expected_redirect_uri = reverse('characters:list')
         self.assertRedirects(response, expected_redirect_uri)
@@ -120,9 +116,7 @@ class TestCharactersViews(TestCase):
 
     def test_orders_list_view(self):
         uri = reverse(
-            'characters:order_list',
-            kwargs={'pk': self.character.pk}
-        )
+            'characters:order_list', kwargs={'pk': self.character.pk})
         response = self.client.get(uri)
 
         self.assertTemplateUsed(response, 'characters/orders_list_view.html')

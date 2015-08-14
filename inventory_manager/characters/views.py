@@ -11,9 +11,8 @@ from django.views.generic import DetailView
 
 from .models import Character
 from .utils import AssetManager
-from .utils import fetch_characters
+from .utils import CharacterManager
 from .utils import fetch_orders
-from .utils import save_characters
 from .utils import prepare_orders
 from .utils import save_orders
 from eve.utils import fetch_price_data
@@ -29,9 +28,8 @@ def character_add_view(request):
         key_id = int(request.POST['key_id'])
         v_code = request.POST['v_code']
 
-        api_key = (key_id, v_code)
-        fetched_characters = fetch_characters(api_key)
-        save_characters(user, fetched_characters, api_key)
+        manager = CharacterManager(user, key_id, v_code)
+        manager.update()
 
         return redirect('characters:list')
     return render(request, 'characters/character_add_form.html')
