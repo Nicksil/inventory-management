@@ -11,8 +11,8 @@ from .models import WatchList
 from characters.models import Character
 from eve.models import Item
 from eve.models import Region
-from eve.utils import fetch_price_data
-from eve.utils import save_price_data
+# from eve.utils import fetch_price_data
+# from eve.utils import save_price_data
 
 
 def update_item_prices(request, pk):

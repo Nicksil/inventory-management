@@ -7,7 +7,6 @@ from django.db import models
 from eve.models import Item
 from eve.models import SolarSystem
 from eve.models import Station
-from monitoring.utils import is_outbid
 
 
 # http://stackoverflow.com/a/8907269/1770233
