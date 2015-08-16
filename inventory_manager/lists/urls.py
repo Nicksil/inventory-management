@@ -9,7 +9,8 @@ from .views import shoppinglist_create_view
 # from .views import shoppinglist_detail_view
 from .views import shoppinglist_item_remove
 from .views import shoppinglist_list_view
-from .views import shoppinglist_update_view
+from .views import ShoppingListUpdateView
+# from .views import shoppinglist_update_view
 # from .views import watchlist_create_view
 from .views import watchlist_delete
 from .views import watchlist_detail_view
@@ -34,7 +35,7 @@ urlpatterns = [
     ),
     url(
         r'^(?P<pk>\d+)/update/$',
-        shoppinglist_update_view,
+        ShoppingListUpdateView.as_view(),
         name='update'
     ),
     url(

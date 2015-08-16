@@ -103,6 +103,28 @@ class TestListsViews(TestCase):
 
         self.assertTemplateUsed(response, 'lists/shoppinglist_create_view.html')
 
+    def test_shoppinglist_update_view_updates_object_name(self):
+        self.client.login(username=self.user.username, password=self.user_password)
+
+        start_name = self.shoppinglist.name
+        self.assertEqual(start_name, "Test ShoppingList")
+
+        uri = reverse('lists:update', kwargs={'pk': self.shoppinglist.pk})
+        payload = {'name': 'Test ShoppingList Updated'}
+        response = self.client.post(uri, data=payload)
+
+        final_name = self.shoppinglist.name
+
+        self.assertEqual(final_name, 'Test ShoppingList Updated')
+
+    def test_shoppinglist_update_view_renders_correct_template(self):
+        self.client.login(username=self.user.username, password=self.user_password)
+
+        uri = reverse('lists:update', kwargs={'pk': self.shoppinglist.pk})
+        response = self.client.get(uri)
+
+        self.assertTemplateUsed(response, 'lists/shoppinglist_form.html')
+
     def test_watchlist_delete(self):
         # Confirm 1 watchlist object
         self.assertEqual(1, WatchList.objects.count())
