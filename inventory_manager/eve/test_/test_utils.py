@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import json
 import mock
 
 from django.test import TestCase
 
 from eve.models import Item
-from eve.models import Price
 from eve.models import Region
 from eve.models import SolarSystem
 from eve.models import Station
-from eve.test_.data import crest_orders_data
-from eve.utils import fetch_price_data
+from eve.utils import EVECentralManager
 from eve.utils import get_station_or_system
-from eve.utils import save_price_data
 
 
 class TestEveViews(TestCase):
@@ -29,55 +25,69 @@ class TestEveViews(TestCase):
         cls.region = Region.objects.get(region_name='The Forge')
         cls.region_id = cls.region.region_id
 
-    def test_fetch_price_data(self):
-        expected_json_return = json.loads(crest_orders_data)
+        cls.test_price_data = {
+            'sell': {
+                'min': 10.74,
+                'max': 17.4,
+                'median': 12.23,
+                'volume': 6780164119,
+                'percentile': 10.88,
+                'stddev': 1.67,
+                'avg': 13.15
+            },
+            'all': {
+                'min': 1.01,
+                'max': 17.4,
+                'median': 11.32,
+                'volume': 9534000331,
+                'percentile': 6.93,
+                'stddev': 2.22,
+                'avg': 12.19
+            },
+            'buy': {
+                'min': 5.0,
+                'max': 10.69,
+                'median': 10.55,
+                'volume': 2742836212,
+                'percentile': 10.68,
+                'stddev': 1.31,
+                'avg': 9.88
+            },
+            'id': 35
+        }
 
-        with mock.patch('eve.utils.requests') as mock_requests:
-            mock_requests.get.return_value = mock_response = mock.Mock()
-            mock_response.json.return_value = expected_json_return
-
-            results = fetch_price_data([(self.item_1.type_id, 10000002)])
-
-        self.assertIsInstance(results, list)
-
-    def test_save_price_data(self):
-        self.assertEqual(Price.objects.count(), 0)
-
-        expected_json_return = json.loads(crest_orders_data)
-
-        with mock.patch('eve.utils.requests') as mock_requests:
-            mock_requests.get.return_value = mock_response = mock.Mock()
-            mock_response.json.return_value = expected_json_return
-
-            results = fetch_price_data([(self.item_1.type_id, 10000002)])
-
-        save_price_data(results)
-
-        self.assertEqual(Price.objects.count(), 2)
-
-    def test_save_price_data_with_station_exception(self):
-        self.assertEqual(Price.objects.count(), 0)
-
-        expected_json_return = json.loads(crest_orders_data)
-
-        # Insert an unrecognized station into last result
-        expected_json_return['items'][1]['location']['id'] = 1222234
-
-        with mock.patch('eve.utils.requests') as mock_requests:
-            mock_requests.get.return_value = mock_response = mock.Mock()
-            mock_response.json.return_value = expected_json_return
-
-            results = fetch_price_data([(self.item_1.type_id, 10000002)])
-
-        save_price_data(results)
-
-        # Check to see if station attribute is None
-        self.assertIsNone(Price.objects.last().station)
-
-        # Check to see if station_name attribute is present
-        self.assertIsNotNone(Price.objects.last().station_name)
-
-        self.assertEqual(Price.objects.count(), 2)
+        cls.market_stats_raw_return_data = {
+            35: {
+                'sell': {
+                    'min': 10.74,
+                    'max': 17.4,
+                    'median': 12.23,
+                    'volume': 6780164119,
+                    'percentile': 10.88,
+                    'stddev': 1.67,
+                    'avg': 13.15
+                },
+                'all': {
+                    'min': 1.01,
+                    'max': 17.4,
+                    'median': 11.32,
+                    'volume': 9534000331,
+                    'percentile': 6.93,
+                    'stddev': 2.22,
+                    'avg': 12.19
+                },
+                'buy': {
+                    'min': 5.0,
+                    'max': 10.69,
+                    'median': 10.55,
+                    'volume': 2742836212,
+                    'percentile': 10.68,
+                    'stddev': 1.31,
+                    'avg': 9.88
+                },
+                'id': 35
+            }
+        }
 
     def test_get_station_or_system(self):
         station_id = Station.objects.get(pk=1).station_id
@@ -89,3 +99,46 @@ class TestEveViews(TestCase):
 
         location_name, location_obj = get_station_or_system(solar_system_id)
         self.assertEqual(location_name, 'solar_system')
+
+    @mock.patch('evelink.thirdparty.eve_central.EVECentral.market_stats')
+    def test_eve_central_manager_returns_price_data_dict_using_system(self, mock_market_stats):
+        mock_market_stats.return_value = self.market_stats_raw_return_data
+
+        type_ids = [35]
+        system = 30000142
+
+        manager = EVECentralManager(type_ids, system=system)
+        price_data = manager.update().next()
+
+        self.assertEqual(price_data, self.test_price_data)
+
+    @mock.patch('evelink.thirdparty.eve_central.EVECentral.market_stats')
+    def test_eve_central_manager_returns_price_data_dict_using_hours(self, mock_market_stats):
+        mock_market_stats.return_value = self.market_stats_raw_return_data
+
+        type_ids = [35]
+        system = 30000142
+        hours = 5
+
+        manager = EVECentralManager(type_ids, hours=hours, system=system)
+        price_data = manager.update().next()
+
+        self.assertEqual(price_data, self.test_price_data)
+
+    @mock.patch('evelink.thirdparty.eve_central.EVECentral.market_stats')
+    def test_eve_central_manager_returns_price_data_dict_using_regions(self, mock_market_stats):
+        mock_market_stats.return_value = self.market_stats_raw_return_data
+
+        type_ids = [35]
+        regions = 10000002
+
+        manager = EVECentralManager(type_ids, regions=regions)
+        price_data = manager.update().next()
+
+        self.assertEqual(price_data, self.test_price_data)
+
+    def test_eve_central_manager_raises_exception(self):
+        type_ids = [35]
+
+        with self.assertRaises(AttributeError):
+            EVECentralManager(type_ids)

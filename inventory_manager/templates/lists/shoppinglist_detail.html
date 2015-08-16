@@ -7,7 +7,7 @@
         <strong>Your shopping list has no name, yo</strong>
     {% endif %}
     <p><a href="{% url 'lists:list' %}">&lt; All shopping lists</a> | <a href="{% url 'lists:update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'lists:delete' pk=shoppinglist.pk %}">Delete</a></p>
-    <form action="{% url 'lists:update_prices' pk=shoppinglist.pk %}" method="POST">
+    <form action="" method="POST">
         {% csrf_token %}
         <label for="_region">Select Region</label>
         <select name="region" id="_region">

@@ -5,35 +5,13 @@ from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic import DeleteView
+from django.views.generic import DetailView
 
 from .models import ShoppingList
 from .models import WatchList
 from characters.models import Character
 from eve.models import Item
 from eve.models import Region
-# from eve.utils import fetch_price_data
-# from eve.utils import save_price_data
-
-
-def update_item_prices(request, pk):
-    """
-    Updates item pricing data via the eve-central.com market API
-
-    :param int pk: Primary key for :class:`ShoppingList` instance
-    :return: Redirect function to given shoppinglist's detail view
-    """
-
-    shoppinglist = ShoppingList.objects.get(pk=pk)
-    items = shoppinglist.items.all()
-    type_ids = [t.type_id for t in items]
-    region_id = int(request.POST['region'])
-
-    payload = [(type_id, region_id) for type_id in type_ids]
-    price_data = fetch_price_data(payload)
-
-    save_price_data(price_data)
-
-    return redirect('lists:detail', pk=pk)
 
 
 class ShoppingListDeleteView(DeleteView):
@@ -42,18 +20,14 @@ class ShoppingListDeleteView(DeleteView):
     success_url = reverse_lazy('lists:list')
 
 
-def shoppinglist_detail_view(request, pk):
-    shoppinglist = ShoppingList.objects.prefetch_related('items').get(pk=pk)
-    regions = Region.objects.all()
+class ShoppingListDetailView(DetailView):
 
-    return render(
-        request,
-        'lists/shoppinglist_detail_view.html',
-        {
-            'shoppinglist': shoppinglist,
-            'regions': regions,
-        }
-    )
+    model = ShoppingList
+
+    def get_context_data(self, **kwargs):
+        kwargs['regions'] = Region.objects.all()
+
+        return super(ShoppingListDetailView, self).get_context_data(**kwargs)
 
 
 def shoppinglist_item_remove(request, list_pk, item_pk):
