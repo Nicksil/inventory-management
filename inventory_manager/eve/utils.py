@@ -26,23 +26,25 @@ def get_station_or_system(location_id):
     return (location, location_obj)
 
 
-class EVECentralManager(object):
+class PriceFetcher(object):
 
     def __init__(self, type_ids, hours=None, regions=None, system=None):
         self.type_ids = type_ids
         self.hours = hours
         self.regions = regions
         self.system = system
+        self.station = None
+        self.payload = None
 
         if self.regions is None and self.system is None:
             raise AttributeError('Must include "regions" or "system" argument')
 
-    def update(self):
-        price_data = self.fetch()
+    def fetch(self):
+        self.payload = self.prepare_payload()
 
-        return self.parse(price_data)
+        return self.via_eve_central()
 
-    def prepare(self):
+    def prepare_payload(self):
         payload = {'type_ids': self.type_ids}
 
         if self.regions:
@@ -55,15 +57,23 @@ class EVECentralManager(object):
 
         return payload
 
-    def fetch(self):
-        """
-        Returns an iterator over the values returned by market API call
-        """
+    def via_eve_central(self):
         eve_central = EVECentral()
-        payload = self.prepare()
-        price_data = eve_central.market_stats(**payload)
+        self.prepare_payload()
+        price_data = eve_central.market_stats(**self.payload)
 
-        return price_data
-
-    def parse(self, price_data):
         return price_data.itervalues()
+
+    def prepare_save(self, price_data):
+        data_list = []
+        for price in price_data:
+            data_list.append(
+                {
+                    'type_id': price['id'],
+                    'regions': self.regions,
+                    'system': self.system,
+                    'station_id': self.station,
+                    'buy': price['buy']['max'],
+                    'sell': price['sell']['min']
+                }
+            )

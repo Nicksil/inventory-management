@@ -9,7 +9,7 @@ from eve.models import Item
 from eve.models import Region
 from eve.models import SolarSystem
 from eve.models import Station
-from eve.utils import EVECentralManager
+from eve.utils import PriceFetcher
 from eve.utils import get_station_or_system
 
 
@@ -107,8 +107,8 @@ class TestEveViews(TestCase):
         type_ids = [35]
         system = 30000142
 
-        manager = EVECentralManager(type_ids, system=system)
-        price_data = manager.update().next()
+        manager = PriceFetcher(type_ids, system=system)
+        price_data = manager.fetch().next()
 
         self.assertEqual(price_data, self.test_price_data)
 
@@ -120,8 +120,8 @@ class TestEveViews(TestCase):
         system = 30000142
         hours = 5
 
-        manager = EVECentralManager(type_ids, hours=hours, system=system)
-        price_data = manager.update().next()
+        manager = PriceFetcher(type_ids, hours=hours, system=system)
+        price_data = manager.fetch().next()
 
         self.assertEqual(price_data, self.test_price_data)
 
@@ -132,8 +132,8 @@ class TestEveViews(TestCase):
         type_ids = [35]
         regions = 10000002
 
-        manager = EVECentralManager(type_ids, regions=regions)
-        price_data = manager.update().next()
+        manager = PriceFetcher(type_ids, regions=regions)
+        price_data = manager.fetch().next()
 
         self.assertEqual(price_data, self.test_price_data)
 
@@ -141,4 +141,4 @@ class TestEveViews(TestCase):
         type_ids = [35]
 
         with self.assertRaises(AttributeError):
-            EVECentralManager(type_ids)
+            PriceFetcher(type_ids)

@@ -3,6 +3,7 @@ from django.db import models
 
 
 class Item(models.Model):
+
     """
     A model to represent a single Item or "Type"
     """
@@ -15,6 +16,7 @@ class Item(models.Model):
 
 
 class Region(models.Model):
+
     """
     A model to represent a single Region
     """
@@ -30,6 +32,7 @@ class Region(models.Model):
 
 
 class Constellation(models.Model):
+
     """
     A model to represent a single Constellation
     """
@@ -47,6 +50,7 @@ class Constellation(models.Model):
 
 
 class SolarSystem(models.Model):
+
     """
     A model to represent a single Solar System
     """
@@ -65,6 +69,7 @@ class SolarSystem(models.Model):
 
 
 class Station(models.Model):
+
     """
     A model to represent a single Station
     """
@@ -84,6 +89,7 @@ class Station(models.Model):
 
 
 class Price(models.Model):
+
     """
     A model to represent a price point on a single Item
     """
@@ -92,7 +98,6 @@ class Price(models.Model):
     region = models.ForeignKey(Region, null=True, related_name='prices')
     solar_system = models.ForeignKey(SolarSystem, null=True, related_name='prices')
     station = models.ForeignKey(Station, null=True, related_name='prices')
-    station_name = models.CharField(max_length=255, null=True)
 
     buy = models.FloatField(null=True)
     sell = models.FloatField(null=True)

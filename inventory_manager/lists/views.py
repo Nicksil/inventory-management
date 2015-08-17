@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import pdb
-
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic import DeleteView
 from django.views.generic import DetailView
-from django.views.generic import UpdateView
 
 from .models import ShoppingList
 from .models import WatchList
 from characters.models import Character
 from eve.models import Item
 from eve.models import Region
+from eve.utils import PriceFetcher
 
 
 class ShoppingListDeleteView(DeleteView):
@@ -51,41 +49,36 @@ def shoppinglist_list_view(request):
     )
 
 
-class ShoppingListUpdateView(UpdateView):
+def shoppinglist_update_view(request, pk):
+    shoppinglist = ShoppingList.objects.get(pk=pk)
 
-    model = ShoppingList
-    fields = ('items', 'name')
+    if request.method == 'POST':
+        name = request.POST['name']
+        items = request.POST['items']
+        items = items.split(', ')
 
-    def get_form_kwargs(self):
-        this = super(ShoppingListUpdateView, self).get_form_kwargs()
-        pdb.set_trace()
-        return this
+        item_list = []
+        for item in items:
+            item_list.append(Item.objects.get(type_name=item))
 
-    def form_valid(self, form):
-        return super(ShoppingListUpdateView, self).form_valid(form)
+        shoppinglist.name = name
+        shoppinglist.items.add(*item_list)
+
+        return redirect('lists:detail', pk=pk)
+    return render(request, 'lists/shoppinglist_form.html', {'shoppinglist': shoppinglist})
 
 
-# def shoppinglist_update_view(request, pk):
-#     shoppinglist = ShoppingList.objects.get(pk=pk)
+def shoppinglist_price_update(request, pk):
+    shoppinglist = ShoppingList.objects.get(pk=pk)
 
-#     if request.method == 'POST':
-#         name = request.POST['name']
-#         items = request.POST['items']
+    region_name = request.POST['region']
+    region = Region.objects.get(region_name=region_name)
+    region_id = region.region_id
 
-#         shoppinglist.name = name
-#         shoppinglist.save()
+    items = shoppinglist.items.all()
+    type_ids = [x.type_id for x in items]
 
-#         if len(items):
-#             item_obj = Item.objects.get(type_name=items)
-#             shoppinglist.items.add(item_obj)
-
-#         return redirect('lists:detail', pk=pk)
-
-#     return render(
-#         request,
-#         'lists/shoppinglist_update_view.html',
-#         {'shoppinglist': shoppinglist}
-#     )
+    price_data = PriceFetcher(type_ids, regions=region_id)
 
 
 def shoppinglist_create_view(request):
