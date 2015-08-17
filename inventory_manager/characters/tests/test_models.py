@@ -8,8 +8,6 @@ from characters.models import Order
 
 class TestCharactersModels(TestCase):
 
-    fixtures = ['characters.json']
-
     def test_active_order_manager(self):
         all_orders = Order.objects.all()
         self.assertEqual(2, len(all_orders))

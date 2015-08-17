@@ -12,8 +12,6 @@ from lists.models import WatchList
 
 class TestListsViews(TestCase):
 
-    fixtures = ['lists.json']
-
     @classmethod
     def setUpTestData(cls):
         cls.character = Character.objects.get(pk=1)

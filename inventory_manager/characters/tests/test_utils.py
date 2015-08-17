@@ -14,8 +14,6 @@ from characters.utils import OrderManager
 
 class TestCharactersUtils(TestCase):
 
-    fixtures = ['characters.json']
-
     @classmethod
     def setUpTestData(cls):
         cls.character = Character.objects.get(pk=1)

@@ -13,8 +13,6 @@ from characters.models import Character
 
 class TestCharactersViews(TestCase):
 
-    fixtures = ['characters.json']
-
     @classmethod
     def setUpTestData(cls):
         cls.user_password = 'test_password'

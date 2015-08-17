@@ -15,8 +15,6 @@ from eve.utils import get_station_or_system
 
 class TestEveViews(TestCase):
 
-    fixtures = ['eve.json']
-
     @classmethod
     def setUpTestData(cls):
         cls.item_1 = Item.objects.get(type_name='Sabre')
