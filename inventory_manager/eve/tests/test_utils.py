@@ -5,12 +5,12 @@ import mock
 
 from django.test import TestCase
 
-from inventory_manager.eve.models import Item
-from inventory_manager.eve.models import Region
-from inventory_manager.eve.models import SolarSystem
-from inventory_manager.eve.models import Station
-from inventory_manager.eve.utils import PriceFetcher
-from inventory_manager.eve.utils import get_station_or_system
+from eve.models import Item
+from eve.models import Region
+from eve.models import SolarSystem
+from eve.models import Station
+from eve.utils import PriceFetcher
+from eve.utils import get_station_or_system
 
 
 class TestEveViews(TestCase):
