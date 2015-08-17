@@ -4,13 +4,12 @@ from collections import namedtuple
 
 import mock
 from django.test import TestCase
-from evelink import api
 
-from characters.models import Asset as _Asset
-from characters.models import Order as _Order
-from characters.models import Character
-from characters.utils import AssetManager
-from characters.utils import OrderManager
+from inventory_manager.characters.models import Asset as _Asset
+from inventory_manager.characters.models import Order as _Order
+from inventory_manager.characters.models import Character
+from inventory_manager.characters.utils import AssetManager
+from inventory_manager.characters.utils import OrderManager
 
 
 class TestCharactersUtils(TestCase):

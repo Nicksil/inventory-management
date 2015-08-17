@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 from django.test import TestCase
 
-from characters.models import Order
+from inventory_manager.characters.models import Order
 
 
 class TestCharactersModels(TestCase):

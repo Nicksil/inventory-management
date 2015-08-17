@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from characters.models import Character
+from inventory_manager.characters.models import Character
 
 
 class TestCharactersViews(TestCase):

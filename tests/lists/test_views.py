@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import json
-import mock
-
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from characters.models import Character
-from eve.models import Item
-from lists.test_.data import crest_orders_data
-from lists.models import ShoppingList
-from lists.models import WatchList
+from inventory_manager.characters.models import Character
+from inventory_manager.lists.models import ShoppingList
+from inventory_manager.lists.models import WatchList
 
 
 class TestListsViews(TestCase):
