@@ -29,8 +29,9 @@ class Character(models.Model):
     """
     A model representing a single character
     """
-
+    # Relationships
     user = models.ForeignKey(User, related_name='characters')
+
     name = models.CharField(max_length=255)
     char_id = models.IntegerField(unique=True)
     key_id = models.IntegerField()
@@ -59,6 +60,9 @@ class Asset(models.Model):
     unique_item_id = models.BigIntegerField(unique=True)
     flag = models.SmallIntegerField()
     packaged = models.BooleanField()
+
+    class Meta:
+        ordering = ['item__type_name']
 
     def __unicode__(self):
         return '{} ({})'.format(self.character.name, self.item.type_name)
