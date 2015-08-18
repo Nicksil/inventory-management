@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
+import mock
 from model_mommy import mommy
 
 from lists.models import ShoppingList
@@ -15,6 +16,7 @@ class TestListsViews(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.char = mommy.make('Character')
+        cls.region = mommy.make('Region')
         cls.item_1 = mommy.make('Item')
         cls.item_2 = mommy.make('Item')
         cls.item_3 = mommy.make('Item')
@@ -165,3 +167,16 @@ class TestListsViews(TestCase):
         response = self.client.get(uri)
 
         self.assertTemplateUsed(response, 'lists/shoppinglist_form.html')
+
+    @mock.patch('eve.utils.PriceFetcher.via_eve_central')
+    def test_shoppinglist_price_update(self, mock_fetch):
+        mock_fetch.return_value = self.price_data.itervalues()
+        self.client.login(username=self.test_user.username, password=self.test_user.password)
+
+        region_id = self.region.region_id
+
+        uri = reverse('lists:price_update', kwargs={'pk': self.shoppinglist.pk})
+        response = self.client.post(uri, data={'region': region_id}, follow=True)
+
+        expected_redirect_uri = reverse('lists:detail', kwargs={'pk': self.shoppinglist.pk})
+        self.assertRedirects(response, expected_redirect_uri)
