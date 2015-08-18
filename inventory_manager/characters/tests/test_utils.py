@@ -17,11 +17,10 @@ class TestCharactersUtils(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.test_char = mommy.make('Character')
-
-        cls.APIResult = namedtuple('APIResult', 'result')
-
         cls.test_item = mommy.make('Item')
         cls.test_station = mommy.make('Station')
+
+        cls.APIResult = namedtuple('APIResult', 'result')
 
         # Setup mocked return from evelink library
         # request to assets endpoint on EVE API
@@ -38,7 +37,7 @@ class TestCharactersUtils(TestCase):
                         'location_id': cls.test_station.station_id,
                         'id': unique_asset_id_1,
                         'quantity': 10,
-                        'content': [
+                        'contents': [
                             {
                                 'location_flag': 13,
                                 'packaged': False,
@@ -93,7 +92,7 @@ class TestCharactersUtils(TestCase):
         manager.save(parse)
         last_saved_asset = Asset.objects.last()
         asset_unique_id = last_saved_asset.unique_item_id
-        self.assertEqual(asset_unique_id, parse[0]['unique_item_id'])
+        self.assertEqual(asset_unique_id, parse[1]['unique_item_id'])
 
     @mock.patch('evelink.char.Char.assets')
     def test_asset_manager_update(self, mock_assets):
@@ -109,7 +108,7 @@ class TestCharactersUtils(TestCase):
         manager.update()
 
         current_num_assets = Asset.objects.count()
-        self.assertEqual(prev_num_assets + 1, current_num_assets)
+        self.assertEqual(prev_num_assets + 2, current_num_assets)
 
     @mock.patch('evelink.char.Char.orders')
     def test_order_manager_save_method_handles_existing_object_correctly(self, mock_orders):
