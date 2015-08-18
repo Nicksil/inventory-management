@@ -21,9 +21,7 @@ def strfdelta(tdelta, fmt):
 class ActiveOrderManager(models.Manager):
 
     def get_queryset(self):
-        return super(ActiveOrderManager, self).get_queryset().filter(
-            order_state='active'
-        )
+        return super(ActiveOrderManager, self).get_queryset().filter(order_state='active')
 
 
 class Character(models.Model):
@@ -51,6 +49,7 @@ class Asset(models.Model):
     A model representing a single character
     """
 
+    # Relationships
     character = models.ForeignKey(Character, related_name='assets')
     item = models.ForeignKey(Item, related_name='assets')
     solar_system = models.ForeignKey(SolarSystem, null=True, related_name='assets')
@@ -66,10 +65,12 @@ class Asset(models.Model):
 
 
 class Order(models.Model):
+
     """
     A model representing a single market order
     """
 
+    # Relationships
     character = models.ForeignKey(Character, related_name='orders')
     item = models.ForeignKey(Item, related_name='orders')
     station = models.ForeignKey(Station, related_name='orders')
@@ -95,13 +96,8 @@ class Order(models.Model):
         return self.vol_remaining <= self.qty_threshold
 
     def expires_in(self):
-        tdelta = (self.issued + datetime.timedelta(days=self.duration)) \
-             - datetime.datetime.utcnow()
-
+        tdelta = (self.issued + datetime.timedelta(days=self.duration)) - datetime.datetime.utcnow()
         return strfdelta(tdelta, '{days}d {hours}h {minutes}m {seconds}s')
 
     def __unicode__(self):
-        return 'Character: {}, Item: {}'.format(
-            self.character.name,
-            self.item.type_name
-        )
+        return 'Character: {}, Item: {}'.format(self.character.name, self.item.type_name)

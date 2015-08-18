@@ -4,10 +4,10 @@ from collections import namedtuple
 
 import mock
 from django.test import TestCase
+from model_mommy import mommy
 
-from characters.models import Asset as _Asset
-from characters.models import Order as _Order
-from characters.models import Character
+from characters.models import Asset
+from characters.models import Order
 from characters.utils import AssetManager
 from characters.utils import OrderManager
 
@@ -16,126 +16,127 @@ class TestCharactersUtils(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.character = Character.objects.get(pk=1)
+        cls.test_char = mommy.make('Character')
 
-        Asset = namedtuple('Asset', ['result'])
-        cls.test_asset = Asset(
-            {
-                60005485: {
-                    'contents': [
-                        {
-                            'id': 1234567890123,
-                            'item_type_id': 35,
-                            'location_flag': 4,
-                            'location_id': 30000142,
-                            'packaged': True,
-                            'quantity': 2200,
-                            'contents': [
-                                {
-                                    'id': 1234567890133,
-                                    'item_type_id': 35,
-                                    'location_flag': 4,
-                                    'location_id': 30000142,
-                                    'packaged': True,
-                                    'quantity': 2200
-                                }
-                            ]
-                        }
-                    ],
-                    'location_id': 30000142
-                }
-            }
-        )
+        cls.APIResult = namedtuple('APIResult', 'result')
 
-        cls.Order = namedtuple('Order', ['result'])
-        cls.test_order_existing = cls.Order(
-            {
-                12345678: {
-                    'status': 'active',
-                    'type_id': 35,
-                    'timestamp': 1350502273,
-                    'price': 708999.99,
-                    'account_key': 1000,
-                    'escrow': 0.0,
-                    'station_id': 60003760,
-                    'amount_left': 0,
-                    'duration': 0,
-                    'id': 12345678,
-                    'char_id': 12345,
-                    'range': -1,
-                    'amount': 50,
-                    'type': 'sell'
-                }
+        cls.test_item = mommy.make('Item')
+        cls.test_station = mommy.make('Station')
+
+        # Setup mocked return from evelink library
+        # request to assets endpoint on EVE API
+        unique_asset_id_1 = 1234567890123
+        unique_asset_id_2 = 1234567890133
+        asset_result = {
+            cls.test_station.station_id: {
+                'location_id': cls.test_station.station_id,
+                'contents': [
+                    {
+                        'location_flag': 4,
+                        'packaged': False,
+                        'item_type_id': cls.test_item.type_id,
+                        'location_id': cls.test_station.station_id,
+                        'id': unique_asset_id_1,
+                        'quantity': 10,
+                        'content': [
+                            {
+                                'location_flag': 13,
+                                'packaged': False,
+                                'item_type_id': cls.test_item.type_id,
+                                'location_id': cls.test_station.station_id,
+                                'id': unique_asset_id_2,
+                                'quantity': 20
+                            }
+                        ]
+                    }
+                ]
             }
-        )
+        }
+        cls.test_evelink_assets_response = cls.APIResult(asset_result)
+
+        # Setup mocked return from evelink library
+        # request to orders endpoint on EVE API
+        cls.order_id = 1234567890
+        cls.test_order = mommy.make('Order', order_id=cls.order_id, order_state='active')
+        order_result = {
+            cls.order_id: {
+                'status': cls.test_order.order_state,
+                'type_id': cls.test_item.type_id,
+                'timestamp': cls.test_order.issued,
+                'price': cls.test_order.price,
+                'station_id': cls.test_station.station_id,
+                'amount_left': cls.test_order.vol_remaining,
+                'duration': cls.test_order.duration,
+                'id': cls.order_id,
+                'char_id': cls.test_char.char_id,
+                'amount': cls.test_order.vol_entered,
+                'type': cls.test_order.order_type
+            }
+        }
+        cls.test_evelink_orders_response = cls.APIResult(order_result)
 
     @mock.patch('evelink.char.Char.assets')
     def test_asset_manager(self, mock_assets):
-        mock_assets.return_value = self.test_asset
+        mock_assets.return_value = self.test_evelink_assets_response
 
-        char = self.character
+        char = self.test_char
         char_id = char.char_id
-        api_key = self.character.get_api_key()
+        api_key = self.test_char.get_api_key()
 
         manager = AssetManager(char, char_id, api_key)
         fetch = manager.fetch()
-        self.assertIsInstance(fetch, dict)
-        self.assertEqual(fetch, self.test_asset.result)
+        self.assertEqual(fetch, self.test_evelink_assets_response.result)
 
         parse = manager.parse(fetch)
         self.assertIsInstance(parse, list)
 
         manager.save(parse)
-        last_saved_asset = _Asset.objects.last()
+        last_saved_asset = Asset.objects.last()
         asset_unique_id = last_saved_asset.unique_item_id
-        self.assertEqual(asset_unique_id, parse[1]['unique_item_id'])
+        self.assertEqual(asset_unique_id, parse[0]['unique_item_id'])
 
     @mock.patch('evelink.char.Char.assets')
     def test_asset_manager_update(self, mock_assets):
-        mock_assets.return_value = self.test_asset
+        mock_assets.return_value = self.test_evelink_assets_response
 
-        prev_num_assets = _Asset.objects.count()
+        prev_num_assets = Asset.objects.count()
 
-        char = self.character
+        char = self.test_char
         char_id = char.char_id
-        api_key = self.character.get_api_key()
+        api_key = self.test_char.get_api_key()
 
         manager = AssetManager(char, char_id, api_key)
         manager.update()
 
-        current_num_assets = _Asset.objects.count()
-        self.assertEqual(prev_num_assets + 2, current_num_assets)
+        current_num_assets = Asset.objects.count()
+        self.assertEqual(prev_num_assets + 1, current_num_assets)
 
     @mock.patch('evelink.char.Char.orders')
     def test_order_manager_save_method_handles_existing_object_correctly(self, mock_orders):
-        existing_order = _Order.objects.get(pk=1)
-        updated_order = self.Order(
-            {
-                1234567: {
-                    'status': 'expired',
-                    'type_id': 35,
-                    'timestamp': 1350502273,
-                    'price': 100.00,
-                    'account_key': 1000,
-                    'escrow': 0.0,
-                    'station_id': 60003760,
-                    'amount_left': 0,
-                    'duration': 0,
-                    'id': 1234567,
-                    'char_id': 12345,
-                    'range': -1,
-                    'amount': 50,
-                    'type': 'sell'
-                }
-            }
-        )
-        mock_orders.return_value = updated_order
-
+        existing_order = Order.objects.last()
         self.assertEqual(existing_order.order_state, 'active')
 
-        manager = OrderManager(self.character, self.character.char_id, self.character.get_api_key())
+        updated_order_result = {
+            self.order_id: {
+                'status': 'expired',
+                'type_id': self.test_item.type_id,
+                'timestamp': 1439842260,
+                'price': 5.00,
+                'station_id': self.test_station.station_id,
+                'amount_left': 5000,
+                'duration': 90,
+                'id': self.order_id,
+                'char_id': self.test_char.char_id,
+                'amount': 9000,
+                'type': 'sell'
+            }
+        }
+        updated_order = self.APIResult(updated_order_result)
+
+        mock_orders.return_value = updated_order
+
+        manager = OrderManager(self.test_char, self.test_char.char_id, self.test_char.get_api_key())
         manager.update()
 
-        existing_order = _Order.objects.get(pk=1)
-
+        existing_order = Order.objects.last()
         self.assertEqual(existing_order.order_state, 'expired')
