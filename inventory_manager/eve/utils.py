@@ -59,7 +59,6 @@ class PriceFetcher(object):
 
     def via_eve_central(self):
         eve_central = EVECentral()
-        self.prepare_payload()
         price_data = eve_central.market_stats(**self.payload)
 
         return price_data.itervalues()

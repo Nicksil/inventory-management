@@ -5,27 +5,35 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from characters.models import Character
+from model_mommy import mommy
+
 from lists.models import ShoppingList
-from lists.models import WatchList
 
 
 class TestListsViews(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.character = Character.objects.get(pk=1)
-        cls.shoppinglist = ShoppingList.objects.get(pk=1)
-        cls.watchlist = WatchList.objects.get(pk=1)
+        cls.char = mommy.make('Character')
+        cls.item_1 = mommy.make('Item')
+        cls.item_2 = mommy.make('Item')
+        cls.item_3 = mommy.make('Item')
+        cls.price_1 = mommy.make('Price', item=cls.item_1)
+        cls.shoppinglist = mommy.make('ShoppingList')
 
-        cls.user_password = 'testing_password'
-        cls.user = User.objects.create_user(
-            username='testing_user',
-            password=cls.user_password,
-        )
+        cls.shoppinglist.items.add(cls.item_1)
+
+        # Can't get a correctly mocked User instance using model_mommy, I
+        # believe it has something to do with the `create_user` method and
+        # `set_password`. For the time-being, create an un-saved, mocked
+        # instance of User and use its attributes to create new User object.
+        cls.test_user_attribs = mommy.prepare('User')
+        cls.test_user = User.objects.create_user(
+            username=cls.test_user_attribs.username,
+            password=cls.test_user_attribs.password)
 
         cls.price_data = {
-            35: {
+            cls.item_1.type_id: {
                 'all': {
                     'avg': 8.73,
                     'max': 14.94,
@@ -37,19 +45,19 @@ class TestListsViews(TestCase):
                 },
                 'buy': {
                     'avg': 7.93,
-                    'max': 12.01,
+                    'max': cls.price_1.buy,
                     'median': 7.39,
                     'min': 5.05,
                     'percentile': 11.23,
                     'stddev': 1.77,
                     'volume': 395414000
                 },
-                'id': 35,
+                'id': cls.item_1.type_id,
                 'sell': {
                     'avg': 13.39,
                     'max': 14.94,
                     'median': 13.99,
-                    'min': 9.43,
+                    'min': cls.price_1.sell,
                     'percentile': 11.41,
                     'stddev': 1.67,
                     'volume': 67460583
@@ -89,56 +97,71 @@ class TestListsViews(TestCase):
         self.assertRedirects(response, expected_redirect_uri)
 
     def test_shoppinglist_create_view_get(self):
-        self.client.login(username=self.user.username, password=self.user_password)
+        self.client.login(
+            username=self.test_user.username, password=self.test_user_attribs.password)
 
         uri = reverse('lists:create')
         response = self.client.get(uri)
 
         self.assertTemplateUsed(response, 'lists/shoppinglist_create_view.html')
 
+    def test_shoppinglist_create_view_post(self):
+        self.client.login(
+            username=self.test_user.username, password=self.test_user_attribs.password)
+
+        uri = reverse('lists:create')
+        payload = {
+            'character': self.char,
+            'name': 'New List',
+            'items': '{}, {}, {}'.format(
+                self.item_1.type_name, self.item_2.type_name, self.item_3.type_name)
+        }
+        response = self.client.post(uri, data=payload, follow=True)
+
+        last_shoppinglist = ShoppingList.objects.last()
+        expected_redirect_uri = reverse('lists:detail', kwargs={'pk': last_shoppinglist.pk})
+        self.assertRedirects(response, expected_redirect_uri)
+
     def test_shoppinglist_update_view_updates_object_name(self):
-        self.client.login(username=self.user.username, password=self.user_password)
+        self.client.login(
+            username=self.test_user.username, password=self.test_user_attribs.password)
 
         start_name = self.shoppinglist.name
-        self.assertEqual(start_name, "Test ShoppingList")
+        self.assertEqual(start_name, self.shoppinglist.name)
 
         uri = reverse('lists:update', kwargs={'pk': self.shoppinglist.pk})
         payload = {'name': 'Test ShoppingList Updated'}
-        response = self.client.post(uri, data=payload)
+        response = self.client.post(uri, data=payload, follow=True)
 
-        final_name = self.shoppinglist.name
-
+        # Query the DB once again for same object in order to show changed name
+        final_name = ShoppingList.objects.get(pk=self.shoppinglist.pk).name
         self.assertEqual(final_name, 'Test ShoppingList Updated')
 
+        expected_redirect_uri = reverse('lists:detail', kwargs={'pk': self.shoppinglist.pk})
+        self.assertRedirects(response, expected_redirect_uri)
+
+    def test_shoppinglist_update_view_updates_object_items(self):
+        self.client.login(
+            username=self.test_user.username, password=self.test_user_attribs.password)
+
+        # Confirm 1 item associated with shoppinglist
+        self.assertEqual(1, self.shoppinglist.items.count())
+
+        uri = reverse('lists:update', kwargs={'pk': self.shoppinglist.pk})
+        item_names = '{}, {}'.format(self.item_2.type_name, self.item_3.type_name)
+        payload = {'items': item_names}
+        response = self.client.post(uri, data=payload, follow=True)
+
+        # Confirm 3 items associated with shoppinglist
+        self.assertEqual(3, self.shoppinglist.items.count())
+
+        expected_redirect_uri = reverse('lists:detail', kwargs={'pk': self.shoppinglist.pk})
+        self.assertRedirects(response, expected_redirect_uri)
+
     def test_shoppinglist_update_view_renders_correct_template(self):
-        self.client.login(username=self.user.username, password=self.user_password)
+        self.client.login(username=self.test_user.username, password=self.test_user.password)
 
         uri = reverse('lists:update', kwargs={'pk': self.shoppinglist.pk})
         response = self.client.get(uri)
 
         self.assertTemplateUsed(response, 'lists/shoppinglist_form.html')
-
-    def test_watchlist_delete(self):
-        # Confirm 1 watchlist object
-        self.assertEqual(1, WatchList.objects.count())
-
-        uri = reverse('lists:watchlist_delete', kwargs={'pk': self.watchlist.pk})
-        response = self.client.get(uri, follow=True)
-
-        # Confirm no watchlists
-        self.assertEqual(0, WatchList.objects.count())
-
-        expected_redirect_uri = reverse('lists:list')
-        self.assertRedirects(response, expected_redirect_uri)
-
-    def test_watchlist_detail_view(self):
-        uri = reverse('lists:watchlist_detail', kwargs={'pk': self.watchlist.pk})
-        response = self.client.get(uri)
-
-        self.assertTemplateUsed(response, 'lists/watchlist_detail_view.html')
-
-    def test_watchlist_list_view(self):
-        uri = reverse('lists:watchlist_list')
-        response = self.client.get(uri)
-
-        self.assertTemplateUsed(response, 'lists/watchlist_list_view.html')
