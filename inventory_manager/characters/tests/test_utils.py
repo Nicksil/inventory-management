@@ -93,7 +93,7 @@ class TestCharactersUtils(TestCase):
         manager.save(parse)
         last_saved_asset = Asset.objects.last()
         asset_unique_id = last_saved_asset.unique_item_id
-        self.assertEqual(asset_unique_id, parse[1]['unique_item_id'])
+        self.assertEqual(asset_unique_id, parse[0]['unique_item_id'])
 
     @mock.patch('evelink.char.Char.assets')
     def test_asset_manager_update(self, mock_assets):
