@@ -10,6 +10,7 @@ from eve.models import Item
 
 class ShoppingList(models.Model):
 
+    # Relationships
     character = models.ForeignKey(Character, related_name='shoppinglists')
     items = models.ManyToManyField(Item, related_name='shoppinglists')
 

@@ -3,6 +3,8 @@ from __future__ import absolute_import
 
 from evelink.thirdparty.eve_central import EVECentral
 
+from .models import Item
+from .models import Region
 from .models import SolarSystem
 from .models import Station
 
@@ -63,16 +65,22 @@ class PriceFetcher(object):
 
         return price_data.itervalues()
 
-    # def prepare_save(self, price_data):
-    #     data_list = []
-    #     for price in price_data:
-    #         data_list.append(
-    #             {
-    #                 'type_id': price['id'],
-    #                 'regions': self.regions,
-    #                 'system': self.system,
-    #                 'station_id': self.station,
-    #                 'buy': price['buy']['max'],
-    #                 'sell': price['sell']['min']
-    #             }
-    #         )
+    def prepare_save(self, price_data):
+        data_list = []
+        for price in price_data:
+            type_id = price['id']
+            item = Item.objects.get(type_id=type_id)
+
+            region_id = self.regions
+            region = Region.objects.get(region_id=region_id)
+
+            data_list.append(
+                {
+                    'item': item,
+                    'region': region,
+                    'buy': price['buy']['max'],
+                    'sell': price['sell']['min']
+                }
+            )
+
+        return data_list

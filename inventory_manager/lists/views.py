@@ -10,7 +10,9 @@ from django.views.generic import DetailView
 from .models import ShoppingList
 from characters.models import Character
 from eve.models import Item
+from eve.models import Price
 from eve.models import Region
+from eve.utils import PriceFetcher
 
 
 class ShoppingListDeleteView(DeleteView):
@@ -25,7 +27,6 @@ class ShoppingListDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         kwargs['regions'] = Region.objects.all()
-
         return super(ShoppingListDetailView, self).get_context_data(**kwargs)
 
 
@@ -69,18 +70,21 @@ def shoppinglist_update_view(request, pk):
     return render(request, 'lists/shoppinglist_form.html', {'shoppinglist': shoppinglist})
 
 
-# def shoppinglist_price_update(request, pk):
-#     shoppinglist = ShoppingList.objects.get(pk=pk)
+def shoppinglist_price_update(request, pk):
+    shoppinglist = ShoppingList.objects.get(pk=pk)
 
-#     region_name = request.POST['region']
-#     region = Region.objects.get(region_name=region_name)
-#     region_id = region.region_id
+    region_id = int(request.POST['region'])
 
-#     items = shoppinglist.items.all()
-#     type_ids = [x.type_id for x in items]
+    items = shoppinglist.items.all()
+    type_ids = [x.type_id for x in items]
 
-#     fetcher = PriceFetcher(type_ids, regions=region_id)
-#     price_data = fetcher.fetch()
+    fetcher = PriceFetcher(type_ids, regions=region_id)
+    price_data = fetcher.fetch()
+
+    for price in fetcher.prepare_save(price_data):
+        Price.objects.create(**price)
+
+    return redirect('lists:detail', pk=pk)
 
 
 def shoppinglist_create_view(request):
