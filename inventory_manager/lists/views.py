@@ -8,11 +8,9 @@ from django.views.generic import DeleteView
 from django.views.generic import DetailView
 
 from .models import ShoppingList
-from .models import WatchList
 from characters.models import Character
 from eve.models import Item
 from eve.models import Region
-from eve.utils import PriceFetcher
 
 
 class ShoppingListDeleteView(DeleteView):
