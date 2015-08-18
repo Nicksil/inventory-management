@@ -24,6 +24,9 @@ class Region(models.Model):
     region_id = models.IntegerField()
     region_name = models.CharField(max_length=255)
 
+    class Meta:
+        ordering = ['region_name']
+
     def __unicode__(self):
         return 'Region: {} - {}'.format(
             self.region_name,
