@@ -64,16 +64,16 @@ class PriceFetcher(object):
 
         return price_data.itervalues()
 
-    def prepare_save(self, price_data):
-        data_list = []
-        for price in price_data:
-            data_list.append(
-                {
-                    'type_id': price['id'],
-                    'regions': self.regions,
-                    'system': self.system,
-                    'station_id': self.station,
-                    'buy': price['buy']['max'],
-                    'sell': price['sell']['min']
-                }
-            )
+    # def prepare_save(self, price_data):
+    #     data_list = []
+    #     for price in price_data:
+    #         data_list.append(
+    #             {
+    #                 'type_id': price['id'],
+    #                 'regions': self.regions,
+    #                 'system': self.system,
+    #                 'station_id': self.station,
+    #                 'buy': price['buy']['max'],
+    #                 'sell': price['sell']['min']
+    #             }
+    #         )

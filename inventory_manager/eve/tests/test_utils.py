@@ -1,26 +1,28 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import mock
-
 from django.test import TestCase
 
-from eve.models import Item
-from eve.models import Region
+import mock
+from model_mommy import mommy
+
 from eve.models import SolarSystem
 from eve.models import Station
 from eve.utils import PriceFetcher
 from eve.utils import get_station_or_system
 
 
-class TestEveViews(TestCase):
+class TestEveUtils(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.item_1 = Item.objects.get(type_name='Sabre')
-        cls.item_2 = Item.objects.get(type_name='Svipul')
+        cls.item_1 = mommy.make('Item')
+        cls.item_2 = mommy.make('Item')
+        cls.region = mommy.make('Region')
+        cls.station = mommy.make('Station')
+        cls.solar_system = mommy.make('SolarSystem')
+
         cls.type_ids = [cls.item_1.type_id, cls.item_2.type_id]
-        cls.region = Region.objects.get(region_name='The Forge')
         cls.region_id = cls.region.region_id
 
         cls.test_price_data = {
@@ -51,11 +53,11 @@ class TestEveViews(TestCase):
                 'stddev': 1.31,
                 'avg': 9.88
             },
-            'id': 35
+            'id': cls.item_1.type_id
         }
 
         cls.market_stats_raw_return_data = {
-            35: {
+            cls.item_1.type_id: {
                 'sell': {
                     'min': 10.74,
                     'max': 17.4,
@@ -83,17 +85,17 @@ class TestEveViews(TestCase):
                     'stddev': 1.31,
                     'avg': 9.88
                 },
-                'id': 35
+                'id': cls.item_1.type_id
             }
         }
 
     def test_get_station_or_system(self):
-        station_id = Station.objects.get(pk=1).station_id
+        station_id = self.station.station_id
 
         location_name, location_obj = get_station_or_system(station_id)
         self.assertEqual(location_name, 'station')
 
-        solar_system_id = SolarSystem.objects.get(pk=1).solar_system_id
+        solar_system_id = self.solar_system.solar_system_id
 
         location_name, location_obj = get_station_or_system(solar_system_id)
         self.assertEqual(location_name, 'solar_system')
@@ -102,8 +104,8 @@ class TestEveViews(TestCase):
     def test_eve_central_manager_returns_price_data_dict_using_system(self, mock_market_stats):
         mock_market_stats.return_value = self.market_stats_raw_return_data
 
-        type_ids = [35]
-        system = 30000142
+        type_ids = [self.item_1.type_id]
+        system = self.solar_system.solar_system_id
 
         manager = PriceFetcher(type_ids, system=system)
         price_data = manager.fetch().next()
@@ -114,8 +116,8 @@ class TestEveViews(TestCase):
     def test_eve_central_manager_returns_price_data_dict_using_hours(self, mock_market_stats):
         mock_market_stats.return_value = self.market_stats_raw_return_data
 
-        type_ids = [35]
-        system = 30000142
+        type_ids = [self.item_1.type_id]
+        system = self.solar_system.solar_system_id
         hours = 5
 
         manager = PriceFetcher(type_ids, hours=hours, system=system)
@@ -127,8 +129,8 @@ class TestEveViews(TestCase):
     def test_eve_central_manager_returns_price_data_dict_using_regions(self, mock_market_stats):
         mock_market_stats.return_value = self.market_stats_raw_return_data
 
-        type_ids = [35]
-        regions = 10000002
+        type_ids = [self.item_1.type_id]
+        regions = self.region.region_id
 
         manager = PriceFetcher(type_ids, regions=regions)
         price_data = manager.fetch().next()
@@ -136,7 +138,7 @@ class TestEveViews(TestCase):
         self.assertEqual(price_data, self.test_price_data)
 
     def test_eve_central_manager_raises_exception(self):
-        type_ids = [35]
+        type_ids = [self.item_1.type_id]
 
         with self.assertRaises(AttributeError):
             PriceFetcher(type_ids)

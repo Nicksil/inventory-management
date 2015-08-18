@@ -2,8 +2,9 @@
 from __future__ import absolute_import
 from collections import namedtuple
 
-import mock
 from django.test import TestCase
+
+import mock
 from model_mommy import mommy
 
 from characters.models import Asset
