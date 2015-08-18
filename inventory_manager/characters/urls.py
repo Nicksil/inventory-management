@@ -8,43 +8,21 @@ from .views import character_add_view
 from .views import CharacterDelete
 from .views import CharacterDetailView
 from .views import character_list_view
+from .views import order_qty_threshold_update
 from .views import orders_list_view
 from .views import orders_update
 
 urlpatterns = [
+    url(r'^add/$', character_add_view, name='add'),
+    url(r'^$', character_list_view, name='list'),
+    url(r'^(?P<pk>\d+)/delete/$', CharacterDelete.as_view(), name='delete'),
+    url(r'^(?P<pk>\d+)/detail/$', CharacterDetailView.as_view(), name='detail'),
+    url(r'^(?P<pk>\d+)/assets/$', asset_list_view, name='asset_list'),
+    url(r'^(?P<pk>\d+)/orders/$', orders_list_view, name='order_list'),
+    url(r'^(?P<pk>\d+)/orders/update/$', orders_update, name='orders_update'),
     url(
-        r'^add/$',
-        character_add_view,
-        name='add'
-    ),
-    url(
-        r'^$',
-        character_list_view,
-        name='list'
-    ),
-    url(
-        r'^(?P<pk>\d+)/delete/$',
-        CharacterDelete.as_view(),
-        name='delete'
-    ),
-    url(
-        r'^(?P<pk>\d+)/detail/$',
-        CharacterDetailView.as_view(),
-        name='detail'
-    ),
-    url(
-        r'^(?P<pk>\d+)/assets/$',
-        asset_list_view,
-        name='asset_list'
-    ),
-    url(
-        r'^(?P<pk>\d+)/orders/$',
-        orders_list_view,
-        name='order_list'
-    ),
-    url(
-        r'^(?P<pk>\d+)/orders/update/$',
-        orders_update,
-        name='orders_update'
+        r'^(?P<char_pk>\d+)/orders/(?P<order_pk>\d+)/update-qty-threshold/$',
+        order_qty_threshold_update,
+        name='qty_threshold_update'
     ),
 ]

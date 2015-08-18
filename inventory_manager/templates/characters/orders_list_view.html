@@ -10,6 +10,7 @@
                     <th>Item</th>
                     <th>Quantity</th>
                     <th>Qty Threshold</th>
+                    <th></th>
                     <th>Price</th>
                     <th>Location</th>
                     <th>Expires in</th>
@@ -21,11 +22,18 @@
                         <td>
                             {{ order.item.type_name }}
                         </td>
-                        <td>
-                            {{ order.vol_remaining }}/{{ order.vol_entered|intcomma }}
+                        <td{% if order.met_qty_threshold %} style="color: red;"{% endif %}>
+                            {{ order.vol_remaining|intcomma }}/{{ order.vol_entered|intcomma }}
                         </td>
                         <td>
                             {% if order.qty_threshold %}{{ order.qty_threshold }}{% else %}-{% endif %}
+                        </td>
+                        <td>
+                            <form action="{% url 'characters:qty_threshold_update' char_pk=character.pk order_pk=order.pk %}" method="POST">
+                                {% csrf_token %}
+                                <input type="text" name="qty_threshold" name="qty_threshold" size="10">
+                                <button>Update</button>
+                            </form>
                         </td>
                         <td>
                             {{ order.price|floatformat:2|intcomma }}

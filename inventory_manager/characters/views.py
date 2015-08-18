@@ -10,6 +10,7 @@ from django.views.generic import DeleteView
 from django.views.generic import DetailView
 
 from .models import Character
+from .models import Order
 from .utils import AssetManager
 from .utils import CharacterManager
 from .utils import OrderManager
@@ -84,7 +85,6 @@ def orders_update(request, pk):
 
 
 def orders_list_view(request, pk):
-
     character = Character.objects.get(pk=pk)
     orders = character.orders.all().filter(order_state='active') \
         .select_related('station').select_related('item')
@@ -92,3 +92,13 @@ def orders_list_view(request, pk):
     return render(
         request, 'characters/orders_list_view.html',
         {'character': character, 'orders': orders})
+
+
+def order_qty_threshold_update(request, char_pk, order_pk):
+    order = Order.objects.get(pk=order_pk)
+    qty_threshold = int(request.POST['qty_threshold'])
+
+    order.qty_threshold = qty_threshold
+    order.save()
+
+    return redirect('characters:order_list', pk=char_pk)
