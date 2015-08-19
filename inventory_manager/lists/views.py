@@ -63,7 +63,7 @@ def shoppinglist_update_view(request, pk):
             items = items.split(', ')
             item_list = []
             for item in items:
-                item_list.append(Item.objects.get(type_name=item))
+                item_list.append(Item.objects.get(type_name__iexact=item))
             shoppinglist.items.add(*item_list)
 
         return redirect('lists:detail', pk=pk)
@@ -94,7 +94,7 @@ def shoppinglist_create_view(request):
         char = Character.objects.get(name=char_name)
         name = request.POST.get('name')
         item_names = request.POST.get('items')
-        items = [Item.objects.get(type_name=i) for i in item_names.split(', ')]
+        items = [Item.objects.get(type_name__iexact=i) for i in item_names.split(', ')]
 
         shoppinglist = ShoppingList.objects.create(character=char, name=name)
         shoppinglist.items.add(*items)

@@ -37,6 +37,9 @@ class Character(models.Model):
     key_id = models.IntegerField()
     v_code = models.CharField(max_length=255)
 
+    class Meta:
+        ordering = ['name']
+
     def get_api_key(self):
         return (self.key_id, self.v_code)
 

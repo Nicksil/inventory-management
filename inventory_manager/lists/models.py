@@ -15,6 +15,8 @@ class ShoppingList(models.Model):
     items = models.ManyToManyField(Item, related_name='shoppinglists')
 
     name = models.CharField(max_length=255)
+    added = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
     def get_absolute_url(self):
         return reverse('lists:detail', kwargs={'pk': self.pk})

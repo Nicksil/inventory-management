@@ -24,10 +24,23 @@
         </div><!-- end col-sm-3 -->
     </div><!-- end row -->
     <div class="row">
-        <ul>
-            {% for item in shoppinglist.items.all %}
-                <li>{{ item.type_name }} <a href="{% url 'lists:item_remove' list_pk=shoppinglist.pk item_pk=item.pk %}">x</a></li>
-            {% endfor %}
-        </ul>
+        <div class="col-sm-6">
+            <table class="table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in shoppinglist.items.all %}
+                        <tr>
+                            <td>{{ item.type_name }}</td>
+                            <td><a href="{% url 'lists:item_remove' list_pk=shoppinglist.pk item_pk=item.pk %}">x</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div><!-- end col-sm-6 -->
     </div><!-- end row -->
 {% endblock %}
