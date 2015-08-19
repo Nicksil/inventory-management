@@ -57,7 +57,7 @@ class Asset(models.Model):
     station = models.ForeignKey(Station, null=True, related_name='assets')
 
     quantity = models.IntegerField()
-    unique_item_id = models.BigIntegerField(unique=True)
+    unique_item_id = models.BigIntegerField()
     flag = models.SmallIntegerField()
     packaged = models.BooleanField()
 

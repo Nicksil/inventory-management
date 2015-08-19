@@ -122,6 +122,9 @@ class AssetManager(object):
         return prepped
 
     def save(self, assets):
+        # Dirty hack to ensure fresh assets
+        self.char.assets.all().delete()
+
         for asset in assets:
             try:
                 Asset.objects.create(**asset)
