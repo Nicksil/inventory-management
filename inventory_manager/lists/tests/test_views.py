@@ -180,3 +180,24 @@ class TestListsViews(TestCase):
 
         expected_redirect_uri = reverse('lists:detail', kwargs={'pk': self.shoppinglist.pk})
         self.assertRedirects(response, expected_redirect_uri)
+
+    def test_shoppinglist_create_view_when_item_not_found(self):
+        self.client.login(
+            username=self.test_user.username, password=self.test_user_attribs.password)
+
+        uri = reverse('lists:create')
+        payload = {
+            'character': self.char.name,
+            'name': 'Test List',
+            'items': '{}, {}, Not an Item, BlahBlah'.format(
+                self.item_1.type_name, self.item_2.type_name),
+        }
+        response = self.client.post(uri, data=payload, follow=True)
+
+        message_text = 'The item(s) listed were not found in the database: {}'.format(
+            'Not an Item, BlahBlah')
+        self.assertContains(response, message_text)
+
+        last_list = ShoppingList.objects.last()
+        expected_redirect_uri = reverse('lists:detail', kwargs={'pk': last_list.pk})
+        self.assertRedirects(response, expected_redirect_uri)
