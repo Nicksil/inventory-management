@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>Log in</h1>
+    <div class="row">
+        <h2>Log in</h2>
+    </div><!-- end row -->
     <form action="" method="POST">
         {% csrf_token %}
         <label for="_username">Username</label>
@@ -9,6 +11,6 @@
         <label for="_password">Password</label>
         <input type="password" id="_password" name="password">
         <br>
-        <button type="submit">Log in</button>
+        <button class="btn btn-default" type="submit">Log in</button>
     </form>
 {% endblock %}

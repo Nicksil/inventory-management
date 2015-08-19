@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>{{ watchlist.name }}</h1>
+    <div class="row">
+        <h2>{{ watchlist.name }}</h2>
+    </div><!-- end row -->
     <form action="" method="POST">
         {% csrf_token %}
         <label for="_item">Item</label>
@@ -9,6 +11,6 @@
         <label for="_desired_price">Desired Price</label>
         <input type="text" id="_desired_price" name="desired_price">
         <br>
-        <button type="submit">Update</button>
+        <button class="btn btn-default" type="submit">Update</button>
     </form>
 {% endblock %}h1

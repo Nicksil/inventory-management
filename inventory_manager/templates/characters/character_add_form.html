@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>Add Character</h1>
-    <form action="" method="POST">
-        {% csrf_token %}
-        <label for="_key_id">Key ID</label>
-        <input type="text" id="_key_id" name="key_id" autofocus>
-        <br>
-        <label for="_v_code">V Code</label>
-        <input type="text" id="_v_code" name="v_code">
-        <br>
-        <button type="submit">Add</button>
-    </form>
+    <div class="row">
+        <h2>Add Character</h2>
+    </div><!-- end row -->
+    <div class="row">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <label for="_key_id">Key ID</label>
+            <input type="text" id="_key_id" name="key_id" autofocus>
+            <br>
+            <label for="_v_code">V Code</label>
+            <input type="text" id="_v_code" name="v_code">
+            <br>
+            <button class="btn btn-default" type="submit">Add</button>
+        </form>
+    </div><!-- end row -->
 {% endblock %}

@@ -1,34 +1,38 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% block body %}
-    <h1>{{ char.name }}'s Assets</h1>
-    <p><a href="{% url 'characters:detail' pk=char.pk %}">&lt; {{ char.name }}</a></p>
-    <p>
-        <form action="{% url 'characters:asset_list' pk=char.pk %}" method="POST">
-            {% csrf_token %}
-            <button type="submit">Update</button>
-        </form>
-    </p>
-    {% if assets %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Location</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for asset in assets %}
+    <div class="row">
+        <h2>{{ char.name }}'s Assets</h2>
+    </div><!-- end row -->
+    <div class="row">
+        <p><a href="{% url 'characters:detail' pk=char.pk %}">&lt; {{ char.name }}</a></p>
+        <p>
+            <form action="{% url 'characters:asset_list' pk=char.pk %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-default" type="submit">Update</button>
+            </form>
+        </p>
+        {% if assets %}
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ asset.item.type_name }}</td>
-                        <td>{{ asset.quantity|intcomma }}</td>
-                        <td>{% if asset.station %}{{ asset.station.station_name }}{% else %}{{ asset.solar_system.solar_system_name }}{% endif %}</td>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Location</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No assets to display.</p>
-    {% endif %}
+                </thead>
+                <tbody>
+                    {% for asset in assets %}
+                        <tr>
+                            <td>{{ asset.item.type_name }}</td>
+                            <td>{{ asset.quantity|intcomma }}</td>
+                            <td>{% if asset.station %}{{ asset.station.station_name }}{% else %}{{ asset.solar_system.solar_system_name }}{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No assets to display.</p>
+        {% endif %}
+    </div><!-- end row -->
 {% endblock %}

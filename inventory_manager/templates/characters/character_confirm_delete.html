@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>Delete Character?</h1>
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Delete</button>
-    </form>
+    <div class="row">
+        <h2>Delete Character?</h2>
+    </div><!-- end row -->
+    <div class="row">
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-default" type="submit">Delete</button>
+        </form>
+    </div><!-- end row -->
 {% endblock %}

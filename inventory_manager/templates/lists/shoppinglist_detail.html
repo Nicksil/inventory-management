@@ -2,9 +2,13 @@
 {% load humanize %}
 {% block body %}
     {% if shoppinglist.name %}
-        <h1>{{ shoppinglist.name }}</h1>
+        <div class="row">
+            <h2>{{ shoppinglist.name }}</h2>
+        </div><!-- end row -->
     {% else %}
-        <strong>Your shopping list has no name, yo</strong>
+        <div class="row">
+            <strong>Your shopping list has no name, yo</strong>
+        </div><!-- end row -->
     {% endif %}
     <p><a href="{% url 'lists:list' %}">&lt; All shopping lists</a> | <a href="{% url 'lists:update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'lists:delete' pk=shoppinglist.pk %}">Delete</a></p>
     <form action="{% url 'lists:price_update' pk=shoppinglist.pk %}" method="POST">
@@ -16,7 +20,7 @@
             {% endfor %}
         </select>
         <br>
-        <button type="submit">Update Prices</button>
+        <button class="btn btn-default" type="submit">Update Prices</button>
     </form>
     <table>
         <thead>

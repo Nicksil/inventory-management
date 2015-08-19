@@ -1,54 +1,60 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% block body %}
-    <h1>{{ character.name }}'s Orders</h1>
-    <p><a href="{% url 'characters:detail' pk=character.pk %}">&lt; {{ character.name }}</a> | <a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a></p>
-    {% if orders %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Qty Threshold</th>
-                    <th></th>
-                    <th>Price</th>
-                    <th>Location</th>
-                    <th>Expires in</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in orders %}
-                    <tr{% if order.outbid %} style="color: red;"{% endif %}>
-                        <td>
-                            {{ order.item.type_name }}
-                        </td>
-                        <td{% if order.met_qty_threshold %} style="color: red;"{% endif %}>
-                            {{ order.vol_remaining|intcomma }}/{{ order.vol_entered|intcomma }}
-                        </td>
-                        <td>
-                            {% if order.qty_threshold %}{{ order.qty_threshold }}{% else %}-{% endif %}
-                        </td>
-                        <td>
-                            <form action="{% url 'characters:qty_threshold_update' char_pk=character.pk order_pk=order.pk %}" method="POST">
-                                {% csrf_token %}
-                                <input type="text" name="qty_threshold" name="qty_threshold" size="10">
-                                <button>Update</button>
-                            </form>
-                        </td>
-                        <td>
-                            {{ order.price|floatformat:2|intcomma }}
-                        </td>
-                        <td>
-                            {{ order.station.station_name }}
-                        </td>
-                        <td>
-                            {{ order.expires_in }}
-                        </td>
+    <div class="row">
+        <h2>{{ character.name }}'s Orders</h2>
+    </div><!-- end row -->
+    <div class="row">
+        <p><a href="{% url 'characters:detail' pk=character.pk %}">&lt; {{ character.name }}</a> | <a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a></p>
+        {% if orders %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Qty Threshold</th>
+                        <th></th>
+                        <th>Price</th>
+                        <th>Location</th>
+                        <th>Expires in</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No orders to display.</p>
-    {% endif %}
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr{% if order.outbid %} style="color: red;"{% endif %}>
+                            <td>
+                                {{ order.item.type_name }}
+                            </td>
+                            <td>
+                                {{ order.vol_remaining|intcomma }}/{{ order.vol_entered|intcomma }}
+                            </td>
+                            <td>
+                                {% if order.qty_threshold %}{{ order.qty_threshold }}{% else %}-{% endif %}
+                            </td>
+                            <td>
+                                <form class="form-inline" action="{% url 'characters:qty_threshold_update' char_pk=character.pk order_pk=order.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <input type="text" class="form-control input-sm" name="qty_threshold" name="qty_threshold" size="10">
+                                    </div>
+                                    <button class="btn btn-default btn-sm" type="submit">Update</button>
+                                </form>
+                            </td>
+                            <td>
+                                {{ order.price|floatformat:2|intcomma }}
+                            </td>
+                            <td>
+                                {{ order.station.station_name }}
+                            </td>
+                            <td>
+                                {{ order.expires_in }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No orders to display.</p>
+        {% endif %}
+    </div><!-- end row -->
 {% endblock %}

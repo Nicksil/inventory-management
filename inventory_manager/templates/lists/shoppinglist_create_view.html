@@ -1,21 +1,25 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>Create Shopping List</h1>
-    <form action="" method="POST">
-        {% csrf_token %}
-        <label for="_character">Choose Character</label>
-        <select name="character" id="_character">
-            {% for character in characters %}
-                <option value="{{ character.name }}">{{ character.name }}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <label for="_name">Name</label>
-        <input type="text" id="_name" name="name">
-        <br>
-        <label for="_items">Items</label>
-        <textarea name="items" id="_items" cols="30" rows="10"></textarea>
-        <br>
-        <button type="submit">Create</button>
-    </form>
+    <div class="row">
+        <h2>Create Shopping List</h2>
+    </div><!-- end row -->
+    <div class="row">
+        <form action="" method="POST" class="col-sm-3">
+            {% csrf_token %}
+            <label for="_character">Choose Character</label>
+            <select class="form-control" name="character" id="_character">
+                {% for character in characters %}
+                    <option value="{{ character.name }}">{{ character.name }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <label for="_name">Name</label>
+            <input type="text" id="_name" name="name">
+            <br>
+            <label for="_items">Items</label>
+            <textarea name="items" id="_items" cols="30" rows="10"></textarea>
+            <br>
+            <button class="btn btn-default" type="submit">Create</button>
+        </form>
+    </div><!-- end row -->
 {% endblock %}

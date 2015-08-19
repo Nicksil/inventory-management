@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>Character List</h1>
-    <p><a href="{% url 'characters:add' %}">Add Characters</a></p>
-    <ul>
-        {% for character in characters %}
-            <li><a href="{% url 'characters:detail' pk=character.pk %}">{{ character.name }}</a></li>
-        {% endfor %}
-    </ul>
+    <div class="row">
+        <h2>Character List</h2>
+    </div><!-- end row -->
+    <div class="row">
+        <p><a href="{% url 'characters:add' %}">Add Characters</a></p>
+        <ul>
+            {% for character in characters %}
+                <li><a href="{% url 'characters:detail' pk=character.pk %}">{{ character.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div><!-- end row -->
 {% endblock %}

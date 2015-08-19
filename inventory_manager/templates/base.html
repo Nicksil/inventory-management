@@ -8,27 +8,31 @@
         <link rel="stylesheet" href="{% static 'css/global.css' %}">
     </head>
     <body>
-        <header>
-            {% if user.is_authenticated %}
-                {{ user.username }}
-            {% endif %}
-            <nav>
-                <ul>
-                    <li><a href="{% url 'index' %}">Home</a></li>
-                    <li>|</li>
+        <div class="container-fluid">
+            <div class="row">
+                <header>
                     {% if user.is_authenticated %}
-                        <li><a href="{% url 'characters:list' %}">Characters</a></li>
-                        <li>|</li>
-                        <li><a href="{% url 'lists:list' %}">Shopping Lists</a></li>
-                        <li>|</li>
-                        <li><a href="{% url 'logout' %}">Log out</a></li>
-                    {% else %}
-                        <li><a href="{% url 'login' %}">Log in</a></li>
+                        <p class="pull-left">{{ user.username }}</p>
                     {% endif %}
-                </ul>
-            </nav>
-        </header>
-        {% block body %}{% endblock %}
+                    <nav>
+                        <ul class="list-unstyled list-inline pull-right">
+                            <li><a href="{% url 'index' %}">Home</a></li>
+                            <li>|</li>
+                            {% if user.is_authenticated %}
+                                <li><a href="{% url 'characters:list' %}">Characters</a></li>
+                                <li>|</li>
+                                <li><a href="{% url 'lists:list' %}">Shopping Lists</a></li>
+                                <li>|</li>
+                                <li><a href="{% url 'logout' %}">Log out</a></li>
+                            {% else %}
+                                <li><a href="{% url 'login' %}">Log in</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </header>
+            </div><!-- end row -->
+            {% block body %}{% endblock %}
+        </div><!-- end container-fluid -->
         <script src="{% static 'css/jquery-2.1.4.min.js' %}"></script>
         <script src="{% static 'css/bootstrap.min.js' %}"></script>
     </body>

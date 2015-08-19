@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>Watch Lists</h1>
+    <div class="row">
+        <h2>Watch Lists</h2>
+    </div><!-- end row -->
     <p><a href="{% url 'lists:create' %}">Create</a></p>
     <ul>
         {% for watchlist in watchlists %}

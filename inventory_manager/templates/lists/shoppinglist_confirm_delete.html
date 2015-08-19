@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Delete {{ shoppinglist.name }} | {% endblock %}
 {% block body %}
-    <h1>Delete Shopping List?</h1>
+    <div class="row">
+        <h2>Delete Shopping List?</h2>
+    </div><!-- end row -->
     <form action="" method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Delete</button>
+        <button class="btn btn-default" type="submit">Delete</button>
     </form>
 {% endblock %}

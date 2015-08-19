@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>Create Watch List</h1>
+    <div class="row">
+        <h2>Create Watch List</h2>
+    </div><!-- end row -->
     <p><a href="{% url 'lists:list' %}">&lt; All watch lists</a></p>
     <form action="" method="POST">
         {% csrf_token %}
@@ -13,6 +15,6 @@
         <label for="_desired_price">Desired Price</label>
         <input type="text" id="_desired_price" name="desired_price">
         <br>
-        <button type="submit">Create</button>
+        <button class="btn btn-default" type="submit">Create</button>
     </form>
 {% endblock %}
