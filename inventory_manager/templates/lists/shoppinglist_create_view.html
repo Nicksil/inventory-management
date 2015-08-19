@@ -4,22 +4,27 @@
         <h2>Create Shopping List</h2>
     </div><!-- end row -->
     <div class="row">
-        <form action="" method="POST" class="col-sm-3">
-            {% csrf_token %}
-            <label for="_character">Choose Character</label>
-            <select class="form-control" name="character" id="_character">
-                {% for character in characters %}
-                    <option value="{{ character.name }}">{{ character.name }}</option>
-                {% endfor %}
-            </select>
-            <br>
-            <label for="_name">Name</label>
-            <input type="text" id="_name" name="name">
-            <br>
-            <label for="_items">Items</label>
-            <textarea name="items" id="_items" cols="30" rows="10"></textarea>
-            <br>
-            <button class="btn btn-default" type="submit">Create</button>
-        </form>
+        <div class="col-sm-3">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="_character">Choose Character</label>
+                    <select class="form-control" name="character" id="_character">
+                        {% for character in characters %}
+                            <option value="{{ character.name }}">{{ character.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="_name">Name</label>
+                    <input class="form-control" type="text" id="_name" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="_items">Items</label>
+                    <textarea class="form-control" name="items" id="_items" cols="30" rows="10"></textarea>
+                </div>
+                <button class="btn btn-default" type="submit">Create</button>
+            </form>
+        </div>
     </div><!-- end row -->
 {% endblock %}

@@ -1,41 +1,49 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% block body %}
-    {% if shoppinglist.name %}
-        <div class="row">
+    <div class="row">
+        {% if shoppinglist.name %}
             <h2>{{ shoppinglist.name }}</h2>
-        </div><!-- end row -->
-    {% else %}
-        <div class="row">
+        {% else %}
             <strong>Your shopping list has no name, yo</strong>
-        </div><!-- end row -->
-    {% endif %}
-    <p><a href="{% url 'lists:list' %}">&lt; All shopping lists</a> | <a href="{% url 'lists:update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'lists:delete' pk=shoppinglist.pk %}">Delete</a></p>
-    <form action="{% url 'lists:price_update' pk=shoppinglist.pk %}" method="POST">
-        {% csrf_token %}
-        <label for="_region">Select Region</label>
-        <select name="region" id="_region">
-            {% for region in regions %}
-                <option value="{{ region.region_id }}"{% if region.region_name == 'The Forge' %} selected{% endif %}>{{ region.region_name }}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <button class="btn btn-default" type="submit">Update Prices</button>
-    </form>
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Last Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in shoppinglist.items.all %}
+        {% endif %}
+
+        <p>
+            <a href="{% url 'lists:list' %}">&lt; All shopping lists</a> | <a href="{% url 'lists:update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'lists:delete' pk=shoppinglist.pk %}">Delete</a>
+        </p>
+    </div><!-- end row -->
+    <div class="row">
+        <div class="col-sm-2">
+            <form action="{% url 'lists:price_update' pk=shoppinglist.pk %}" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="_region">Select Region</label>
+                    <select class="form-control" name="region" id="_region">
+                        {% for region in regions %}
+                            <option value="{{ region.region_id }}"{% if region.region_name == 'The Forge' %} selected{% endif %}>{{ region.region_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-default" type="submit">Update Prices</button>
+            </form>
+        </div><!-- end col-sm-3 -->
+    </div><!-- end row -->
+    <div class="row">
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ item.type_name }}</td>
-                    <td>{{ item.prices.last.sell|floatformat:2|intcomma }}</td>
+                    <th>Item</th>
+                    <th>Last Price</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for item in shoppinglist.items.all %}
+                    <tr>
+                        <td>{{ item.type_name }}</td>
+                        <td>{{ item.prices.last.sell|floatformat:2|intcomma }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div><!-- end row -->
 {% endblock %}

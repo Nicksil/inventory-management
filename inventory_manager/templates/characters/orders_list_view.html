@@ -7,7 +7,7 @@
     <div class="row">
         <p><a href="{% url 'characters:detail' pk=character.pk %}">&lt; {{ character.name }}</a> | <a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a></p>
         {% if orders %}
-            <table>
+            <table class="table table-condensed table-striped">
                 <thead>
                     <tr>
                         <th>Item</th>

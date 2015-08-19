@@ -2,23 +2,32 @@
 {% block body %}
     <div class="row">
         <h2>Shopping List Update View</h2>
+        <p>
+            <a href="{% url 'lists:detail' pk=shoppinglist.pk %}">&lt; Back to list</a>
+        </p>
     </div><!-- end row -->
-    <p><a href="{% url 'lists:detail' pk=shoppinglist.pk %}">&lt; Back to list</a></p>
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ shoppinglist.character }}
-        <br>
-        <label for="_name">Name</label>
-        <input type="text" id="_name" name="name" value="{{ shoppinglist.name }}">
-        <br>
-        <label for="_items">Items</label>
-        <textarea name="items" id="_items" cols="30" rows="10"></textarea>
-        <br>
-        <button class="btn btn-default" type="submit">Update</button>
-    </form>
-    <ul>
-        {% for item in shoppinglist.items.all %}
-            <li>{{ item.type_name }} <a href="{% url 'lists:item_remove' list_pk=shoppinglist.pk item_pk=item.pk %}">x</a></li>
-        {% endfor %}
-    </ul>
+    <div class="row">
+        <div class="col-sm-2">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ shoppinglist.character }}
+                <div class="form-group">
+                    <label for="_name">Name</label>
+                    <input class="form-control" type="text" id="_name" name="name" value="{{ shoppinglist.name }}">
+                </div>
+                <div class="form-group">
+                    <label for="_items">Items</label>
+                    <textarea class="form-control" name="items" id="_items" cols="30" rows="10"></textarea>
+                </div>
+                <button class="btn btn-default" type="submit">Update</button>
+            </form>
+        </div><!-- end col-sm-3 -->
+    </div><!-- end row -->
+    <div class="row">
+        <ul>
+            {% for item in shoppinglist.items.all %}
+                <li>{{ item.type_name }} <a href="{% url 'lists:item_remove' list_pk=shoppinglist.pk item_pk=item.pk %}">x</a></li>
+            {% endfor %}
+        </ul>
+    </div><!-- end row -->
 {% endblock %}
