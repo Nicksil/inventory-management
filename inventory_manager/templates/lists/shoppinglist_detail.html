@@ -2,12 +2,12 @@
 {% load humanize %}
 {% block body %}
     <div class="row">
-        {% if shoppinglist.name %}
-            <h2>{{ shoppinglist.name }}</h2>
-        {% else %}
-            <strong>Your shopping list has no name, yo</strong>
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
         {% endif %}
-
+        <h2>{{ shoppinglist.name }}</h2>
         <p>
             <a href="{% url 'lists:list' %}">&lt; All shopping lists</a> | <a href="{% url 'lists:update' pk=shoppinglist.pk %}">Update list</a> | <a href="{% url 'lists:delete' pk=shoppinglist.pk %}">Delete</a>
         </p>

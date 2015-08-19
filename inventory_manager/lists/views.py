@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+import logging
+
+from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -13,6 +16,8 @@ from eve.models import Item
 from eve.models import Price
 from eve.models import Region
 from eve.utils import PriceFetcher
+
+logger = logging.getLogger(__name__)
 
 
 class ShoppingListDeleteView(DeleteView):
@@ -93,11 +98,24 @@ def shoppinglist_create_view(request):
         char_name = request.POST['character']
         char = Character.objects.get(name=char_name)
         name = request.POST.get('name')
-        item_names = request.POST.get('items')
-        items = [Item.objects.get(type_name__iexact=i) for i in item_names.split(', ')]
+        item_names = request.POST.get('items').split(', ')
+
+        items = []
+        not_found = []
+        for item_name in item_names:
+            try:
+                items.append(Item.objects.get(type_name__iexact=item_name))
+            except Item.DoesNotExist as e:
+                not_found.append(item_name)
+                logger.exception(e)
 
         shoppinglist = ShoppingList.objects.create(character=char, name=name)
         shoppinglist.items.add(*items)
+
+        if not_found:
+            message_text = 'The item(s) listed were not found in the database: {}'.format(
+                ', '.join(not_found).rstrip(', '))
+            messages.info(request, message_text)
 
         return redirect('lists:detail', pk=shoppinglist.pk)
     return render(request, 'lists/shoppinglist_create_view.html', {'characters': chars})
