@@ -29,6 +29,8 @@ class TestCharactersViews(TestCase):
         cls.test_char = mommy.make('Character')
         cls.unsaved_test_char = mommy.prepare('Character')
 
+        cls.test_order = mommy.make('Order', character=cls.test_char, qty_threshold=0)
+
         cls.test_item = mommy.make('Item')
         cls.test_station = mommy.make('Station')
 
@@ -119,8 +121,9 @@ class TestCharactersViews(TestCase):
             data={'key_id': key_id, 'v_code': v_code},
             follow=True)
 
-        last_character = Character.objects.last()
-        self.assertEqual(last_character.char_id, self.unsaved_test_char.char_id)
+        # Using get_or_create, confirm obj using existing v_code as look-up already exists
+        obj, created = Character.objects.get_or_create(v_code=self.unsaved_test_char.v_code)
+        self.assertFalse(created)
 
         expected_redirect_uri = reverse('characters:list')
         self.assertRedirects(response, expected_redirect_uri)
@@ -171,4 +174,23 @@ class TestCharactersViews(TestCase):
             kwargs={'pk': self.test_char.pk}
         )
 
+        self.assertRedirects(response, expected_redirect_uri)
+
+    def test_order_qty_threshold_update(self):
+        # Confirm test_order has qty_threshold set at 0
+        self.assertEqual(self.test_order.qty_threshold, 0)
+
+        uri = reverse(
+            'characters:qty_threshold_update',
+            kwargs={'char_pk': self.test_char.pk, 'order_pk': self.test_order.pk})
+        payload = {
+            'qty_threshold': 5,
+        }
+        response = self.client.post(uri, data=payload, follow=True)
+
+        # Confirm qty_threshold is now 5
+        test_order = Order.objects.get(pk=self.test_order.pk)
+        self.assertEqual(test_order.qty_threshold, 5)
+
+        expected_redirect_uri = reverse('characters:order_list', kwargs={'pk': self.test_char.pk})
         self.assertRedirects(response, expected_redirect_uri)
