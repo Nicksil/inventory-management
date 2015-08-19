@@ -19,6 +19,7 @@
                         <th>Item</th>
                         <th>Quantity</th>
                         <th>Location</th>
+                        <th>Flag</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,6 +28,7 @@
                             <td>{{ asset.item.type_name }}</td>
                             <td>{{ asset.quantity|intcomma }}</td>
                             <td>{% if asset.station %}{{ asset.station.station_name }}{% else %}{{ asset.solar_system.solar_system_name }}{% endif %}</td>
+                            <td>{{ asset.flag_name }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
