@@ -10,7 +10,6 @@ omit =
     */data/*
     */manage*
     */migrations/*
-    */monitoring/*
     */tests/*
     */auth_views*
     */wsgi*
