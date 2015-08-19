@@ -2,10 +2,20 @@
 {% load humanize %}
 {% block body %}
     <div class="row">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
         <h2>{{ character.name }}'s Orders</h2>
     </div><!-- end row -->
     <div class="row">
-        <p><a href="{% url 'characters:detail' pk=character.pk %}">&lt; {{ character.name }}</a> | <a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a></p>
+        <p><a href="{% url 'characters:detail' pk=character.pk %}">&lt; {{ character.name }}</a> | <a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a> | <a href="{% url 'monitoring:check_qty_threshold' pk=character.pk %}">Check Order Thresholds</a></p>
         {% if orders %}
             <table class="table table-condensed table-striped">
                 <thead>
