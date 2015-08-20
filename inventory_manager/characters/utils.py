@@ -141,7 +141,8 @@ class OrderManager(object):
 
     def update(self):
         data = self.fetch()
-        self.parse(data)
+        parsed = self.parse(data)
+        self.save(parsed)
 
     def fetch(self):
         api = evelink.api.API(api_key=self.api_key)
@@ -150,29 +151,34 @@ class OrderManager(object):
         return char_api.orders().result
 
     def parse(self, orders):
+        parsed = []
         for order in orders.itervalues():
-            self.save(order)
+            type_id = order['type_id']
+            station_id = order['station_id']
 
-    def save(self, order):
-        type_id = order['type_id']
-        station_id = order['station_id']
+            item = Item.objects.get(type_id=type_id)
+            station = Station.objects.get(station_id=station_id)
 
-        item = Item.objects.get(type_id=type_id)
-        station = Station.objects.get(station_id=station_id)
+            prepped = {
+                'character': self.char,
+                'item': item,
+                'station': station,
+                'order_id': order['id'],
+                'vol_entered': order['amount'],
+                'vol_remaining': order['amount_left'],
+                'order_state': order['status'],
+                'order_type': order['type'],
+                'duration': order['duration'],
+                'price': order['price'],
+                'issued': convert_ts(order['timestamp']),
+            }
+            parsed.append(prepped)
 
-        prepped = {
-            'character': self.char,
-            'item': item,
-            'station': station,
-            'order_id': order['id'],
-            'vol_entered': order['amount'],
-            'vol_remaining': order['amount_left'],
-            'order_state': order['status'],
-            'order_type': order['type'],
-            'duration': order['duration'],
-            'price': order['price'],
-            'issued': convert_ts(order['timestamp']),
-        }
+        return parsed
 
-        obj, created = Order.objects.update_or_create(
-            order_id=prepped['order_id'], defaults=prepped)
+    def save(self, orders):
+        # Dirty hack for the time-being
+        self.char.orders.all().delete()
+
+        for order in orders:
+            Order.objects.create(**order)

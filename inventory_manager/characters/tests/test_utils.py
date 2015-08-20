@@ -110,33 +110,3 @@ class TestCharactersUtils(TestCase):
 
         current_num_assets = Asset.objects.count()
         self.assertEqual(prev_num_assets + 2, current_num_assets)
-
-    @mock.patch('evelink.char.Char.orders')
-    def test_order_manager_save_method_handles_existing_object_correctly(self, mock_orders):
-        existing_order = Order.objects.last()
-        self.assertEqual(existing_order.order_state, 'active')
-
-        updated_order_result = {
-            self.order_id: {
-                'status': 'expired',
-                'type_id': self.test_item.type_id,
-                'timestamp': 1439842260,
-                'price': 5.00,
-                'station_id': self.test_station.station_id,
-                'amount_left': 5000,
-                'duration': 90,
-                'id': self.order_id,
-                'char_id': self.test_char.char_id,
-                'amount': 9000,
-                'type': 'sell'
-            }
-        }
-        updated_order = self.APIResult(updated_order_result)
-
-        mock_orders.return_value = updated_order
-
-        manager = OrderManager(self.test_char, self.test_char.char_id, self.test_char.get_api_key())
-        manager.update()
-
-        existing_order = Order.objects.last()
-        self.assertEqual(existing_order.order_state, 'expired')
