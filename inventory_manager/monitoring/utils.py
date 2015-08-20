@@ -44,8 +44,11 @@ def check_qty_threshold(request, pk):
 
     if orders_to_alert:
         type_names = ', '.join([x.item.type_name for x in orders_to_alert])
-        message_text = 'The following items have quantities at or below their quantity threshold: {}'.format(
+        message_text = 'The following orders have quantities at or below their quantity threshold: {}'.format(
             type_names)
+        messages.info(request, message_text)
+    else:
+        message_text = 'No orders seem to be at or below their quantity threshold'
         messages.info(request, message_text)
 
     return redirect('characters:order_list', pk=pk)

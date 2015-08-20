@@ -35,7 +35,7 @@ class TestMonitoringUtils(TestCase):
         uri = reverse('monitoring:check_qty_threshold', kwargs={'pk': self.char.pk})
         response = self.client.get(uri, follow=True)
 
-        message_text = 'The following items have met their quantity threshold: {}'.format(
+        message_text = 'The following orders have quantities at or below their quantity threshold: {}'.format(
             self.order_1.item.type_name)
         self.assertContains(response, message_text)
 
@@ -50,7 +50,7 @@ class TestMonitoringUtils(TestCase):
         uri = reverse('monitoring:check_qty_threshold', kwargs={'pk': self.char.pk})
         response = self.client.get(uri, follow=True)
 
-        message_text = 'The following items have met their quantity threshold: {}'.format(
+        message_text = 'The following orders have quantities at or below their quantity threshold: {}'.format(
             self.order_1.item.type_name)
         self.assertNotContains(response, message_text)
 

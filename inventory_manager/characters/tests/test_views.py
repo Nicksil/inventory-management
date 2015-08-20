@@ -194,3 +194,17 @@ class TestCharactersViews(TestCase):
 
         expected_redirect_uri = reverse('characters:order_list', kwargs={'pk': self.test_char.pk})
         self.assertRedirects(response, expected_redirect_uri)
+
+        # Test for no input ('')
+
+        payload = {
+            'qty_threshold': '',
+        }
+        response = self.client.post(uri, data=payload, follow=True)
+
+        # Confirm qty_threshold is now None
+        test_order = Order.objects.get(pk=self.test_order.pk)
+        self.assertIsNone(test_order.qty_threshold)
+
+        expected_redirect_uri = reverse('characters:order_list', kwargs={'pk': self.test_char.pk})
+        self.assertRedirects(response, expected_redirect_uri)
