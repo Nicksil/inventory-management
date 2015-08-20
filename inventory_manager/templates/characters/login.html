@@ -7,15 +7,15 @@
         <div class="col-sm-2">
             <form action="" method="POST">
                 {% csrf_token %}
-                <div class="form-group">
+                <fieldset class="form-group">
                     <label for="_username">Username</label>
                     <input class="form-control" type="text" id="_username" name="username">
-                </div>
-                <div class="form-group">
+                </fieldset>
+                <fieldset class="form-group">
                     <label for="_password">Password</label>
                     <input class="form-control" type="password" id="_password" name="password">
-                </div>
-                <button class="btn btn-default" type="submit">Log in</button>
+                </fieldset>
+                <button class="btn btn-secondary" type="submit">Log in</button>
             </form>
         </div>
     </div><!-- end row -->

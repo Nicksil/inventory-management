@@ -4,9 +4,10 @@
     <div class="row">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-warning alert-dismissible" role="alert">
+                <div class="alert alert-warning alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
                     </button>
                     {{ message }}
                 </div>
@@ -17,13 +18,12 @@
     <div class="row">
         <p><a href="{% url 'characters:detail' pk=character.pk %}">&lt; {{ character.name }}</a> | <a href="{% url 'characters:orders_update' pk=character.pk %}">Update orders</a> | <a href="{% url 'monitoring:check_qty_threshold' pk=character.pk %}">Check Order Thresholds</a></p>
         {% if orders %}
-            <table class="table table-condensed table-striped">
-                <thead>
+            <table class="table table-sm table-striped">
+                <thead class="thead-inverse">
                     <tr>
                         <th>Item</th>
                         <th>Quantity</th>
                         <th>Qty Threshold</th>
-                        <th></th>
                         <th>Price</th>
                         <th>Location</th>
                         <th>Expires in</th>
@@ -39,15 +39,12 @@
                                 {{ order.vol_remaining|intcomma }}/{{ order.vol_entered|intcomma }}
                             </td>
                             <td>
-                                {% if order.qty_threshold %}{{ order.qty_threshold }}{% else %}-{% endif %}
-                            </td>
-                            <td>
                                 <form class="form-inline" action="{% url 'characters:qty_threshold_update' char_pk=character.pk order_pk=order.pk %}" method="POST">
                                     {% csrf_token %}
                                     <div class="form-group">
-                                        <input type="text" class="form-control input-sm" name="qty_threshold" name="qty_threshold" size="10">
+                                        <input value="{% if order.qty_threshold %}{{ order.qty_threshold }}{% endif %}" type="text" class="form-control form-control-sm" name="qty_threshold" name="qty_threshold" size="5">
                                     </div>
-                                    <button class="btn btn-default btn-sm" type="submit">Update</button>
+                                    <button class="btn btn-secondary btn-sm" type="submit">Update</button>
                                 </form>
                             </td>
                             <td>

@@ -9,12 +9,14 @@
         <p>
             <form action="{% url 'characters:asset_list' pk=char.pk %}" method="POST">
                 {% csrf_token %}
-                <button class="btn btn-default" type="submit">Update</button>
+                <button class="btn btn-secondary" type="submit">Update</button>
             </form>
         </p>
+    </div><!-- end row -->
+    <div class="row">
         {% if assets %}
-            <table class="table table-condensed table-striped">
-                <thead>
+            <table class="table table-sm table-striped">
+                <thead class="thead-inverse">
                     <tr>
                         <th>Item</th>
                         <th>Quantity</th>

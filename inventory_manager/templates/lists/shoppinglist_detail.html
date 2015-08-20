@@ -16,21 +16,21 @@
         <div class="col-sm-2">
             <form action="{% url 'lists:price_update' pk=shoppinglist.pk %}" method="POST">
                 {% csrf_token %}
-                <div class="form-group">
+                <fieldset class="form-group">
                     <label for="_region">Select Region</label>
                     <select class="form-control" name="region" id="_region">
                         {% for region in regions %}
                             <option value="{{ region.region_id }}"{% if region.region_name == 'The Forge' %} selected{% endif %}>{{ region.region_name }}</option>
                         {% endfor %}
                     </select>
-                </div>
-                <button class="btn btn-default" type="submit">Update Prices</button>
+                </fieldset>
+                <button class="btn btn-secondary" type="submit">Update Prices</button>
             </form>
         </div><!-- end col-sm-3 -->
     </div><!-- end row -->
     <div class="row">
-        <table class="table table-condensed table-striped">
-            <thead>
+        <table class="table table-sm table-striped">
+            <thead class="thead-inverse">
                 <tr>
                     <th>Item</th>
                     <th>Last Price</th>

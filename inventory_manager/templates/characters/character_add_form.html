@@ -7,15 +7,15 @@
         <div class="col-sm-2">
             <form action="" method="POST">
                 {% csrf_token %}
-                <div class="form-group">
+                <fieldset class="form-group">
                     <label for="_key_id">Key ID</label>
                     <input class="form-control" type="text" id="_key_id" name="key_id" autofocus>
-                </div>
-                <div class="form-group">
+                </fieldset>
+                <fieldset class="form-group">
                     <label for="_v_code">V Code</label>
                     <input class="form-control" type="text" id="_v_code" name="v_code">
-                </div>
-                <button class="btn btn-default" type="submit">Add</button>
+                </fieldset>
+                <button class="btn btn-secondary" type="submit">Add</button>
             </form>
         </div>
     </div><!-- end row -->

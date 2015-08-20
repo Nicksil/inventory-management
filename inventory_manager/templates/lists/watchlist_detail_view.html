@@ -7,7 +7,7 @@
     <p><a href="{% url 'lists:list' %}">&lt; All watch lists</a> |
     <a href="{% url 'lists:update' pk=watchlist.pk %}">Update</a> | <a href="{% url 'lists:delete' pk=watchlist.pk %}">Delete</a></p>
     <table>
-        <thead>
+        <thead class="thead-inverse">
             <tr>
                 <th>Item</th>
                 <th>Desired Price</th>

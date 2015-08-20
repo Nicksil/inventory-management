@@ -96,7 +96,10 @@ def orders_list_view(request, pk):
 
 def order_qty_threshold_update(request, char_pk, order_pk):
     order = Order.objects.get(pk=order_pk)
-    qty_threshold = int(request.POST['qty_threshold'])
+    qty_threshold = request.POST['qty_threshold']
+
+    if qty_threshold == '':
+        qty_threshold = None
 
     order.qty_threshold = qty_threshold
     order.save()
