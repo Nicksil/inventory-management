@@ -15,6 +15,7 @@ from .models import Order
 from eve.models import Item
 from eve.models import Station
 from eve.utils import get_station_or_system
+from inventory_manager.tasks import app
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +32,7 @@ class CharacterManager(object):
         self.v_code = v_code
         self.api_key = (key_id, v_code)
 
+    @app.task
     def update(self):
         data = self.fetch()
         parsed = self.parse(data)

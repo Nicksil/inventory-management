@@ -79,7 +79,7 @@ def orders_update(request, pk):
     api_key = char.get_api_key()
 
     manager = OrderManager(char, char_id, api_key)
-    manager.update()
+    manager.update.delay()
 
     return redirect('characters:order_list', pk=pk)
 
