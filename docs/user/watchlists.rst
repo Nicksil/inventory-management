@@ -1,4 +1,0 @@
-.. _watchlists:
-
-Watch Lists
-===========
