@@ -5,6 +5,8 @@ If you've stumbled upon this page because you have an interest in Eve online and
 - `Evernus <http://evernus.com/>`_
 - `NEAT <http://pwning.de/neat/index.php>`_
 
+-----------------------------------------------------------------------------------------------------------------
+
 An Inventory Management Application for use with the game `EVE Online <http://www.eveonline.com/>`_
 
 `Docs <http://eve-online-inventory-manager.readthedocs.org/en/latest/>`_
